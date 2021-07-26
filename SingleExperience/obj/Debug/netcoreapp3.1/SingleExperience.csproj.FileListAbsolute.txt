@@ -1,0 +1,13 @@
+C:\Users\mariane.santos\Documents\ws-vs2019\SingleExperience\SingleExperience\bin\Debug\netcoreapp3.1\SingleExperience.exe
+C:\Users\mariane.santos\Documents\ws-vs2019\SingleExperience\SingleExperience\bin\Debug\netcoreapp3.1\SingleExperience.deps.json
+C:\Users\mariane.santos\Documents\ws-vs2019\SingleExperience\SingleExperience\bin\Debug\netcoreapp3.1\SingleExperience.runtimeconfig.json
+C:\Users\mariane.santos\Documents\ws-vs2019\SingleExperience\SingleExperience\bin\Debug\netcoreapp3.1\SingleExperience.runtimeconfig.dev.json
+C:\Users\mariane.santos\Documents\ws-vs2019\SingleExperience\SingleExperience\bin\Debug\netcoreapp3.1\SingleExperience.dll
+C:\Users\mariane.santos\Documents\ws-vs2019\SingleExperience\SingleExperience\bin\Debug\netcoreapp3.1\SingleExperience.pdb
+C:\Users\mariane.santos\Documents\ws-vs2019\SingleExperience\SingleExperience\obj\Debug\netcoreapp3.1\SingleExperience.csproj.AssemblyReference.cache
+C:\Users\mariane.santos\Documents\ws-vs2019\SingleExperience\SingleExperience\obj\Debug\netcoreapp3.1\SingleExperience.AssemblyInfoInputs.cache
+C:\Users\mariane.santos\Documents\ws-vs2019\SingleExperience\SingleExperience\obj\Debug\netcoreapp3.1\SingleExperience.AssemblyInfo.cs
+C:\Users\mariane.santos\Documents\ws-vs2019\SingleExperience\SingleExperience\obj\Debug\netcoreapp3.1\SingleExperience.csproj.CoreCompileInputs.cache
+C:\Users\mariane.santos\Documents\ws-vs2019\SingleExperience\SingleExperience\obj\Debug\netcoreapp3.1\SingleExperience.dll
+C:\Users\mariane.santos\Documents\ws-vs2019\SingleExperience\SingleExperience\obj\Debug\netcoreapp3.1\SingleExperience.pdb
+C:\Users\mariane.santos\Documents\ws-vs2019\SingleExperience\SingleExperience\obj\Debug\netcoreapp3.1\SingleExperience.genruntimeconfig.cache
