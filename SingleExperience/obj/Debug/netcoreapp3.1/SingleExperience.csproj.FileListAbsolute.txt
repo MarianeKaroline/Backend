@@ -11,3 +11,5 @@ C:\Users\mariane.santos\Documents\ws-vs2019\SingleExperience\SingleExperience\ob
 C:\Users\mariane.santos\Documents\ws-vs2019\SingleExperience\SingleExperience\obj\Debug\netcoreapp3.1\SingleExperience.dll
 C:\Users\mariane.santos\Documents\ws-vs2019\SingleExperience\SingleExperience\obj\Debug\netcoreapp3.1\SingleExperience.pdb
 C:\Users\mariane.santos\Documents\ws-vs2019\SingleExperience\SingleExperience\obj\Debug\netcoreapp3.1\SingleExperience.genruntimeconfig.cache
+C:\Users\mariane.santos\Documents\ws-vs2019\SingleExperience\SingleExperience\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
+C:\Users\mariane.santos\Documents\ws-vs2019\SingleExperience\SingleExperience\obj\Debug\netcoreapp3.1\SingleExperience.csproj.CopyComplete

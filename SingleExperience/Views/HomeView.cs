@@ -1,12 +1,14 @@
 ﻿using System;
 using SingleExperience.Services.ProductServices;
 using System.Globalization;
+using System.Linq;
 
 namespace SingleExperience.Views
 {
-    class Home
+    class HomeView
     {
-        public Products products = new Products();
+        public ProductCategoryView products = new ProductCategoryView();
+        //Tela inicial
         public void Menu()
         {            
             Console.WriteLine("\n1. Buscar por categoria");
@@ -22,6 +24,7 @@ namespace SingleExperience.Views
             }
         }
 
+        //Pesquisa
         public void Search()
         {
             Console.Clear();
@@ -42,19 +45,19 @@ namespace SingleExperience.Views
                     ListProducts();
                     break;
                 case 1:
-                    products.Accessories();
+                    products.Category(opc);
                     break;
                 case 2:
-                    products.Cellphone();
+                    products.Category(opc);
                     break;
                 case 3:
-                    products.Computers();
+                    products.Category(opc);
                     break;
                 case 4:
-                    products.Laptops();
+                    products.Category(opc);
                     break;
                 case 5:
-                    products.Tablets();
+                    products.Category(opc);
                     break;
                 default:
                     Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
@@ -64,6 +67,7 @@ namespace SingleExperience.Views
             }
         }
 
+        //Listar produtos na página inicial 
         public void ListProducts()
         {
             var productService = new ProductService();
@@ -73,20 +77,15 @@ namespace SingleExperience.Views
 
             Console.WriteLine("\nInício\n");
 
-            var list = productService.ListProducts(); 
+            var list = productService.ListProductsTable();
 
             list.ForEach(p =>
             {
                 Console.WriteLine($"+{new string('-', j)}+");
                 Console.WriteLine($"| {p.Name}{new string(' ', j - 1 - p.Name.ToString().Length)}|");
                 Console.WriteLine($"| R${p.Price.ToString("F2", CultureInfo.CurrentCulture)}{new string(' ', j - 6 - p.Price.ToString().Length)}|");
-                if (p.Available == true)
-                {
-                    Console.WriteLine($"| Disponível{new string(' ', j - 1 - "Disponível".Length)}|");
-                }
                 Console.WriteLine($"+{new string('-', j)}+");
             });
-
             Menu();
         }
     }

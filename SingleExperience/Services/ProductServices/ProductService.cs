@@ -2,45 +2,49 @@
 using SingleExperience.Entities;
 using System.IO;
 using System.Collections.Generic;
+using SingleExperience.Services.ProductServices.Model;
 using System.Text;
+using System.Linq;
+using SingleExperience.Services.ProductServices.Models.ProductModels;
 
 namespace SingleExperience.Services.ProductServices
 {
     class ProductService
     {
+        //Lê o arquivo CSV
 		public List<ProductEntitie> ListProducts()
         {
-            int produtoID = 0, statusId = 0, amount = 0, categoryId = 0, ranking = 0;
-            string name = null;
-            double price = 0.0;
-            bool available = false;
-            float rating = 0.0f;
-
             string path = @"C:\Users\mariane.santos\Documents\Products.csv";
-            List<ProductEntitie> prod = new List<ProductEntitie>(); 
+            var prod = new List<ProductEntitie>(); 
 			try 
 			{
-                string[] products = File.ReadAllLines(path);
+                string[] products = File.ReadAllLines(path, Encoding.UTF8);
 
                 using (StreamReader sr = File.OpenText(path))
                 {
-                    foreach (var item in products)
-                    {
-                        string[] fields = item.Split(';');
+                    products
+                        .Skip(1)
+                        .ToList()
+                        .ForEach(item =>
+                        {
+                            string[] fields = item.Split(',');
 
-                        produtoID = int.Parse(fields[0]);
-                        name = fields[1];
-                        price = double.Parse(fields[2]);
-                        statusId = int.Parse(fields[3]);
-                        amount = int.Parse(fields[4]);
-                        categoryId = int.Parse(fields[5]);
-                        ranking = int.Parse(fields[6]);
-                        available = bool.Parse(fields[7]);
-                        rating = float.Parse(fields[8]);
+                            var produto = new ProductEntitie();
+
+                            produto.ProductId = int.Parse(fields[0]);
+                            produto.Name = fields[1];
+                            produto.Price = double.Parse(fields[2]);
+                            produto.Detail = fields[3];
+                            produto.StatusId = int.Parse(fields[4]);
+                            produto.Amount = int.Parse(fields[5]);
+                            produto.CategoryId = int.Parse(fields[6]);
+                            produto.Ranking = int.Parse(fields[7]);
+                            produto.Available = bool.Parse(fields[8]);
+                            produto.Rating = float.Parse(fields[9]);
 
 
-                        prod.Add(new ProductEntitie(produtoID, name, price, statusId, amount, categoryId, ranking, available, rating));
-                    }
+                            prod.Add(produto);
+                        });
                 }
 			}
 			catch (IOException e)
@@ -49,6 +53,74 @@ namespace SingleExperience.Services.ProductServices
                 Console.WriteLine(e.Message);
 			}
             return prod;
+        }
+
+        //Listar Produto Home
+        public List<BestSellingModel> ListProductsTable()        {
+            var list = ListProducts();
+            var bestSellingModel = new List<BestSellingModel>();
+
+            list
+                .Where(p => p.Available == true && p.Ranking > 0)
+                .ToList()
+                .ForEach(p =>
+                {
+                    var selling = new BestSellingModel();
+                    selling.ProductId = p.ProductId;
+                    selling.Name = p.Name;
+                    selling.Price = p.Price;
+                    selling.Ranking = p.Ranking;
+
+                    bestSellingModel.Add(selling);
+                });
+
+            return bestSellingModel;
+        }
+
+        public List<BestSellingCategoryModel> ListProductCategory(int categoryId)
+        {
+            var list = ListProducts();
+            var bestSelling = new List<BestSellingCategoryModel>();
+
+            list
+                .Where(p => p.Available == true && p.CategoryId == categoryId)
+                .ToList()
+                .ForEach(p =>
+                {
+                    var selling = new BestSellingCategoryModel();
+                    selling.ProductId = p.ProductId;
+                    selling.Name = p.Name;
+                    selling.Price = p.Price;
+
+                    bestSelling.Add(selling);
+                });
+
+            return bestSelling;
+        }
+
+        public ProductSelectedModel ListProductSelected(int productId)
+        {
+            var list = ListProducts();
+            var selectedModels = new ProductSelectedModel();
+
+            list
+                .Where(p => p.Available == true && p.ProductId == productId)
+                .ToList()
+                .ForEach(p =>
+                {
+                    var product = new ProductSelectedModel();
+                    product.Rating = p.Rating;
+                    product.CategoryId = p.CategoryId;
+                    product.ProductId = p.ProductId;
+                    product.Name = p.Name;
+                    product.Price = p.Price;
+                    product.Amount = p.Amount;
+                    product.Detail = p.Detail;
+
+                    selectedModels = product;
+                });
+
+            return selectedModels;
         }
     }
 }

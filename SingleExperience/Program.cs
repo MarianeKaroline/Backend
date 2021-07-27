@@ -6,7 +6,8 @@ namespace SingleExperience
     {
         static void Main(string[] args)
         {
-            Home inicio = new Home();
+            //Chama a home para ser exibida inicialmente
+            HomeView inicio = new HomeView();
             inicio.ListProducts();
         }
     }
