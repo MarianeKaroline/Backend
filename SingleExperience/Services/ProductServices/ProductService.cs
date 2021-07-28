@@ -6,18 +6,21 @@ using SingleExperience.Services.ProductServices.Model;
 using System.Text;
 using System.Linq;
 using SingleExperience.Services.ProductServices.Models.ProductModels;
+using System.Reflection;
 
 namespace SingleExperience.Services.ProductServices
 {
     class ProductService
     {
-        //Lê o arquivo CSV
-		public List<ProductEntitie> ListProducts()
+        //Lê o arquivo CSV Produtos
+        public List<ProductEntitie> ListProducts()
         {
-            string path = @"C:\Users\mariane.santos\Documents\Products.csv";
-            var prod = new List<ProductEntitie>(); 
-			try 
-			{
+            var CurrentDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            string path = CurrentDirectory + @"..\..\..\..\\Database\Products.csv";
+            var prod = new List<ProductEntitie>();
+
+            try
+            {
                 string[] products = File.ReadAllLines(path, Encoding.UTF8);
 
                 using (StreamReader sr = File.OpenText(path))
@@ -46,17 +49,18 @@ namespace SingleExperience.Services.ProductServices
                             prod.Add(produto);
                         });
                 }
-			}
-			catch (IOException e)
-			{
+            }
+            catch (IOException e)
+            {
                 Console.WriteLine("Ocorreu um erro");
                 Console.WriteLine(e.Message);
-			}
+            }
             return prod;
         }
 
-        //Listar Produto Home
-        public List<BestSellingModel> ListProductsTable()        {
+        //Listar Produtos Home
+        public List<BestSellingModel> ListProductsTable()
+        {
             var list = ListProducts();
             var bestSellingModel = new List<BestSellingModel>();
 
@@ -77,6 +81,7 @@ namespace SingleExperience.Services.ProductServices
             return bestSellingModel;
         }
 
+        //Listar Produtos Categoria
         public List<BestSellingCategoryModel> ListProductCategory(int categoryId)
         {
             var list = ListProducts();
@@ -98,6 +103,7 @@ namespace SingleExperience.Services.ProductServices
             return bestSelling;
         }
 
+        //Listar Produto Selecionado
         public ProductSelectedModel ListProductSelected(int productId)
         {
             var list = ListProducts();

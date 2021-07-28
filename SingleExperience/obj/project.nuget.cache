@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "HxNnt892xf6hU7lfEKZ8B2NMMv7ZSQTygzVeT2VXVwQlPzWoMA7z/5Crc3dZcZ65MVZMZgRFoGmh/cX2qrlhrA==",
+  "dgSpecHash": "59gjCkb3/sWlHmOtdQFIJvjQXN7+S0nTrkrhEfYBZ31kuqhoOi+ca6xMoQuQeN5nWqPPIL5QDZiCquTMfQcazA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\mariane.santos\\Documents\\ws-vs2019\\SingleExperience\\SingleExperience\\SingleExperience.csproj",
+  "projectFilePath": "C:\\Users\\nani_\\Documents\\Csharp\\Backend\\SingleExperience\\SingleExperience.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\mariane.santos\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
+    "C:\\Users\\nani_\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
   ],
   "logs": []
 }

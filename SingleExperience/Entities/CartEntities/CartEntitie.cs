@@ -7,7 +7,5 @@ namespace SingleExperience.Entities.CartEntities
         public int CartId { get; set; }
         public int ProductId { get; set; }
         public DateTime DateCreated { get; set; }
-        public int Amount { get; set; }
-        public double Price { get; set; }
     }
 }

@@ -8,7 +8,7 @@ namespace SingleExperience
         {
             //Chama a home para ser exibida inicialmente
             HomeView inicio = new HomeView();
-            inicio.ListProducts();
+            inicio.ListProducts(0);
         }
     }
 }

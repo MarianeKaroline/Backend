@@ -12,44 +12,47 @@ namespace SingleExperience.Views
     class ProductCategoryView
     {
         //Chama ListaProdutos pela Categoria
-        public void Category(int id)
+        public void Category(int id, int countProductCart)
         {
             Console.Clear();
             var category = (CategoryProductEnums)id;
             Console.WriteLine($"\nInício > Pesquisa > {category}\n");
 
-            ListProducts(id);
-            Menu();
+            ListProducts(id, countProductCart);
+            Menu(countProductCart);
         }
         
         //Menu dos Produtos
-        public void Menu()
+        public void Menu(int countProductCart)
         {
             var selectedProduct = new SelectedProductView();
             var inicio = new HomeView();
 
             Console.WriteLine("0. Início");
             Console.WriteLine("1. Pesquisar por categoria");
+            Console.WriteLine($"2. Ver Carrinho (quantidade: {countProductCart})");
             Console.WriteLine("Digite o código # para acessar o produto");
             int op = int.Parse(Console.ReadLine());
 
             switch (op)
             {
                 case 0:
-                    inicio.ListProducts();
+                    inicio.ListProducts(countProductCart);
                     break;
                 case 1:
-                    inicio.Search();
+                    inicio.Search(countProductCart);
+                    break;
+                case 2:
                     break;
                 default:
-                    selectedProduct.ListProducts(op);
+                    selectedProduct.ListProducts(op, countProductCart);
                     break;
             }
 
             
         }
         //Listar Produtos selecionado
-        public void ListProducts(int categoryId)
+        public void ListProducts(int categoryId, int countProductCart)
         {
             var productService = new ProductService();
             var list = productService.ListProductCategory(categoryId);

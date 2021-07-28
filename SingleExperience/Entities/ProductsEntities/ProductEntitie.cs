@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SingleExperience.Entities
+﻿namespace SingleExperience.Entities
 {
     class ProductEntitie
     {

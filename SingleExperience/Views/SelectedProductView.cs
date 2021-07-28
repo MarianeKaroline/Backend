@@ -1,4 +1,5 @@
 ﻿using SingleExperience.Services.ProductServices;
+using SingleExperience.Services.CartServices;
 using SingleExperience.Entities.Enums;
 using System.Linq;
 using System;
@@ -9,12 +10,16 @@ namespace SingleExperience.Views
 {
     class SelectedProductView
     {
+        private ProductService productService = null;
+        public SelectedProductView()
+        {
+            productService = new ProductService();
+        }
+
         //Listar Produtos
-        public void ListProducts(int productId)
+        public void ListProducts(int productId, int countProduct)
         {
             Console.Clear();
-
-            var productService = new ProductService();
             var list = productService.ListProductSelected(productId);
             var j = 41;
             var category = (CategoryProductEnums)list.CategoryId;
@@ -32,37 +37,43 @@ namespace SingleExperience.Views
             Console.WriteLine($"|Quantidade em estoque: {list.Amount}{new string(' ', j - "Quantidade em estoque".Length - 2 - list.Amount.ToString().Length)}|");
             Console.WriteLine($"+{new string('-', j)}+");
 
-            Menu(productId);
+            Menu(productId, countProduct);
         }
 
         //Mostra Menu
-        public void Menu(int productId)
+        public void Menu(int productId, int countProduct)
         {
             var categoryProduct = new ProductCategoryView();
             var inicio = new HomeView();
-            var productService = new ProductService();
             var list = productService.ListProductSelected(productId);
             var category = (CategoryProductEnums)list.CategoryId; //Busca o nome da categoria por enum
+            var cart = new CartService();
 
             Console.WriteLine("\n0. Início");
             Console.WriteLine("1. Pesquisar por categoria");
             Console.WriteLine("2. Voltar para a categoria: " + category);
-            Console.WriteLine("Digite o código # para adicionar ao carrinho");
+            Console.WriteLine("3. Adicionar produto ao carrinho");
+            Console.WriteLine($"4. Ver Carrinho (Quantidade: {countProduct})");
             int op = int.Parse(Console.ReadLine());
 
             switch (op)
             {
                 case 0:
-                    inicio.ListProducts();
+                    inicio.ListProducts(countProduct);
                     break;
                 case 1:
-                    inicio.Search();
+                    inicio.Search(countProduct);
                     break;
                 case 2:
-                    categoryProduct.Category(list.CategoryId);
+                    categoryProduct.Category(list.CategoryId, countProduct);
+                    break;
+                case 3:
+                    int count = cart.AddCart(productId);
+                    Console.WriteLine("Produto adicionado com sucesso (Aperte enter para continuar)");
+                    Console.ReadKey();
+                    ListProducts(productId, count);
                     break;
                 default:
-
                     break;
             }
         }

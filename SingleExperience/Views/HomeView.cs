@@ -9,15 +9,18 @@ namespace SingleExperience.Views
     {
         public ProductCategoryView products = new ProductCategoryView();
         //Tela inicial
-        public void Menu()
+        public void Menu(int countProductCart)
         {            
             Console.WriteLine("\n1. Buscar por categoria");
+            Console.WriteLine($"2. Ver Carrinho (Quantidade: {countProductCart})");
             int op = int.Parse(Console.ReadLine());
 
             switch (op)
             {
                 case 1:
-                    Search();
+                    Search(countProductCart);
+                    break;
+                case 2:
                     break;
                 default:
                     break;
@@ -25,7 +28,7 @@ namespace SingleExperience.Views
         }
 
         //Pesquisa
-        public void Search()
+        public void Search(int countProductCart)
         {
             Console.Clear();
 
@@ -37,38 +40,31 @@ namespace SingleExperience.Views
             Console.WriteLine("3. Computador");
             Console.WriteLine("4. Notebook");
             Console.WriteLine("5. Tablets");
+            Console.WriteLine($"6. Ver Carrinho {countProductCart}");
             int opc = int.Parse(Console.ReadLine());
 
             switch (opc)
             {
                 case 0:
-                    ListProducts();
+                    ListProducts(countProductCart);
                     break;
                 case 1:
-                    products.Category(opc);
-                    break;
                 case 2:
-                    products.Category(opc);
-                    break;
                 case 3:
-                    products.Category(opc);
-                    break;
                 case 4:
-                    products.Category(opc);
-                    break;
                 case 5:
-                    products.Category(opc);
+                    products.Category(opc, countProductCart);
                     break;
                 default:
                     Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                     Console.ReadKey();
-                    Search();
+                    Search(countProductCart);
                     break;
             }
         }
 
         //Listar produtos na página inicial 
-        public void ListProducts()
+        public void ListProducts(int countProductCart)
         {
             var productService = new ProductService();
             var j = 41;
@@ -86,7 +82,7 @@ namespace SingleExperience.Views
                 Console.WriteLine($"| R${p.Price.ToString("F2", CultureInfo.CurrentCulture)}{new string(' ', j - 6 - p.Price.ToString().Length)}|");
                 Console.WriteLine($"+{new string('-', j)}+");
             });
-            Menu();
+            Menu(countProductCart);
         }
     }
 }

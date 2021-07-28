@@ -1,0 +1,5 @@
+ProdutoId,Nome,Preco,Details,StatusId,Qtde,CategoriaId,Ranking,Disponibilidade,Avaliacao
+1000,Computador Acer,3000,Marca: Acer;Processador: Intel Core I5;Velocidade do Processador: 2.9 GHz;Tamanho da Memoria: 8 GB;Tecnologia HD: SSD 250 GB;Placa de Video: Radeon RX 550,1,100,3,15,TRUE,0
+1001,Notebook Gamer Samsung,5000,Marca: Dell;Processador: Intel Core I5;Velocidade do Processador: 2.9 GHz;Tamanho da Memoria: 8 GB;Tecnologia HD: SSD 250 GB;Placa de Video: Radeon RX 550,1,50,4,5,TRUE,0
+1002,Celular Samsung A50,2500,Marca: Samsung;Modelo: A50;Tamanho da Memoria: 4 GB;Armazenamento: 128 GB;Tela: 6.4 Polegadas;Câmera Traseira: 25MP;Câmera Frontal: 16MP,1,200,2,10,TRUE,0
+1003,Celular Redmi Note 10,2500,Marca: Redmi;Modelo: Note 10;Tamanho da Memoria: 4 GB;Armazenamento: 128 GB;Tela: 6.4 Polegadas;Câmera Traseira: 25MP;Câmera Frontal: 16MP,1,30,2,20,TRUE,0
