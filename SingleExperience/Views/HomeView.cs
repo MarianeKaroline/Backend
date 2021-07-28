@@ -9,7 +9,7 @@ namespace SingleExperience.Views
     {
         public ProductCategoryView products = new ProductCategoryView();
         //Tela inicial
-        public void Menu(int countProductCart)
+        public void Menu(int countProductCart, string ipComputer)
         {            
             Console.WriteLine("\n1. Buscar por categoria");
             Console.WriteLine($"2. Ver Carrinho (Quantidade: {countProductCart})");
@@ -18,7 +18,7 @@ namespace SingleExperience.Views
             switch (op)
             {
                 case 1:
-                    Search(countProductCart);
+                    Search(countProductCart, ipComputer);
                     break;
                 case 2:
                     break;
@@ -28,7 +28,7 @@ namespace SingleExperience.Views
         }
 
         //Pesquisa
-        public void Search(int countProductCart)
+        public void Search(int countProductCart, string ipComputer)
         {
             Console.Clear();
 
@@ -46,25 +46,25 @@ namespace SingleExperience.Views
             switch (opc)
             {
                 case 0:
-                    ListProducts(countProductCart);
+                    ListProducts(countProductCart, ipComputer);
                     break;
                 case 1:
                 case 2:
                 case 3:
                 case 4:
                 case 5:
-                    products.Category(opc, countProductCart);
+                    products.Category(opc, countProductCart, ipComputer);
                     break;
                 default:
                     Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                     Console.ReadKey();
-                    Search(countProductCart);
+                    Search(countProductCart, ipComputer);
                     break;
             }
         }
 
         //Listar produtos na página inicial 
-        public void ListProducts(int countProductCart)
+        public void ListProducts(int countProductCart, string ipComputer)
         {
             var productService = new ProductService();
             var j = 41;
@@ -82,7 +82,7 @@ namespace SingleExperience.Views
                 Console.WriteLine($"| R${p.Price.ToString("F2", CultureInfo.CurrentCulture)}{new string(' ', j - 6 - p.Price.ToString().Length)}|");
                 Console.WriteLine($"+{new string('-', j)}+");
             });
-            Menu(countProductCart);
+            Menu(countProductCart, ipComputer);
         }
     }
 }

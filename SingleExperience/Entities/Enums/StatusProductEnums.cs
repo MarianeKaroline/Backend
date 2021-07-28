@@ -6,10 +6,11 @@ namespace SingleExperience.Entities.Enums
 {
     enum StatusProductEnums
     {
-        Actived = 1,
-        Pending = 2,
-        Bought = 3,
-        Sent = 4,
-        Delivered = 5
+        Inativo = 4001,
+        Ativo = 4002,
+        PagamentoPendente = 4003,
+        Comprado = 4004,
+        Enviado = 4005,
+        Entregue = 4006
     }
 }

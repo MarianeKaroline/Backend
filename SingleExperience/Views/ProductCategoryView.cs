@@ -12,18 +12,18 @@ namespace SingleExperience.Views
     class ProductCategoryView
     {
         //Chama ListaProdutos pela Categoria
-        public void Category(int id, int countProductCart)
+        public void Category(int id, int countProductCart, string ipComputer)
         {
             Console.Clear();
             var category = (CategoryProductEnums)id;
             Console.WriteLine($"\nInício > Pesquisa > {category}\n");
 
             ListProducts(id, countProductCart);
-            Menu(countProductCart);
+            Menu(countProductCart, ipComputer);
         }
         
         //Menu dos Produtos
-        public void Menu(int countProductCart)
+        public void Menu(int countProductCart, string ipComputer)
         {
             var selectedProduct = new SelectedProductView();
             var inicio = new HomeView();
@@ -37,15 +37,15 @@ namespace SingleExperience.Views
             switch (op)
             {
                 case 0:
-                    inicio.ListProducts(countProductCart);
+                    inicio.ListProducts(countProductCart, ipComputer);
                     break;
                 case 1:
-                    inicio.Search(countProductCart);
+                    inicio.Search(countProductCart, ipComputer);
                     break;
                 case 2:
                     break;
                 default:
-                    selectedProduct.ListProducts(op, countProductCart);
+                    selectedProduct.ListProducts(op, countProductCart, ipComputer);
                     break;
             }
 

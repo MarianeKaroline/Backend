@@ -1,0 +1,1 @@
+CartId, ProductId, UserId, ProductStatus, DateCreated
