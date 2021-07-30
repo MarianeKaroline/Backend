@@ -7,6 +7,7 @@ using System.Text;
 using System.Linq;
 using SingleExperience.Services.ProductServices.Models.ProductModels;
 using System.Reflection;
+using SingleExperience.Entities.Enums;
 
 namespace SingleExperience.Services.ProductServices
 {
@@ -38,12 +39,11 @@ namespace SingleExperience.Services.ProductServices
                             produto.Name = fields[1];
                             produto.Price = double.Parse(fields[2]);
                             produto.Detail = fields[3];
-                            produto.StatusId = int.Parse(fields[4]);
-                            produto.Amount = int.Parse(fields[5]);
-                            produto.CategoryId = int.Parse(fields[6]);
-                            produto.Ranking = int.Parse(fields[7]);
-                            produto.Available = bool.Parse(fields[8]);
-                            produto.Rating = float.Parse(fields[9]);
+                            produto.Amount = int.Parse(fields[4]);
+                            produto.CategoryId = int.Parse(fields[5]);
+                            produto.Ranking = int.Parse(fields[6]);
+                            produto.Available = bool.Parse(fields[7]);
+                            produto.Rating = float.Parse(fields[8]);
 
 
                             prod.Add(produto);
@@ -74,6 +74,7 @@ namespace SingleExperience.Services.ProductServices
                     selling.Name = p.Name;
                     selling.Price = p.Price;
                     selling.Ranking = p.Ranking;
+                    selling.Available = p.Available;
 
                     bestSellingModel.Add(selling);
                 });
@@ -82,20 +83,22 @@ namespace SingleExperience.Services.ProductServices
         }
 
         //Listar Produtos Categoria
-        public List<BestSellingCategoryModel> ListProductCategory(int categoryId)
+        public List<CategoryModel> ListProductCategory(int categoryId)
         {
             var list = ListProducts();
-            var bestSelling = new List<BestSellingCategoryModel>();
+            var bestSelling = new List<CategoryModel>();
 
             list
                 .Where(p => p.Available == true && p.CategoryId == categoryId)
                 .ToList()
                 .ForEach(p =>
                 {
-                    var selling = new BestSellingCategoryModel();
+                    var selling = new CategoryModel();
                     selling.ProductId = p.ProductId;
                     selling.Name = p.Name;
                     selling.Price = p.Price;
+                    selling.CategoryId = p.CategoryId;
+                    selling.Available = p.Available;
 
                     bestSelling.Add(selling);
                 });

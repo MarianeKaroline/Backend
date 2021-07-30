@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SingleExperience.Services.ProductServices.Models.ProductModels;
 
 namespace SingleExperience.Views
 {
@@ -26,12 +27,13 @@ namespace SingleExperience.Views
         public void Menu(int countProductCart, string ipComputer)
         {
             var selectedProduct = new SelectedProductView();
+            var cart = new CartView();
             var inicio = new HomeView();
 
             Console.WriteLine("0. Início");
             Console.WriteLine("1. Pesquisar por categoria");
             Console.WriteLine($"2. Ver Carrinho (quantidade: {countProductCart})");
-            Console.WriteLine("Digite o código # para acessar o produto");
+            Console.WriteLine("Digite o codigo do produto # para mais detalhes\n");
             int op = int.Parse(Console.ReadLine());
 
             switch (op)
@@ -43,9 +45,10 @@ namespace SingleExperience.Views
                     inicio.Search(countProductCart, ipComputer);
                     break;
                 case 2:
+                    cart.ListCart(ipComputer);
                     break;
                 default:
-                    selectedProduct.ListProducts(op, countProductCart, ipComputer);
+                    selectedProduct.SelectedProduct(op, countProductCart, ipComputer);
                     break;
             }
 
@@ -55,14 +58,24 @@ namespace SingleExperience.Views
         public void ListProducts(int categoryId, int countProductCart)
         {
             var productService = new ProductService();
-            var list = productService.ListProductCategory(categoryId);
+            var itemCategory = productService.ListProductCategory(categoryId)
+                .GroupBy(i => i.Name)
+                .Select(j => new CategoryModel()
+                {
+                    ProductId = j.First().ProductId,
+                    Name = j.First().Name,
+                    Price = j.First().Price,
+                    CategoryId = j.First().CategoryId,
+                    Available = j.First().Available
+                })
+                .ToList();
             var j = 41;
 
-            list.ForEach(p =>
+            itemCategory.ForEach(p =>
             {
                 Console.WriteLine($"+{new string('-', j)}+");
                 Console.WriteLine($"|#{p.ProductId}{new string(' ', j - 1 - p.ProductId.ToString().Length)}|");
-                Console.WriteLine($"|{p.Name}{new string(' ', j - p.Name.ToString().Length)}|");
+                Console.WriteLine($"| {p.Name}{new string(' ', j - 1 - p.Name.ToString().Length)}|");
                 Console.WriteLine($"|R${p.Price.ToString("F2", CultureInfo.CurrentCulture)}{new string(' ', j - 5 - p.Price.ToString().Length)}|");
                 Console.WriteLine($"+{new string('-', j)}+");
             });

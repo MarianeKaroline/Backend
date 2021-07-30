@@ -1,0 +1,7 @@
+StatusId,Descricao
+4001,Inativo
+4002,Ativo
+4003,PagamentoPendente
+4004,Comprado
+4005,Enviado
+4006,Entregue

@@ -17,7 +17,7 @@ namespace SingleExperience.Views
         }
 
         //Listar Produtos
-        public void ListProducts(int productId, int countProduct, string ipComputer)
+        public void SelectedProduct(int productId, int countProduct, string ipComputer)
         {
             Console.Clear();
             var list = productService.ListProductSelected(productId);
@@ -47,12 +47,12 @@ namespace SingleExperience.Views
             var inicio = new HomeView();
             var cartList = new CartView();
             var list = productService.ListProductSelected(productId);
-            var category = (CategoryProductEnums)list.CategoryId; //Busca o nome da categoria por enum
+            var category = (CategoryProductEnums)list.CategoryId;
             var cart = new CartService();
 
             Console.WriteLine("\n0. Início");
             Console.WriteLine("1. Pesquisar por categoria");
-            Console.WriteLine("2. Voltar para a categoria: " + category);
+            Console.WriteLine($"2. Voltar para a categoria: {category}");
             Console.WriteLine("3. Adicionar produto ao carrinho");
             Console.WriteLine($"4. Ver Carrinho (Quantidade: {countProduct})");
             int op = int.Parse(Console.ReadLine());
@@ -69,10 +69,12 @@ namespace SingleExperience.Views
                     categoryProduct.Category(list.CategoryId, countProduct, ipComputer);
                     break;
                 case 3:
-                    int count = cart.AddCart(productId, ipComputer);
+                    cart.AddCart(productId, ipComputer);
+                    var count = cart.TotalCart(ipComputer);
+
                     Console.WriteLine("Produto adicionado com sucesso (Aperte enter para continuar)");
                     Console.ReadKey();
-                    ListProducts(productId, count, ipComputer);
+                    SelectedProduct(productId, count.TotalAmount, ipComputer);
                     break;
                 case 4:
                     cartList.ListCart(ipComputer);

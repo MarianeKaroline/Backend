@@ -10,19 +10,22 @@ using System.Net.Sockets;
 using SingleExperience.Entities.ProductsEntities;
 using SingleExperience.Entities;
 using SingleExperience.Services.ProductServices.Models.CartModels;
+using SingleExperience.Services.CartServices.Models;
+using SingleExperience.Entities.Enums;
 
 namespace SingleExperience.Services.CartServices
 {
     class CartService
     {
-        private int CartId = 0;
         private string CurrentDirectory = null;
         private string path = null;
+        private string pathItens = null;
 
         public CartService()
         {
             CurrentDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             path = CurrentDirectory + @"..\..\..\..\\Database\Cart.csv";
+            pathItens = CurrentDirectory + @"..\..\..\..\\Database\ItensCart.csv";
         }
 
         //Lê arquivo csv carrinho
@@ -43,9 +46,7 @@ namespace SingleExperience.Services.CartServices
 
                             var itens = new CartEntitie();
                             itens.CartId = int.Parse(fields[0]);
-                            itens.ProductId = int.Parse(fields[1]);
                             itens.UserId = fields[2];
-                            itens.ProductStatus = int.Parse(fields[3]);
                             itens.DateCreated = DateTime.Parse(fields[4]);
 
                             prodCart.Add(itens);
@@ -60,164 +61,154 @@ namespace SingleExperience.Services.CartServices
             return prodCart;
         }
 
+        //Lê o arquivo csv Status
+        public List<StatusProductEntitie> ListStatus()
+        {
+            var statusCart = new List<StatusProductEntitie>();
+            try
+            {
+                var pathStatus = CurrentDirectory + @"..\..\..\..\\Database\Status.csv";
+                string[] status = File.ReadAllLines(pathStatus, Encoding.UTF8);
+                using (StreamReader sr = File.OpenText(path))
+                {
+                    status
+                        .Skip(1)
+                        .ToList()
+                        .ForEach(p =>
+                        {
+                            string[] fields = p.Split(',');
+
+                            var itens = new StatusProductEntitie();
+                            itens.StatusId = int.Parse(fields[0]);
+                            itens.Description = fields[1];
+
+                            statusCart.Add(itens);
+                        });
+                }
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine("Ocorreu um erro");
+                Console.WriteLine(e.Message);
+            }
+            return statusCart;
+        }
+
+        //Lê o arquivo csv itens no carrinho
+        public List<ItensEntities> ListItens()
+        {
+            var itens = new List<ItensEntities>();
+            try
+            {
+                string[] itensCart = File.ReadAllLines(pathItens, Encoding.UTF8);
+                using (StreamReader sr = File.OpenText(pathItens))
+                {
+                    itensCart
+                        .Skip(1)
+                        .ToList()
+                        .ForEach(p =>
+                        {
+                            string[] fields = p.Split(',');
+
+                            var item = new ItensEntities();
+                            item.ProductCartId = int.Parse(fields[0]);
+                            item.CartId = int.Parse(fields[1]);
+                            item.ProductId = int.Parse(fields[2]);
+                            item.UserId = fields[3];
+                            item.Name = fields[4];
+                            item.CategoryId = int.Parse(fields[5]);
+                            item.Amount = int.Parse(fields[6]);
+                            item.StatusId = int.Parse(fields[7]);
+                            item.Price = double.Parse(fields[8]);
+
+                            itens.Add(item);
+                        });
+                }
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine("Ocorreu um erro");
+                Console.WriteLine(e.Message);
+            }
+            return itens;
+        }
+
         //Adiciona no carrinho
-        public int AddCart(int productId, string ipComputer)
+        public void AddCart(int productId, string ipComputer)
         {
             var pathProduct = CurrentDirectory + @"..\..\..\..\\Database\Products.csv";
             string[] product = File.ReadAllLines(pathProduct, Encoding.UTF8);
-            CartId++;
-            var countProducts = 0;
-
-            if (File.Exists(path))
-            {
-                string lines = $"{CartId},{productId},{ipComputer},4002,{DateTime.Now}";
-
-                using (StreamWriter sw = File.AppendText(path))
-                {
-                    sw.WriteLine(lines);
-                }
-                countProducts = CountProducts(ipComputer);
-            }
-
-            if (File.Exists(pathProduct))
-            {
-                using (StreamWriter writer = new StreamWriter(pathProduct))
-                {
-                    for (int i = 0; i < product.Length; i++)
-                    {
-                        if (product[i].Contains(productId.ToString()))
-                        {
-                            string a = product[i];
-                            product[i] = a.Replace(",4001,", ",4002,");
-                        }
-                    }
-                }
-                File.WriteAllLines(pathProduct, product);
-            }
-
-            return countProducts;
-        }
-
-        //Contar produtos no carrinho
-        public int CountProducts(string ipComputer)
-        {
+            string[] cart = File.ReadAllLines(path, Encoding.UTF8);
+            string[] itensCart = File.ReadAllLines(pathItens, Encoding.UTF8);
+            string[] aux1 = new string[itensCart.Length];
+            var linesItens = "";
+            var aux = "";
+            var sum = 1;
             var count = 0;
-            var products = ListCart();
-
-            count = products
-                .Where(p => p.UserId == ipComputer && p.ProductStatus == 4002)
-                .Skip(0)
-                .Count();
-            return count;
-        }
-
-        //Limpar carrinho do usuário
-        public void CleanAllCart(string ipComputer)
-        {
-            var pathProduct = CurrentDirectory + @"..\..\..\..\\Database\Products.csv";
-            string[] productInative = File.ReadAllLines(pathProduct, Encoding.UTF8);
-            string[] product = File.ReadAllLines(path, Encoding.UTF8);
-
-            if (File.Exists(pathProduct))
-            {
-                using (StreamWriter writer = new StreamWriter(pathProduct))
-                {
-                    for (int i = 0; i < productInative.Length; i++)
-                    {
-                        if (productInative[i].Contains(4002.ToString()))
-                        {
-                            string a = productInative[i];
-                            productInative[i] = a.Replace(",4002,", ",4001,");
-                        }
-                    }
-                }
-                File.WriteAllLines(pathProduct, productInative);
-            }
-
-            if (File.Exists(path))
-            {
-                using (StreamWriter writer = new StreamWriter(path))
-                {
-                    for (int i = 0; i < product.Length; i++)
-                    {
-                        if (product[i].Contains(4002.ToString()))
-                        {
-                            string a = product[i];
-                            product[i] = a.Replace(",4002,", ",4001,");
-                        }
-                    }
-                }
-                File.WriteAllLines(path, productInative);
-            }
-        }
-
-        //Listar produtos no carrinho
-        public List<ProductsCartModel> ItemCard(string ipComputer)
-        {
-            var list = new List<ProductsCartModel>();
-            var prod = new List<ProductsCartModel>();
-            var aux = 0;
-            var aux2 = 0;
-            var pathProduct = CurrentDirectory + @"..\..\..\..\\Database\Products.csv";
 
             try
             {
-                var countId = 0;
-                var countTotal = 0;
-                var b = 0;
-                var a = 0;
-                string[] productCart = File.ReadAllLines(path, Encoding.UTF8);
-                string[] product = File.ReadAllLines(pathProduct, Encoding.UTF8);
-                string[] fieldsProdCart = null, fieldsProd = null;
-
-
-                int count = CountProducts(ipComputer);
-
-                for (int i = 1; i < product.Length; i++)
+                cart.ToList().ForEach(p =>
                 {
-                    fieldsProd = product[i].Split(',');
-                    aux = int.Parse(fieldsProd[0]);
-                    for (int j = 1; j < productCart.Length; j++)
+                    if (p.Contains($",{ipComputer},"))
                     {
-                        fieldsProdCart = productCart[j].Split(',');
-                        if (productCart[j].Contains(fieldsProd[0]) && product[i].Contains(",4002,"))
-                        {
-                            countTotal++;
-                        }
+                        string[] field = p.Split(',');
+                        aux = field[0];
+                        count++;
+                    }
+                                        
+                });
 
-                        if (aux == int.Parse(fieldsProdCart[1]))
+                itensCart.ToList().ForEach(p =>
+                {
+                    if (p.Contains($",{productId},"))
+                    {
+                        sum++;
+                    }
+                });
+                for (int j = 0; j < product.Length; j++)
+                {
+                    var fields = product[j].Split(',');
+                    if (j != 0)
+                    {
+                        if (count == 0 && fields[0] == productId.ToString())
                         {
-                            countId++;
-                            aux2++;
-                        }
-                        else
-                        {
-                            countId = 0;
-                        }
+                            string linesCart = $"{cart.Length},{ipComputer},{DateTime.Now}";
 
-                        if (fieldsProdCart[1] == fieldsProd[0] && countId < 2)
-                        {
-                            var prodCart = new ProductsCartModel();
-                            prodCart.CartId = int.Parse(fieldsProdCart[0]);
-                            prodCart.ProductId = int.Parse(fieldsProd[0]);
-                            prodCart.UserId = fieldsProdCart[2];
-                            prodCart.DateCreated = DateTime.Parse(fieldsProdCart[4]);
-                            prodCart.Name = fieldsProd[1];
-                            prodCart.CategoryId = int.Parse(fieldsProd[6]);
-                            prodCart.Price = double.Parse(fieldsProd[2]);
-                            prodCart.Amount = countId;
-                            prodCart.TotalAmount = countTotal;
-                            prodCart.TotalPrice = 0.0;
-
-                            prod.Add(prodCart);
+                            using (StreamWriter sw = File.AppendText(path))
+                            {
+                                sw.WriteLine(linesCart);
+                            }
                         }
-                        else
+                        else if (fields[0] == productId.ToString() && sum == 1)
                         {
-                            prod.ForEach(p => {
-                                p.Amount = aux2;
-                            });
-                        }
+                            linesItens = $"{itensCart.Length},{cart.Length},{productId},{ipComputer},{fields[1]},{fields[5]},{sum},{Convert.ToInt32(StatusProductEnums.Ativo)},{fields[2]}";
 
+                            using (StreamWriter sw = File.AppendText(pathItens))
+                            {
+                                sw.WriteLine(linesItens);
+                            }
+
+                        }
+                        else if (fields[0] == productId.ToString() && sum > 1)
+                        {
+                            for (int i = 0; i < itensCart.Length; i++)
+                            {
+                                aux1[i] = itensCart[i];
+                                var help = aux1[i].Split(',');
+                                if (itensCart[i].Contains($",{productId},") && itensCart[i].Contains($"{Convert.ToInt32(StatusProductEnums.Ativo)}"))
+                                {
+                                    aux1[i] = itensCart[i].Replace($",{help[6]},{help[7]}", $",{sum},{help[7]}");
+                                    count++;
+                                }
+                                else if (itensCart[i].Contains($",{productId},"))
+                                {
+                                    aux1[i] = itensCart[i].Replace($",{help[6]},{help[7]}", $",{help[6]},{Convert.ToInt32(StatusProductEnums.Ativo)}");
+                                    count++;
+                                }
+                            }
+                            File.WriteAllLines(pathItens, aux1);
+                        }
                     }
                 }
             }
@@ -226,7 +217,122 @@ namespace SingleExperience.Services.CartServices
                 Console.WriteLine("Ocorreu um erro");
                 Console.WriteLine(e.Message);
             }
+        }
+
+        //Limpar carrinho do usuário
+        //Arrumar
+        public void RemoveAllCart(string ipComputer)
+        {
+            var pathProduct = CurrentDirectory + @"..\..\..\..\\Database\ItensCarts.csv";
+            string[] productInative = File.ReadAllLines(pathProduct, Encoding.UTF8);
+
+            if (File.Exists(pathProduct))
+            {
+                using (StreamWriter writer = new StreamWriter(pathProduct))
+                {
+                    for (int i = 0; i < productInative.Length; i++)
+                    {
+                        if (productInative[i].Contains($"{Convert.ToInt32(StatusProductEnums.Ativo)}"))
+                        {
+                            string a = productInative[i];
+                            productInative[i] = a.Replace(",4002,", ",4001,");
+                        }
+                    }
+                }
+                File.WriteAllLines(pathProduct, productInative);
+            }
+        }
+
+        //Listar produtos no carrinho
+        public List<ProductsCartModel> ItemCard(string ipComputer)
+        {
+            var prod = new List<ProductsCartModel>();
+            var pathProduct = CurrentDirectory + @"..\..\..\..\\Database\Products.csv";
+            var itensCart = ListItens();
+
+            try
+            {
+                itensCart
+                    .ToList()
+                    .ForEach(j =>
+                    {
+                        if (j.UserId == ipComputer)
+                        {
+                            if (j.StatusId == Convert.ToInt32(StatusProductEnums.Ativo))
+                            {
+                                var prodCart = new ProductsCartModel();
+                                prodCart.ProductId = j.ProductId;
+                                prodCart.Name = j.Name;
+                                prodCart.StatusId = j.StatusId;
+                                prodCart.CategoryId = j.CategoryId;
+                                prodCart.Price = j.Price;
+                                prodCart.Amount = j.Amount;
+                                prodCart.UserId = j.UserId;
+
+                                prod.Add(prodCart);
+                            }
+                        }
+                    });
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine("Ocorreu um erro");
+                Console.WriteLine(e.Message);
+            }
             return prod;
+        }
+
+        //Total do Carrinho
+        public TotalCartModel TotalCart(string ipComputer)
+        {
+            var itens = ItemCard(ipComputer);
+            var total = new TotalCartModel();
+
+            try
+            {
+                total.TotalPrice = itens
+                    .Where(item => item.UserId == ipComputer && item.StatusId == Convert.ToInt32(StatusProductEnums.Ativo))
+                    .Sum(item => item.Price);
+                total.TotalAmount = itens
+                    .Where(item => item.UserId == ipComputer && item.StatusId == Convert.ToInt32(StatusProductEnums.Ativo))
+                    .Sum(item => item.Amount);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return total;
+        }
+
+        public void RemoveItem(int productId, string ipComputer)
+        {
+            string[] products = File.ReadAllLines(pathItens, Encoding.UTF8);
+            var count = 0;
+            string[] aux = new string[products.Length];
+            Console.WriteLine($"{Convert.ToInt32(StatusProductEnums.Inativo)}");
+
+            for (int i = 0; i < products.Length; i++)
+            {
+                string[] field = products[i].Split(',');
+                aux[i] = products[i];
+                if (i != 0)
+                {
+                    if (products[i].Contains($",{productId},") && count == 0 && field[6] == "1")
+                    {
+                        aux[i] = products[i].Replace(",4002,", $",{Convert.ToInt32(StatusProductEnums.Inativo)},");
+                        count++;
+                    }
+                    else if (products[i].Contains($",{productId},") && count == 0)
+                    {
+                        aux[i] = products[i].Replace($",{field[6]},{field[7]},", $",{Convert.ToInt32(field[6])-1},{field[7]},");
+                        count++;
+                    }
+                }
+            }
+
+            File.WriteAllLines(pathItens, aux);
         }
     }
 }

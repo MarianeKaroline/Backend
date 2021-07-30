@@ -12,26 +12,26 @@ namespace SingleExperience
         {
             //Chama a função para pegar o IP do PC
             ClientService client = new ClientService();
-            string ipComputer = client.ClientId();
+            var ipComputer = client.ClientId();
 
             //Chama a função para pegar a quantidade que está no carrinho
             CartService cartService = new CartService();
-            int countProducts = cartService.CountProducts(ipComputer);
+            var countProducts = cartService.TotalCart(ipComputer);
 
             //Se a quantidade no carrinho for maior que 0, os produtos irão durar 20min
-            if (countProducts > 0)
+            if (countProducts.TotalAmount > 0)
             {
                 var periodTimeSpan = TimeSpan.FromMinutes(20);
 
                 var timer = new Timer((e) =>
                 {
-                    cartService.CleanAllCart(ipComputer);
+                    cartService.RemoveAllCart(ipComputer);
                 }, null, periodTimeSpan, periodTimeSpan);
             }
 
             //Chama a home para ser exibida inicialmente
             HomeView inicio = new HomeView();
-            inicio.ListProducts(countProducts, ipComputer);
+            inicio.ListProducts(countProducts.TotalAmount, ipComputer);
         }
     }
 }

@@ -4,12 +4,12 @@ using System.Text;
 
 namespace SingleExperience.Services.ProductServices.Models.ProductModels
 {
-    class BestSellingCategoryModel
+    class CategoryModel
     {
         public int ProductId { get; set; }
         public string Name { get; set; }
         public double Price { get; set; }
         public int CategoryId { get; set; }
-        public string Available { get; set; }
+        public bool Available { get; set; }
     }
 }

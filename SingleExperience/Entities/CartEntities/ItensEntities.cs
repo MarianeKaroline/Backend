@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SingleExperience.Services.ProductServices.Models.CartModels
+namespace SingleExperience.Entities.CartEntities
 {
-    class ProductsCartModel
+    class ItensEntities
     {
+        public int ProductCartId { get; set; }
+        public int CartId { get; set; }
         public int ProductId { get; set; }
         public string UserId { get; set; }
         public string Name { get; set; }
