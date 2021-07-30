@@ -10,6 +10,8 @@ namespace SingleExperience
     {
         static void Main(string[] args)
         {
+            long session = 0;
+
             //Chama a função para pegar o IP do PC
             ClientService client = new ClientService();
             var ipComputer = client.ClientId();
@@ -31,7 +33,7 @@ namespace SingleExperience
 
             //Chama a home para ser exibida inicialmente
             HomeView inicio = new HomeView();
-            inicio.ListProducts(countProducts.TotalAmount, ipComputer);
+            inicio.ListProducts(countProducts.TotalAmount, ipComputer, session);
         }
     }
 }

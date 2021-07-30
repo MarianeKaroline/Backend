@@ -17,7 +17,7 @@ namespace SingleExperience.Views
         }
 
         //Listar Produtos
-        public void SelectedProduct(int productId, int countProduct, string ipComputer)
+        public void SelectedProduct(int productId, int countProduct, string ipComputer, long session)
         {
             Console.Clear();
             var list = productService.ListProductSelected(productId);
@@ -37,11 +37,11 @@ namespace SingleExperience.Views
             Console.WriteLine($"|Quantidade em estoque: {list.Amount}{new string(' ', j - "Quantidade em estoque".Length - 2 - list.Amount.ToString().Length)}|");
             Console.WriteLine($"+{new string('-', j)}+");
 
-            Menu(productId, countProduct, ipComputer);
+            Menu(productId, countProduct, ipComputer, session);
         }
 
         //Mostra Menu
-        public void Menu(int productId, int countProduct, string ipComputer)
+        public void Menu(int productId, int countProduct, string ipComputer, long session)
         {
             var categoryProduct = new ProductCategoryView();
             var inicio = new HomeView();
@@ -55,18 +55,27 @@ namespace SingleExperience.Views
             Console.WriteLine($"2. Voltar para a categoria: {category}");
             Console.WriteLine("3. Adicionar produto ao carrinho");
             Console.WriteLine($"4. Ver Carrinho (Quantidade: {countProduct})");
+            if (session == 0)
+            {
+                Console.WriteLine("5. Fazer Login");
+                Console.WriteLine("6. Cadastrar-se");
+            }
+            else
+            {
+                Console.WriteLine("5. Desconectar-se");
+            }
             int op = int.Parse(Console.ReadLine());
 
             switch (op)
             {
                 case 0:
-                    inicio.ListProducts(countProduct, ipComputer);
+                    inicio.ListProducts(countProduct, ipComputer, session);
                     break;
                 case 1:
-                    inicio.Search(countProduct, ipComputer);
+                    inicio.Search(countProduct, ipComputer, session);
                     break;
                 case 2:
-                    categoryProduct.Category(list.CategoryId, countProduct, ipComputer);
+                    categoryProduct.Category(list.CategoryId, countProduct, ipComputer, session);
                     break;
                 case 3:
                     cart.AddCart(productId, ipComputer);
@@ -74,10 +83,16 @@ namespace SingleExperience.Views
 
                     Console.WriteLine("Produto adicionado com sucesso (Aperte enter para continuar)");
                     Console.ReadKey();
-                    SelectedProduct(productId, count.TotalAmount, ipComputer);
+                    SelectedProduct(productId, count.TotalAmount, ipComputer, session);
                     break;
                 case 4:
-                    cartList.ListCart(ipComputer);
+                    cartList.ListCart(ipComputer, session);
+                    break;
+                case 5:
+
+                    break;
+                case 6:
+
                     break;
                 default:
                     break;

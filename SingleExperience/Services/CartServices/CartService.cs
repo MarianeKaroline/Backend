@@ -180,7 +180,7 @@ namespace SingleExperience.Services.CartServices
                                 sw.WriteLine(linesCart);
                             }
                         }
-                        else if (fields[0] == productId.ToString() && sum == 1)
+                        if (fields[0] == productId.ToString() && sum == 1)
                         {
                             linesItens = $"{itensCart.Length},{cart.Length},{productId},{ipComputer},{fields[1]},{fields[5]},{sum},{Convert.ToInt32(StatusProductEnums.Ativo)},{fields[2]}";
 
@@ -244,7 +244,7 @@ namespace SingleExperience.Services.CartServices
         }
 
         //Listar produtos no carrinho
-        public List<ProductsCartModel> ItemCard(string ipComputer)
+        public List<ProductsCartModel> ItemCart(string ipComputer)
         {
             var prod = new List<ProductsCartModel>();
             var pathProduct = CurrentDirectory + @"..\..\..\..\\Database\Products.csv";
@@ -285,7 +285,7 @@ namespace SingleExperience.Services.CartServices
         //Total do Carrinho
         public TotalCartModel TotalCart(string ipComputer)
         {
-            var itens = ItemCard(ipComputer);
+            var itens = ItemCart(ipComputer);
             var total = new TotalCartModel();
 
             try
@@ -306,6 +306,7 @@ namespace SingleExperience.Services.CartServices
             return total;
         }
 
+        //Remove um item do carrinho
         public void RemoveItem(int productId, string ipComputer)
         {
             string[] products = File.ReadAllLines(pathItens, Encoding.UTF8);
@@ -333,6 +334,68 @@ namespace SingleExperience.Services.CartServices
             }
 
             File.WriteAllLines(pathItens, aux);
+        }
+
+        public List<PreviewBoughtModel> PreviewBoughts(long session, Enum method)
+        {
+            var list = new List<PreviewBoughtModel>();
+            var pathClient = CurrentDirectory + @"..\..\..\..\\Database\Client.csv";
+            var pathAddress = CurrentDirectory + @"..\..\..\..\\Database\Address.csv";
+            var pathCards = CurrentDirectory + @"..\..\..\..\\Database\Card.csv";
+            var itens = ListItens();
+            string[] client = File.ReadAllLines(pathClient, Encoding.UTF8);
+            string[] address = File.ReadAllLines(pathAddress, Encoding.UTF8);
+            string[] card = File.ReadAllLines(pathCards, Encoding.UTF8);
+            int aux = 0;
+            long cpf = 0;
+
+            var preview = new PreviewBoughtModel();
+
+            client.ToList().ForEach(p =>
+            {
+                if (p.Contains($",{session},"))
+                {
+                    string[] field = p.Split(',');
+
+                    cpf = long.Parse(field[0]);
+                    aux = int.Parse(field[6]);
+                    preview.FullName = field[1];
+                    preview.Phone = field[2];
+                }
+            });
+
+            address.ToList().ForEach(p =>
+            {
+                if (p.Contains($"{aux},"))
+                {
+                    string[] field = p.Split(',');
+
+                    preview.Street = field[2];
+                    preview.Number = field[3];
+                    preview.City = field[4];
+                    preview.State = field[5];
+                }
+            });
+
+            preview.Method = method;
+            if (Convert.ToInt32(method) == 1)
+            {
+                card.ToList().ForEach(p =>
+                {
+                    if (p.Contains($",{cpf}"))
+                    {
+                        string[] field = p.Split(',');
+                        preview.NumberCard = field[0];
+                    }
+                });
+            }
+
+            //itens.ForEach(p =>
+            //{
+            //    preview.ProductName.Add()
+
+            //})
+            return list;
         }
     }
 }
