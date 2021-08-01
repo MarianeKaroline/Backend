@@ -18,7 +18,6 @@ namespace SingleExperience.Entities.DB
         private string path = null;
         private string pathAddress = null;
         private string pathCard = null;
-        private string header = null;
 
         public ClientDB()
         {
@@ -26,7 +25,6 @@ namespace SingleExperience.Entities.DB
             path = CurrentDirectory + @"..\..\..\..\\Database\Client.csv";
             pathAddress = CurrentDirectory + @"..\..\..\..\\Database\Address.csv";
             pathCard = CurrentDirectory + @"..\..\..\..\\Database\Card.csv";
-            header = "";
         }
 
 
@@ -48,32 +46,27 @@ namespace SingleExperience.Entities.DB
 
         /* Lê Arquivo CSV */
         //Client
-        public List<ClientEntitie> ListClient()
+        public ClientEntitie GetClient(string authentication)
         {
-            var client = new List<ClientEntitie>();
+            var client = new ClientEntitie();
             try
             {
                 string[] clientList = File.ReadAllLines(path, Encoding.UTF8);
                 using (StreamReader sr = File.OpenText(path))
                 {
-                    clientList
+                    client = clientList
                         .Skip(1)
-                        .ToList()
-                        .ForEach(p =>
+                        .Select(i => new ClientEntitie
                         {
-                            string[] fields = p.Split(',');
-
-                            var cli = new ClientEntitie();
-                            cli.Cpf = fields[0];
-                            cli.FullName = fields[1];
-                            cli.Phone = fields[2];
-                            cli.Email = fields[3];
-                            cli.BirthDate = DateTime.Parse(fields[4]);
-                            cli.Password = fields[5];
-                            cli.AddressId = int.Parse(fields[6]);
-
-                            client.Add(cli);
-                        });
+                            Cpf = i.Split(',')[0],
+                            FullName = i.Split(',')[1],
+                            Phone = i.Split(',')[2],
+                            Email = i.Split(',')[3],
+                            BirthDate = DateTime.Parse(i.Split(',')[4]),
+                            Password = i.Split(',')[5],
+                            AddressId = int.Parse(i.Split(',')[6])
+                        })
+                        .FirstOrDefault(i => i.Cpf == authentication || i.Email == authentication);                    
                 }
             }
             catch (IOException e)
@@ -85,31 +78,27 @@ namespace SingleExperience.Entities.DB
         }
 
         //Address
-        public List<AddressEntitie> ListAddress()
+        public List<AddressEntitie> ListAddress(int addressId)
         {
             var address = new List<AddressEntitie>();
             try
             {
-                string[] AddressList = File.ReadAllLines(pathAddress, Encoding.UTF8);
+                string[] addressList = File.ReadAllLines(pathAddress, Encoding.UTF8);
                 using (StreamReader sr = File.OpenText(pathAddress))
                 {
-                    AddressList
+                    address = addressList
                         .Skip(1)
-                        .ToList()
-                        .ForEach(p =>
+                        .Select(i => new AddressEntitie
                         {
-                            string[] fields = p.Split(',');
-
-                            var addr = new AddressEntitie();
-                            addr.AddressId = int.Parse(fields[0]);
-                            addr.Cep = fields[1];
-                            addr.Street = fields[2];
-                            addr.Number = fields[3];
-                            addr.City = fields[4];
-                            addr.State = fields[5];
-
-                            address.Add(addr);
-                        });
+                            AddressId = int.Parse(i.Split(',')[0]),
+                            Cep = i.Split(',')[1],
+                            Street = i.Split(',')[2],
+                            Number = i.Split(',')[3],
+                            City = i.Split(',')[4],
+                            State = i.Split(',')[5],
+                        })
+                        .Where(i => i.AddressId == addressId)
+                        .ToList();
                 }
             }
             catch (IOException e)
@@ -121,30 +110,25 @@ namespace SingleExperience.Entities.DB
         }
 
         //Card
-        public List<CardEntitie> ListCard()
+        public CardEntitie GetCard(string userId)
         {
-            var card = new List<CardEntitie>();
+            var card = new CardEntitie();
             try
             {
                 string[] cardList = File.ReadAllLines(pathCard, Encoding.UTF8);
                 using (StreamReader sr = File.OpenText(pathAddress))
                 {
-                    cardList
+                    card = cardList
                         .Skip(1)
-                        .ToList()
-                        .ForEach(p =>
+                        .Select(i => new CardEntitie
                         {
-                            string[] fields = p.Split(',');
-
-                            var cardClient = new CardEntitie();
-                            cardClient.CardNumber = long.Parse(fields[0]);
-                            cardClient.Name = fields[1];
-                            cardClient.DateTime = DateTime.Parse(fields[2]);
-                            cardClient.CVV = int.Parse(fields[3]);
-                            cardClient.ClientId = fields[4];
-
-                            card.Add(cardClient);
-                        });
+                            CardNumber = long.Parse(i.Split(',')[0]),
+                            Name = i.Split(',')[1],
+                            ShelfLife = DateTime.Parse(i.Split(',')[2]),
+                            CVV = int.Parse(i.Split(',')[3]),
+                            ClientId = i.Split(',')[4],
+                        })
+                        .FirstOrDefault(i => i.ClientId == userId);
                 }
             }
             catch (IOException e)
@@ -159,35 +143,26 @@ namespace SingleExperience.Entities.DB
         //Client
         public string SignUp(SignUpModel client)
         {
-            var clientDB = new ClientDB();
-            var listClient = clientDB.ListClient();
+            var existClient = GetClient(client.Cpf);
+            var existEmail = GetClient(client.Email);
             var address = File.ReadAllLines(pathAddress, Encoding.UTF8);
-            var count = 0;
             string msg = null;
             try
             {
                 var lines = new List<string>();
                 var linesAddress = new List<string>();
 
-                foreach (var item in listClient)
-                {
-                    if (item.Email == client.Email)
-                    {
-                        count++;
-                    }
-                }
-
-                if (count == 0)
+                if (existClient == null && existEmail == null)
                 {
                     var aux = new string[]
                     {
                         client.Cpf.ToString(),
                         client.FullName.ToString(),
-                        client.Phone.ToString(), client.Email.ToString(),
+                        client.Phone.ToString(), 
+                        client.Email.ToString(),
                         client.BirthDate.ToString(),
                         client.Password.ToString(),
-                        address.Length.ToString(),
-                        client.SessionId.ToString()
+                        address.Length.ToString()
                     };
                     var auxAddress = new string[]
                     {
@@ -220,7 +195,14 @@ namespace SingleExperience.Entities.DB
                 }
                 else
                 {
-                    msg = "\nJá existe uma conta com esse e-mail";
+                    if (existClient != null)
+                    {
+                        msg = "\nJá existe uma conta com este cpf";
+                    }
+                    else
+                    {
+                        msg = "\nJá existe uma conta com este email";
+                    }
                 }
             }
             catch (IOException e)
@@ -235,40 +217,32 @@ namespace SingleExperience.Entities.DB
         //CreditCard
         public void AddCard(string session, CardModel card)
         {
-            var clientDB = new ClientDB();
-            var listClient = clientDB.ListClient();
-            var listCard = clientDB.ListCard();
-            var count = 0;
+            var client = GetClient(card.ClientId.ToString());
+            var existCard = GetCard(session);
             var lines = new List<string>();
 
             try
             {
-                listClient.ForEach(p =>
+                if (existCard == null)
                 {
-                    if (p.SessionId != 0 && p.Cpf == session)
-                    {
-                        foreach (var item in listCard)
-                        {
-                            if (item.CardNumber == card.CardNumber)
-                            {
-                                count++; //Acrescenta um se o cartão já estiver cadastrado
-                            }
-                        }
-                        if (count == 0)
-                        {
-                            var aux = new string[] { card.CardNumber.ToString(), card.Name, card.ShelfLife.ToString(), card.CVV.ToString(), p.Cpf.ToString() };
-                            lines.Add(String.Join(",", aux));
+                    var aux = new string[] 
+                    { 
+                        card.CardNumber.ToString(),
+                        card.Name, 
+                        card.ShelfLife.ToString(), 
+                        card.CVV.ToString(), 
+                        client.Cpf 
+                    };
+                    lines.Add(String.Join(",", aux));
 
-                            using (StreamWriter sw = File.AppendText(pathCard))
-                            {
-                                lines.ForEach(p =>
-                                {
-                                    sw.WriteLine(p);
-                                });
-                            }
-                        }
+                    using (StreamWriter sw = File.AppendText(pathCard))
+                    {
+                        lines.ForEach(p =>
+                        {
+                            sw.WriteLine(p);
+                        });
                     }
-                });
+                }
             }
             catch (IOException e)
             {

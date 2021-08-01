@@ -19,16 +19,14 @@ namespace SingleExperience.Services.ClientServices
         public string SignIn(SignInModel signIn)
         {
             var clientDB = new ClientDB();
-            var listClient = clientDB.ListClient();
+            var client = clientDB.GetClient(signIn.Email);
             string session = "";
 
-            foreach (var item in listClient)
+            if (client.Password == signIn.Password)
             {
-                if (item.Email == signIn.Email && item.Password == signIn.Password)
-                {
-                    session = item.Cpf;
-                }
+                session = client.Cpf;
             }
+
             return session;
         }
 
@@ -43,45 +41,23 @@ namespace SingleExperience.Services.ClientServices
         public string ClientName(string session)
         {
             var clientDB = new ClientDB();
-            var listClient = clientDB.ListClient();
-            string name = null;
+            var client = clientDB.GetClient(session);
 
-            listClient.ForEach(p =>
-            {
-                if (p.Cpf == session)
-                {
-                    name = p.FullName;
-                    var lines = new List<string>();
-                }
-            });
-
-            return name;
+            return client.FullName;
         }        
 
         //Verifica se o cliente possui cartão de crédito
         public bool HasCard(string session)
         {
             var clientDB = new ClientDB();
-            var listClient = clientDB.ListClient();
-            var listCard = clientDB.ListCard();
+            var card = clientDB.GetCard(session);
             var hasCard = false;
-            string aux = "";
 
-            listClient.ForEach(p =>
+            if (card != null)
             {
-                if (p.Cpf == session)
-                {
-                    aux = p.Cpf;
-                }
-            });
+                hasCard = true;
+            }
 
-            listCard.ForEach(p => 
-            {
-                if (p.ClientId == aux)
-                {
-                    hasCard = true;
-                }
-            });
             return hasCard;
         }
 
@@ -89,30 +65,19 @@ namespace SingleExperience.Services.ClientServices
         public List<ShowCard> ShowCards(string session)
         {
             var clientDB = new ClientDB();
-            var listClient = clientDB.ListClient();
-            var listCard = clientDB.ListCard();
+            var client = clientDB.GetClient(session);
+            var card = clientDB.GetCard(session);
             var cards = new List<ShowCard>();
-            string aux = "";
 
-            listClient.ForEach(p =>
+            if (card.ClientId == client.Cpf)
             {
-                if (p.Cpf == session)
-                {
-                    aux = p.Cpf;
-                }
-            });
+                var showCards = new ShowCard();
+                showCards.CardNumber = card.CardNumber.ToString();
+                showCards.Name = card.Name;
+                showCards.ShelfLife = card.ShelfLife;
 
-            listCard.ForEach(p =>
-            {
-                if (p.ClientId == aux)
-                {
-                    var card = new ShowCard();
-                    card.CardNumber = p.CardNumber.ToString();
-                    card.Name = p.Name;
-                    card.ShelfLife = p.DateTime;
-                    cards.Add(card);
-                }
-            });
+                cards.Add(showCards);
+            }
             return cards;
         }        
     }

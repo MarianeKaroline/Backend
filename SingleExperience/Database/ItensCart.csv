@@ -1,2 +1,3 @@
-ProductCartId,ProductId,UserId,Name,CategoryId,Amount,StatusId,Price,IpComputer
+UserId,DataCriado
 1,1000,10328698954,Computador Acer,3,2,4002,3000,1921680172
+2,1002,10328698954,Celular Samsung A50,2,1,4002,2500,10328698954

@@ -43,7 +43,7 @@ namespace SingleExperience.Entities.DB
                 }
                 using (StreamReader sr = File.OpenText(path))
                 {
-
+                    //Irá procurar o carrinho pelo userId
                     cart = carts
                         .Skip(1)
                         .Select(p => new CartEntitie
@@ -60,6 +60,12 @@ namespace SingleExperience.Entities.DB
                 Console.WriteLine(e.Message);
             }
             return cart;
+        }
+
+        public string GetHeader()
+        {
+            string[] carts = File.ReadAllLines(path, Encoding.UTF8);
+            return carts[0];
         }
 
         //Itens Cart
@@ -107,7 +113,7 @@ namespace SingleExperience.Entities.DB
 
         /* Editar Arquivo CSV */
         //Adiciona itens na tabela
-        public void Add(CartModel cart)
+        public void AddItensCart(CartModel cart)
         {
             var cartDB = new CartDB();
             var listItensCart = cartDB.ListItens();
@@ -266,7 +272,7 @@ namespace SingleExperience.Entities.DB
             }
         }
 
-        //Criar carrinho e editar produtos quando o usuário logar
+        //Criar carrinho e edita produtos quando o usuário logar
         public void EditUserId(string session)
         {
             var client = new ClientDB();
@@ -275,6 +281,7 @@ namespace SingleExperience.Entities.DB
             var currentCart = cart.GetCart(session);
             var linesCart = new List<string>();
             var linesItens = new List<string>();
+            var count = 0;
 
             //Create Cart
             if (currentCart == null)
@@ -303,7 +310,7 @@ namespace SingleExperience.Entities.DB
 
             if (cart.ListItens() != null && cart.ListItens().Count != 0)
             {
-                linesItens.Add(header);
+                linesItens.Add(GetHeader());
                 cart.ListItens()
                     .ForEach(i =>
                     {

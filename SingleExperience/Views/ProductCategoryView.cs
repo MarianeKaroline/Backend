@@ -71,7 +71,7 @@ namespace SingleExperience.Views
                     }
                     break;
                 case 4:
-                    signUp.SignUp(countProductCart, session, true);
+                    signUp.SignUp(countProductCart, true);
                     break;
                 default:
                     selectedProduct.SelectedProduct(op, countProductCart, session);

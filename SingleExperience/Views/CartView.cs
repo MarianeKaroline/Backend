@@ -30,7 +30,7 @@ namespace SingleExperience.Views
 
             Console.WriteLine($"\nInício > Carrinho\n");
 
-            var itens = cart.ItemCart(session)
+            var itens = cart.ItemCart(session, StatusProductEnum.Ativo)
                 .GroupBy(p => p.Name)
                 .Select(p => new ProductCartModel()
                 { 
@@ -70,7 +70,7 @@ namespace SingleExperience.Views
             var signIn = new SignInView();
             var cartDB = new CartDB();
             var total = cart.TotalCart(session);
-            var category = cart.ItemCart(session)
+            var category = cart.ItemCart(session, StatusProductEnum.Ativo)
                 .Select(p => p.CategoryId)
                 .FirstOrDefault();
 
@@ -118,7 +118,7 @@ namespace SingleExperience.Views
                             cartModel.StatusId = Convert.ToInt32(StatusProductEnum.Ativo);
                             cartModel.Price = p.Price;
 
-                            cartDB.Add(cartModel);
+                            cartDB.AddItensCart(cartModel);
                         }
                     });
 
@@ -154,7 +154,7 @@ namespace SingleExperience.Views
                                 signIn.Login(total.TotalAmount, session, false);
                                 break;
                             case 2:
-                                signUp.SignUp(total.TotalAmount, session, false);
+                                signUp.SignUp(total.TotalAmount, false);
                                 break;
                             case 3:
                                 ListCart(session);
@@ -179,7 +179,7 @@ namespace SingleExperience.Views
                     }
                     break;
                 case 7:
-                    signUp.SignUp(total.TotalAmount, session, true);
+                    signUp.SignUp(total.TotalAmount, true);
                     break;
                 default:
                     break;

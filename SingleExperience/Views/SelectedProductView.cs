@@ -24,7 +24,7 @@ namespace SingleExperience.Views
         public void SelectedProduct(int productId, int countProduct, string session)
         {
             Console.Clear();
-            var list = productService.ListProductSelected(productId);
+            var list = productService.ProductSelected(productId);
             var j = 41;
             var category = (CategoryProductEnum)list.CategoryId;
 
@@ -94,7 +94,7 @@ namespace SingleExperience.Views
                     cartModel.StatusId = Convert.ToInt32(StatusProductEnum.Ativo);
                     cartModel.Price = list.Price;
 
-                    cartDB.Add(cartModel);
+                    cartDB.AddItensCart(cartModel);
                     var count = cart.TotalCart(session);
 
                     Console.WriteLine("Produto adicionado com sucesso (Aperte enter para continuar)");
@@ -115,7 +115,7 @@ namespace SingleExperience.Views
                     }
                     break;
                 case 6:
-                    signUp.SignUp(countProduct, session, true);
+                    signUp.SignUp(countProduct, true);
                     break;
                 default:
                     break;

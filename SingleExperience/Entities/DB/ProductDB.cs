@@ -64,7 +64,7 @@ namespace SingleExperience.Entities.DB
             return prod;
         }
 
-        //Quando o usuario compra um item, o amount do produto diminui
+        //Quando o usuario compra um item, a quantidade do produto diminui
         public bool EditAmount(int productId, int amount)
         {
             var listItens = ListProducts();

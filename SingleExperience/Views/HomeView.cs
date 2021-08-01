@@ -53,7 +53,7 @@ namespace SingleExperience.Views
                     }
                     break;
                 case 4:
-                    signUp.SignUp(countProductCart, session, true);
+                    signUp.SignUp(countProductCart, true);
                     break;
                 default:
                     selectedProduct.SelectedProduct(opc, countProductCart, session);
@@ -109,7 +109,7 @@ namespace SingleExperience.Views
         {
             var client = new ClientService();
             var productService = new ProductService();
-            var products = productService.ListProductsTable()
+            var products = productService.ListProducts()
                 .GroupBy(i => i.Name)
                 .Select(j => new BestSellingModel()
                 {
@@ -126,7 +126,7 @@ namespace SingleExperience.Views
 
             Console.WriteLine("\nInício\n");
 
-            if (session != "")
+            if (session.Length == 11)
             {
                 Console.WriteLine($"Usuário: {client.ClientName(session)}");
             }

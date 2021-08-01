@@ -3,21 +3,17 @@ using SingleExperience.Services.CartServices;
 using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.ClientServices.Models;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SingleExperience.Views
 {
     class SignUpView
     {
         public string password = null;
-        public void SignUp(int countProductCart, string session, bool home)
+        public void SignUp(int countProductCart, bool home)
         {
             var payment = new PaymentMethodView();
             var client = new SignUpModel();
-            var cart = new CartService();
             var cartDB = new CartDB();
-            var clientService = new ClientService();
             var clientDB = new ClientDB();
             var j = 41;
 
@@ -47,8 +43,6 @@ namespace SingleExperience.Views
                 client.Password = password;
             }
 
-            client.SessionId = client.Cpf;
-
             Console.WriteLine($"\n+{new string('-', j)}+\n");
 
             Console.WriteLine("Endereço\n");
@@ -69,14 +63,14 @@ namespace SingleExperience.Views
             Console.WriteLine("Tecle enter para continuar");
             Console.ReadKey();
 
-            cartDB.EditUserId(client.SessionId);
+            cartDB.EditUserId(client.Cpf);
             if (home)
             {
-                Menu(countProductCart, client.SessionId);
+                Menu(countProductCart, client.Cpf);
             }
             else
             {
-                payment.Methods(client.SessionId);
+                payment.Methods(client.Cpf);
             }
         }
 

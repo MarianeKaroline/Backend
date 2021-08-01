@@ -15,7 +15,7 @@ namespace SingleExperience.Services.ProductServices
     class ProductService
     {
         //Listar Produtos Home
-        public List<BestSellingModel> ListProductsTable()
+        public List<BestSellingModel> ListProducts()
         {
             ProductDB product = new ProductDB();
             var list = product.ListProducts();
@@ -65,7 +65,7 @@ namespace SingleExperience.Services.ProductServices
         }
 
         //Listar Produto Selecionado
-        public ProductSelectedModel ListProductSelected(int productId)
+        public ProductSelectedModel ProductSelected(int productId)
         {
             ProductDB product = new ProductDB();
             var list = product.ListProducts();

@@ -1,11 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
 using System.Linq;
-using SingleExperience.Entities.CartEntities;
-using SingleExperience.Entities;
 using SingleExperience.Services.ProductServices.Models.CartModels;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Entities.Enums;
@@ -121,27 +117,17 @@ namespace SingleExperience.Services.CartServices
         {
             var list = new List<PreviewBoughtModel>();
             var preview = new PreviewBoughtModel();
-            var client = clientDB.ListClient();
-            var address = clientDB.ListAddress();
-            var card = clientDB.ListCard();
+            var client = clientDB.GetClient(session);
+            var address = clientDB.ListAddress(client.AddressId);
+            var card = clientDB.GetCard(session);
             var itens = cartDB.ListItens();
-            int aux = 0;
 
             //Pega alguns atributos do cliente
-            client
-                .Where(i => i.Cpf == session)
-                .ToList()
-                .ForEach(i =>
-                {
-                    aux = i.AddressId;
-                    preview.FullName = i.FullName;
-                    preview.Phone = i.Phone;
-                });
+            preview.FullName = client.FullName;
+            preview.Phone = client.Phone;
 
             //Pega alguns atributos do endereço
             address
-                .Where(i => i.AddressId == aux)
-                .ToList()
                 .ForEach(i =>
                 {
                     preview.Cep = i.Cep;
@@ -154,16 +140,13 @@ namespace SingleExperience.Services.CartServices
             preview.Method = method;
             if (Convert.ToInt32(method) == 1) //Só ira adicionar o número do cartão se o método for cartão
             {
-                card
-                    .Where(i => i.CardNumber.ToString().Substring(12, i.CardNumber.ToString().Length - 12) == lastNumbers && i.ClientId == session)
-                    .ToList()
-                    .ForEach(i =>
-                    {
-                        preview.NumberCard = i.CardNumber.ToString();
-                    });
+                if (card.CardNumber.ToString().Substring(12, card.CardNumber.ToString().Length - 12) == lastNumbers)
+                {
+                    preview.NumberCard = card.CardNumber.ToString();
+                }
             }
 
-            preview.Itens = ItemCart(session, status); //Arrumar aqui
+            preview.Itens = ItemCart(session, status);
             list.Add(preview);
             return list;
         }
