@@ -18,31 +18,29 @@ namespace SingleExperience.Services.ClientServices
         private string path = null;
         private string pathAddress = null;
         private string pathCard = null;
-        private string header = null;
         public ClientService()
         {
             CurrentDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             path = CurrentDirectory + @"..\..\..\..\\Database\Client.csv";
             pathAddress = CurrentDirectory + @"..\..\..\..\\Database\Address.csv";
             pathCard = CurrentDirectory + @"..\..\..\..\\Database\Card.csv";
-            header = "";
         }
 
         //Pega o ip do computador, para verificar o usuário
         public string ClientId()
         {
             var host = Dns.GetHostEntry(Dns.GetHostName());
-            string ipComputer = null;
+            string session = "";
 
             //Pega o endereço do Computador
             foreach (var ip in host.AddressList)
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    ipComputer = ip.ToString();
+                    session = ip.ToString().Replace(".", "");
                 }
             }
-            return ipComputer;
+            return session;
         }
 
         //Lê o arquivo csv client
@@ -62,14 +60,13 @@ namespace SingleExperience.Services.ClientServices
                             string[] fields = p.Split(',');
 
                             var cli = new ClientEntitie();
-                            cli.Cpf = long.Parse(fields[0]);
+                            cli.Cpf = fields[0];
                             cli.FullName = fields[1];
                             cli.Phone = fields[2];
                             cli.Email = fields[3];
                             cli.BirthDate = DateTime.Parse(fields[4]);
                             cli.Password = fields[5];
                             cli.AddressId = int.Parse(fields[6]);
-                            cli.SessionId = long.Parse(fields[6]);
 
                             client.Add(cli);
                         });
@@ -136,11 +133,11 @@ namespace SingleExperience.Services.ClientServices
                             string[] fields = p.Split(',');
 
                             var cardClient = new CardClientEntitie();
-                            cardClient.CardNumber = int.Parse(fields[0]);
+                            cardClient.CardNumber = long.Parse(fields[0]);
                             cardClient.Name = fields[1];
                             cardClient.DateTime = DateTime.Parse(fields[2]);
-                            cardClient.CVV = int.Parse(fields[2]);
-                            cardClient.ClientId = long.Parse(fields[3]);
+                            cardClient.CVV = int.Parse(fields[3]);
+                            cardClient.ClientId = fields[4];
 
                             card.Add(cardClient);
                         });
@@ -229,30 +226,37 @@ namespace SingleExperience.Services.ClientServices
             return msg;
         }
 
-        public long SignIn(SignInModel signIn)
+        //Login
+        public string SignIn(SignInModel signIn)
         {
             var listClient = ListClient();
-            long session = 0;
+            string session = "";
 
             foreach (var item in listClient)
             {
                 if (item.Email == signIn.Email && item.Password == signIn.Password)
                 {
-                    signIn.SignInId = item.SessionId;
-                    session = signIn.SignInId;
+                    session = item.Cpf;
                 }
             }
             return session;
         }
 
-        public string ClientName(long session)
+        //Sair
+        public long SignOut()
+        {
+            return 0;
+        }
+
+        //Puxa o nome do cliente
+        public string ClientName(string session)
         {
             var client = ListClient();
             string name = null;
 
             client.ForEach(p =>
             {
-                if (p.SessionId == session)
+                if (p.Cpf == session)
                 {
                     name = p.FullName;
                     var lines = new List<string>();
@@ -262,7 +266,8 @@ namespace SingleExperience.Services.ClientServices
             return name;
         }
 
-        public void AddCard(long session, CardModel card)
+        //cadastra Cartão de Crédito
+        public void AddCard(string session, CardModel card)
         {
             var client = ListClient();
             var listCard = ListCard();
@@ -273,7 +278,7 @@ namespace SingleExperience.Services.ClientServices
             {
                 client.ForEach(p =>
                 {
-                    if (p.SessionId != 0 && p.SessionId == session)
+                    if (p.SessionId != 0 && p.Cpf == session)
                     {
                         foreach (var item in listCard)
                         {
@@ -305,15 +310,16 @@ namespace SingleExperience.Services.ClientServices
             }            
         }
 
-        public bool Registered(long session)
+        //Verifica se está registrado
+        public bool Registered(string session)
         {
             var client = ListClient();
             var registered = false;
             foreach (var item in client)
             {
-                if (item.SessionId != 0)
+                if (item.Cpf != "")
                 {
-                    if (item.SessionId == session && item.Cpf != 0 && item.Cpf.ToString().Length == 11)
+                    if (item.Cpf == session && item.Cpf != "" && item.Cpf.ToString().Length == 11)
                     {
                         registered = true;
                     }
@@ -321,5 +327,61 @@ namespace SingleExperience.Services.ClientServices
             }
             return registered;
         }
+
+        //Verifica se já possui cartão
+        public bool HasCard(string session)
+        {
+            var hasCard = false;
+            var listClient = ListClient();
+            var listCard = ListCard();
+            string aux = "";
+
+            listClient.ForEach(p =>
+            {
+                if (p.Cpf == session)
+                {
+                    aux = p.Cpf;
+                }
+            });
+
+            listCard.ForEach(p => 
+            {
+                if (p.ClientId == aux)
+                {
+                    hasCard = true;
+                }
+            });
+            return hasCard;
+        }
+
+        //Altera DateTime do ListCard
+        public List<ShowCard> ListCardClient(string session)
+        {
+            var listClient = ListClient();
+            var listCard = ListCard();
+            var cards = new List<ShowCard>();
+            string aux = "";
+
+            listClient.ForEach(p =>
+            {
+                if (p.Cpf == session)
+                {
+                    aux = p.Cpf;
+                }
+            });
+
+            listCard.ForEach(p =>
+            {
+                if (p.ClientId == aux)
+                {
+                    var card = new ShowCard();
+                    card.CardNumber = p.CardNumber.ToString();
+                    card.Name = p.Name;
+                    card.ShelfLife = p.DateTime;
+                    cards.Add(card);
+                }
+            });
+            return cards;
+        }        
     }
 }

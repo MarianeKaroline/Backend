@@ -1,6 +1,8 @@
-﻿using SingleExperience.Services.ClientServices;
+﻿using SingleExperience.Entities.Enums;
+using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.ClientServices.Models;
 using System;
+using System.Globalization;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,7 +11,16 @@ namespace SingleExperience.Views
     class PaymentMethodView
     {
         public int j = 41;
-        public void Methods(long session)
+        private PreviewBoughtView preview;
+        private ClientService client;
+
+        public PaymentMethodView()
+        {
+            preview = new PreviewBoughtView();
+            client = new ClientService();
+        }
+
+        public void Methods(string session)
         {
             Console.Clear();
 
@@ -26,40 +37,79 @@ namespace SingleExperience.Views
                     CreditCard(session);
                     break;
                 case 2:
-                    Bullet();
+                    Bullet(session);
                     break;
                 case 3:
-
+                    Pix(session);
                     break;
                 default:
                     break;
             }
         }
 
-        public void CreditCard(long session)
+        public void CreditCard(string session)
         {
-            ClientService client = new ClientService();
             CardModel card = new CardModel();
+            if (client.HasCard(session))
+            {
+                client.ListCardClient(session)
+                    .ForEach(p => 
+                    {
+                        Console.WriteLine($"\n(Crédito) com final {p.CardNumber.Substring(12, p.CardNumber.Length - 12)}        {p.Name}        {p.ShelfLife}\n");
+                    });
+                Console.Write("Escolher um desses cartões: (s/n) ");
+                char opc = char.Parse(Console.ReadLine().ToLower());
 
-            Console.WriteLine($"\n+{new string('-', j)}+\n");
-            Console.Write("Número do cartão: ");
-            card.CardNumber = long.Parse(Console.ReadLine());
-            Console.Write("Nome no cartão: ");
-            card.Name = Console.ReadLine();
-            Console.Write("Data de expiração(01/2021): ");
-            card.ShelfLife = DateTime.Parse(Console.ReadLine());
-            Console.Write("Código de segurança(CVV): ");
-            card.CVV = int.Parse(Console.ReadLine());
+                switch (opc)
+                {
+                    case 's':
+                        Console.Write("Digite os últimos 4 números do cartão: ");
+                        string op = Console.ReadLine();
 
-            client.AddCard(session, card);
+                        preview.Bought(session, MethodPaymentEnum.CreditCard, op);
+                        break;
+                    case 'n':
+                        Console.Write("Novo Cartão\n");
+                        Console.WriteLine($"\n+{new string('-', j)}+\n");
+                        Console.Write("Número do cartão: ");
+                        card.CardNumber = long.Parse(Console.ReadLine());
+                        Console.Write("Nome no cartão: ");
+                        card.Name = Console.ReadLine();
+                        Console.Write("Data de expiração(01/2021): ");
+                        card.ShelfLife = DateTime.ParseExact(Console.ReadLine(), "MM/yyyy", CultureInfo.InvariantCulture);
+                        Console.Write("Código de segurança(CVV): ");
+                        card.CVV = int.Parse(Console.ReadLine());
+
+                        client.AddCard(session, card);
+                        preview.Bought(session, MethodPaymentEnum.CreditCard, card.CardNumber.ToString().Substring(12, card.CardNumber.ToString().Length - 12));
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                Console.WriteLine($"\n+{new string('-', j)}+\n");
+                Console.Write("Número do cartão: ");
+                card.CardNumber = long.Parse(Console.ReadLine());
+                Console.Write("Nome no cartão: ");
+                card.Name = Console.ReadLine();
+                Console.Write("Data de expiração(01/2021): ");
+                card.ShelfLife = DateTime.ParseExact(Console.ReadLine(), "MM/yyyy", CultureInfo.InvariantCulture);
+                Console.Write("Código de segurança(CVV): ");
+                card.CVV = int.Parse(Console.ReadLine());
+
+                client.AddCard(session, card);
+                preview.Bought(session, MethodPaymentEnum.CreditCard, "");
+            }
         }
 
-        public void Bullet()
+        public void Bullet(string session)
         {
-
+            preview.Bought(session, MethodPaymentEnum.Bullet, "");
         }
 
-        public void Pix()
+        public void Pix(string session)
         {
             Console.WriteLine($"\n+{new string('-', j)}+\n");
             Console.WriteLine("Escolha uma chave");
@@ -90,6 +140,8 @@ namespace SingleExperience.Views
                 default:
                     break;
             }
+
+            preview.Bought(session, MethodPaymentEnum.Pix, "");
         }
     }
 }

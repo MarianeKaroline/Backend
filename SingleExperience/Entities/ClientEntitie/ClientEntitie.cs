@@ -6,13 +6,13 @@ namespace SingleExperience.Entities.ClientEntities
 {
     class ClientEntitie
     {
-        public long Cpf { get; set; }
+        public string Cpf { get; set; }
         public string FullName { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
         public DateTime BirthDate { get; set; }
         public string Password { get; set; }
         public int AddressId { get; set; }
-        public long SessionId { get; set; }
+        public int SessionId { get; set; }
     }
 }

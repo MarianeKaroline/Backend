@@ -1,5 +1,6 @@
 ﻿using SingleExperience.Entities.Enums;
 using SingleExperience.Services.CartServices;
+using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.ProductServices;
 using SingleExperience.Services.ProductServices.Models.CartModels;
@@ -20,15 +21,15 @@ namespace SingleExperience.Views
             cart = new CartService();
         }
 
-        public void ListCart(string ipComputer, long session)
+        public void ListCart(string session)
         {
             Console.Clear();
-            var total = cart.TotalCart(ipComputer);
+            var total = cart.TotalCart(session);
             var j = 41; 
 
             Console.WriteLine($"\nInício > Carrinho\n");
 
-            var itens = cart.ItemCart(ipComputer)
+            var itens = cart.ItemCart(session)
                 .GroupBy(p => p.Name)
                 .Select(p => new ProductsCartModel()
                 { 
@@ -43,7 +44,7 @@ namespace SingleExperience.Views
 
             itens.ForEach(p =>
             {
-                if (p.StatusId == Convert.ToInt32(StatusProductEnums.Ativo))
+                if (p.StatusId == Convert.ToInt32(StatusProductEnum.Ativo))
                 {
                     Console.WriteLine($"+{new string('-', j)}+");
                     Console.WriteLine($"|#{p.ProductId}{new string(' ', j - 1 - p.ProductId.ToString().Length)}|");
@@ -55,28 +56,29 @@ namespace SingleExperience.Views
             });
 
             Console.WriteLine($"\nSubtotal ({total.TotalAmount} itens): R${total.TotalPrice}");
-            Menu(ipComputer, session);
+            Menu(itens, session);
         }
 
-        public void Menu(string ipComputer, long session)
+        public void Menu(List<ProductsCartModel> list, string session)
         {
             var inicio = new HomeView();
             var productCategory = new ProductCategoryView();
+            var payment = new PaymentMethodView();
             var client = new ClientService();
             var signUp = new SignUpView();
             var signIn = new SignInView();
-            var total = cart.TotalCart(ipComputer);
-            var category = cart.ItemCart(ipComputer)
+            var total = cart.TotalCart(session);
+            var category = cart.ItemCart(session)
                 .Select(p => p.CategoryId)
                 .FirstOrDefault();
 
             Console.WriteLine("0. Início");
             Console.WriteLine("1. Buscar por categoria");
-            Console.WriteLine($"2. Voltar para a categoria: {(CategoryProductEnums)category}");
+            Console.WriteLine($"2. Voltar para a categoria: {(CategoryProductEnum)category}");
             Console.WriteLine("3. Adicionar o produto mais uma vez ao carrinho");
             Console.WriteLine("4. Excluir um produto");
             Console.WriteLine("5. Finalizar compra");
-            if (session == 0)
+            if (session.Length == 10)
             {
                 Console.WriteLine("6. Fazer Login");
                 Console.WriteLine("7. Cadastrar-se");
@@ -90,52 +92,92 @@ namespace SingleExperience.Views
             switch (op)
             {
                 case 0:
-                    inicio.ListProducts(total.TotalAmount, ipComputer, session);
+                    inicio.ListProducts(total.TotalAmount, session);
                     break;
                 case 1:
-                    inicio.Search(total.TotalAmount, ipComputer, session);
+                    inicio.Search(total.TotalAmount, session);
                     break;
                 case 2:
-                    productCategory.Category(category, total.TotalAmount, ipComputer, session);
+                    productCategory.Category(category, total.TotalAmount, session);
                     break;
                 case 3:
                     Console.Write("\nPor favor digite o código do produto #");
                     int code = int.Parse(Console.ReadLine());
-                    cart.AddCart(code, ipComputer);
-                    var count = cart.TotalCart(ipComputer);
+
+                    list.ForEach(p =>
+                    {
+                        if (p.ProductId == code)
+                        {
+                            CartModel cartModel = new CartModel();
+                            cartModel.ProductId = p.ProductId;
+                            cartModel.UserId = session;
+                            cartModel.Name = p.Name;
+                            cartModel.CategoryId = p.CategoryId;
+                            cartModel.StatusId = Convert.ToInt32(StatusProductEnum.Ativo);
+                            cartModel.Price = p.Price;
+
+                            cart.AddCart(cartModel);
+                        }
+                    });
+
+                    var count = cart.TotalCart(session);
 
                     Console.WriteLine("\n\nProduto adicionado com sucesso (Aperte enter para continuar)");
                     Console.ReadKey();
 
-                    ListCart(ipComputer, session);
+                    ListCart(session);
                     break;
                 case 4:
                     Console.Write("\nPor favor digite o codigo do produto #");
                     int codeRemove = int.Parse(Console.ReadLine());
 
-                    cart.RemoveItem(codeRemove, ipComputer);
+                    cart.RemoveItem(codeRemove, session);
                     Console.WriteLine("\n\nProduto removido com sucesso (Aperte enter para continuar)");
                     Console.ReadKey();
 
-                    ListCart(ipComputer, session);
+                    ListCart(session);
                     break;
                 case 5:
-                    var registered = client.Registered(session);
-                    if (registered)
+                    if (session.Length == 10)
                     {
-                        Console.Clear();
-                        Console.WriteLine("Fazer login");
+                        Console.WriteLine("\nVocê não está logado!!\n");
+                        Console.WriteLine("1. Fazer login");
+                        Console.WriteLine("2. Cadastrar-se");
+                        Console.WriteLine("3. Cancelar");
+                        int opc = int.Parse(Console.ReadLine());
 
-                        var countItens = Convert.ToInt32(cart.TotalCart(ipComputer));
-                        signIn.Login(countItens, ipComputer);
+                        switch (opc)
+                        {
+                            case 1:
+                                signIn.Login(total.TotalAmount, session, false);
+                                break;
+                            case 2:
+                                signUp.SignUp(total.TotalAmount, session, false);
+                                break;
+                            case 3:
+                                ListCart(session);
+                                break;
+                            default:
+                                break;
+                        }
                     }
                     else
                     {
-                        Console.Clear();
-                        Console.WriteLine("Cadastrar");
-
-                        signUp.SignUp(ipComputer);
+                        payment.Methods(session);
                     }
+                    break;
+                case 6:
+                    if (session.Length == 11)
+                    {
+                        client.SignOut();
+                    }
+                    else
+                    {
+                        signIn.Login(total.TotalAmount, session, true);
+                    }
+                    break;
+                case 7:
+                    signUp.SignUp(total.TotalAmount, session, true);
                     break;
                 default:
                     break;

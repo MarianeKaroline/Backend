@@ -1,4 +1,5 @@
-﻿using SingleExperience.Services.ClientServices;
+﻿using SingleExperience.Services.CartServices;
+using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.ClientServices.Models;
 using System;
 using System.Collections.Generic;
@@ -9,14 +10,15 @@ namespace SingleExperience.Views
     class SignUpView
     {
         public string password = null;
-        public void SignUp(int countProductCart, string ipComputer)
+        public void SignUp(int countProductCart, string session, bool home)
         {
-            Random random = new Random();
-            var rand = random.Next(100000000, 200000000);
-            Console.Clear();
+            var payment = new PaymentMethodView();
             var client = new SignUpModel();
+            var cart = new CartService();
             var clientService = new ClientService();
             var j = 41;
+
+            Console.Clear();
 
             Console.WriteLine("Inicio > Cadastrar-se\n");
             Console.Write("Nome Completo: ");
@@ -26,7 +28,7 @@ namespace SingleExperience.Views
             Console.Write("E-mail: ");
             client.Email = Console.ReadLine();
             Console.Write("CPF: ");
-            client.Cpf = long.Parse(Console.ReadLine());
+            client.Cpf = Console.ReadLine();
             Console.Write("Data de Nascimento: ");
             client.BirthDate = DateTime.Parse(Console.ReadLine());
             var equal = passwords();
@@ -42,7 +44,7 @@ namespace SingleExperience.Views
                 client.Password = password;
             }
 
-            client.SessionId = rand;
+            client.SessionId = client.Cpf;
 
             Console.WriteLine($"\n+{new string('-', j)}+\n");
 
@@ -64,7 +66,15 @@ namespace SingleExperience.Views
             Console.WriteLine("Tecle enter para continuar");
             Console.ReadKey();
 
-            Menu(countProductCart, ipComputer, rand);
+            cart.EditUserId(client.SessionId);
+            if (home)
+            {
+                Menu(countProductCart, client.SessionId);
+            }
+            else
+            {
+                payment.Methods(client.SessionId);
+            }
         }
 
         public bool passwords()
@@ -72,9 +82,9 @@ namespace SingleExperience.Views
             var equal = false;
 
             Console.Write("\nDigite uma senha de usuário: ");
-            password = Console.ReadLine();
+            password = ReadPassword();
             Console.Write("Confirmar senha: ");
-            string confirmPassword = Console.ReadLine();
+            string confirmPassword = ReadPassword();
 
             if (password == confirmPassword)
             {
@@ -84,7 +94,7 @@ namespace SingleExperience.Views
             return equal;
         }
 
-        public void Menu(int countProductCart, string ipComputer, long session)
+        public void Menu(int countProductCart, string session)
         {
             var selectedProduct = new SelectedProductView();
             var cart = new CartView();
@@ -93,33 +103,57 @@ namespace SingleExperience.Views
             Console.WriteLine("\n0. Início");
             Console.WriteLine("1. Pesquisar por categoria");
             Console.WriteLine($"2. Ver Carrinho (quantidade: {countProductCart})");
-            if (session == 0)
-            {
-                Console.WriteLine("3. Fazer Login");
-                Console.WriteLine("4. Cadastrar-se");
-            }
-            else
-            {
-                Console.WriteLine("3. Desconectar-se");
-            }
-            Console.WriteLine("Digite o codigo do produto # para mais detalhes\n");
+            Console.WriteLine("3. Desconectar-se");
             int op = int.Parse(Console.ReadLine());
 
             switch (op)
             {
                 case 0:
-                    inicio.ListProducts(countProductCart, ipComputer, session);
+                    inicio.ListProducts(countProductCart, session);
                     break;
                 case 1:
-                    inicio.Search(countProductCart, ipComputer, session);
+                    inicio.Search(countProductCart, session);
                     break;
                 case 2:
-                    cart.ListCart(ipComputer, session);
+                    cart.ListCart(session);
                     break;
                 default:
-                    selectedProduct.SelectedProduct(op, countProductCart, ipComputer, session);
+                    selectedProduct.SelectedProduct(op, countProductCart, session);
                     break;
             }
+        }
+
+        public string ReadPassword()
+        {
+            string password = "";
+            ConsoleKeyInfo info = Console.ReadKey(true);
+            while (info.Key != ConsoleKey.Enter)
+            {
+                if (info.Key != ConsoleKey.Backspace)
+                {
+                    Console.Write("*");
+                    password += info.KeyChar;
+                }
+                else if (info.Key == ConsoleKey.Backspace)
+                {
+                    if (!string.IsNullOrEmpty(password))
+                    {
+                        // remove one character from the list of password characters
+                        password = password.Substring(0, password.Length - 1);
+                        // get the location of the cursor
+                        int pos = Console.CursorLeft;
+                        // move the cursor to the left by one character
+                        Console.SetCursorPosition(pos - 1, Console.CursorTop);
+                        // replace it with space
+                        Console.Write(" ");
+                        // move the cursor to the left by one character again
+                        Console.SetCursorPosition(pos - 1, Console.CursorTop);
+                    }
+                }
+                info = Console.ReadKey(true);
+            }
+            Console.WriteLine();
+            return password;
         }
     }
 }

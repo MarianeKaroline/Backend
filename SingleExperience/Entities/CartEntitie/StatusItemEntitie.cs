@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SingleExperience.Entities.ProductsEntities
 {
-    class StatusProductEntitie
+    class StatusItemEntitie
     {
         public int StatusId { get; set; }
         public string Description { get; set; }

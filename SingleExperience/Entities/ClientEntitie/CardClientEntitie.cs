@@ -6,10 +6,10 @@ namespace SingleExperience.Entities.ClientsEntities
 {
     class CardClientEntitie
     {
-        public int CardNumber { get; set; }
+        public long CardNumber { get; set; }
         public string Name { get; set; }
         public DateTime DateTime { get; set; }
         public int CVV { get; set; }
-        public long ClientId { get; set; }
+        public string ClientId { get; set; }
     }
 }

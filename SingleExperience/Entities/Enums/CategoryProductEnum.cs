@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SingleExperience.Entities.Enums
 {
-    enum CategoryProductEnums
+    enum CategoryProductEnum
     {
         Acessorio = 1,
         Celular = 2,

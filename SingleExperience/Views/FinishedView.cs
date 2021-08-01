@@ -1,35 +1,36 @@
 ﻿using SingleExperience.Entities.Enums;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.CartServices.Models;
-using SingleExperience.Services.ClientServices.Models;
 using SingleExperience.Services.ProductServices.Models.CartModels;
+using SingleExperience.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SingleExperience.Views
+namespace SingleExperience.Services.ClientServices.Models
 {
-    class PreviewBoughtView
+    class FinishedView
     {
-        private CartService cart;
-
-        public PreviewBoughtView()
+        public void ProductsBought(List<BuyProductsModel> buyProducts, string session, Enum method, string lastNumbers)
         {
-            cart = new CartService();
-        }
-        public void Bought(string session, Enum method, string lastNumbers)
-        {
-            var payment = (MethodPaymentEnum)method;
+            var home = new HomeView();
+            var cart = new CartService();
+            var bought = new BuyProductsModel();
             var total = cart.TotalCart(session);
-            var listConfirmation = new List<BuyProductsModel>();
+            var payment = (MethodPaymentEnum)method;
             var j = 41;
 
-            Console.WriteLine("\nCarrinho > Informações pessoais > Método de pagamento > Confirma compra\n");
+            var buy = cart.Buy(buyProducts, session);
 
-            Console.Clear();
-            cart.PreviewBoughts(session, payment, lastNumbers)
-                .ForEach(p => 
+            if (buy)
+            {
+                Console.Clear();
+
+                Console.WriteLine("\nCompra realizada com sucesso!!\n");
+
+                cart.PreviewBoughts(session, payment, lastNumbers)
+                .ForEach(p =>
                 {
                     Console.WriteLine("Endereço de entrega");
                     Console.WriteLine(p.FullName);
@@ -68,48 +69,12 @@ namespace SingleExperience.Views
 
 
                         var bought = new BuyProductsModel();
-
-                        bought.ProductId = i.ProductId;
-                        bought.Amount = i.Amount;
-                        bought.Status = 0;
-
-                        listConfirmation.Add(bought);
                     });
                 });
-
-            Console.WriteLine("Resumo do pedido");
-            Console.WriteLine($"Itens: R$ {total.TotalPrice}");
-            Console.WriteLine("Frete: R$ 0,00");
-            Console.WriteLine($"Total do Pedido: R$ {total.TotalPrice}");
-
-            Menu(listConfirmation, session, method, lastNumbers);
-        }
-
-        public void Menu(List<BuyProductsModel> list, string session, Enum method, string lastNumbers)
-        {
-            var total = cart.TotalCart(session);
-            var finished = new FinishedView();
-            var cartView = new CartView();
-
-            Console.WriteLine("\n1. Confirmar Compra");
-            Console.WriteLine($"2. Voltar para o carrinho {total.TotalAmount}");
-            var op = int.Parse(Console.ReadLine());
-
-            switch (op)
-            {
-                case 1:
-                    list.ForEach(i => 
-                    {
-                        i.Status = StatusProductEnum.Comprado;
-                    });
-
-                    finished.ProductsBought(list, session, method, lastNumbers);
-                    break;
-                case 2:
-                    cartView.ListCart(session);
-                    break;
-                default:
-                    break;
+                Console.WriteLine($"Total do Pedido: R$ {total.TotalPrice}");
+                Console.WriteLine("\nTecle enter para continuar");
+                Console.ReadKey();
+                home.ListProducts(total.TotalAmount, session);
             }
         }
     }

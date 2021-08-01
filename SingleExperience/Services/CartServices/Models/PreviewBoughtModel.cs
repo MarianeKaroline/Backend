@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SingleExperience.Services.ProductServices.Models.CartModels;
+using System;
 using System.Collections.Generic;
 
 namespace SingleExperience.Services.CartServices.Models
@@ -14,10 +15,6 @@ namespace SingleExperience.Services.CartServices.Models
         public string Phone { get; set; }
         public string NumberCard { get; set; }
         public Enum Method { get; set; }
-        public int CartId { get; set; }
-        public List<string> ProductName { get; set; }
-        public List<string> Price { get; set; }
-        public List<string> Amount { get; set; }
-        public double TotalPrice { get; set; }
+        public List<ProductsCartModel> Itens { get; set; }
     }
 }

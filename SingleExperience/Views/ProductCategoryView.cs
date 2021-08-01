@@ -7,33 +7,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SingleExperience.Services.ProductServices.Models.ProductModels;
+using SingleExperience.Services.ClientServices;
 
 namespace SingleExperience.Views
 {
     class ProductCategoryView
     {
         //Chama ListaProdutos pela Categoria
-        public void Category(int id, int countProductCart, string ipComputer, long session)
+        public void Category(int id, int countProductCart, string session)
         {
             Console.Clear();
-            var category = (CategoryProductEnums)id;
+            var category = (CategoryProductEnum)id;
             Console.WriteLine($"\nInício > Pesquisa > {category}\n");
 
-            ListProducts(id, countProductCart, session);
-            Menu(countProductCart, ipComputer, session);
+            ListProducts(id);
+            Menu(countProductCart, session);
         }
         
         //Menu dos Produtos
-        public void Menu(int countProductCart, string ipComputer, long session)
+        public void Menu(int countProductCart, string session)
         {
+            var client = new ClientService();
             var selectedProduct = new SelectedProductView();
+            var signIn = new SignInView();
+            var signUp = new SignUpView();
             var cart = new CartView();
             var inicio = new HomeView();
 
             Console.WriteLine("0. Início");
             Console.WriteLine("1. Pesquisar por categoria");
             Console.WriteLine($"2. Ver Carrinho (quantidade: {countProductCart})");
-            if (session == 0)
+            if (session.Length == 10)
             {
                 Console.WriteLine("3. Fazer Login");
                 Console.WriteLine("4. Cadastrar-se");
@@ -48,23 +52,36 @@ namespace SingleExperience.Views
             switch (op)
             {
                 case 0:
-                    inicio.ListProducts(countProductCart, ipComputer, session);
+                    inicio.ListProducts(countProductCart, session);
                     break;
                 case 1:
-                    inicio.Search(countProductCart, ipComputer, session);
+                    inicio.Search(countProductCart, session);
                     break;
                 case 2:
-                    cart.ListCart(ipComputer, session);
+                    cart.ListCart(session);
+                    break;
+                case 3:
+                    if (session.Length == 11)
+                    {
+                        client.SignOut();
+                    }
+                    else
+                    {
+                        signIn.Login(countProductCart, session, true);
+                    }
+                    break;
+                case 4:
+                    signUp.SignUp(countProductCart, session, true);
                     break;
                 default:
-                    selectedProduct.SelectedProduct(op, countProductCart, ipComputer, session);
+                    selectedProduct.SelectedProduct(op, countProductCart, session);
                     break;
             }
 
             
         }
         //Listar Produtos selecionado
-        public void ListProducts(int categoryId, int countProductCart, long session)
+        public void ListProducts(int categoryId)
         {
             var productService = new ProductService();
             var itemCategory = productService.ListProductCategory(categoryId)

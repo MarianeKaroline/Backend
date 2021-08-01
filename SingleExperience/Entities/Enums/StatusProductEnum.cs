@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SingleExperience.Entities.Enums
 {
-    enum StatusProductEnums
+    enum StatusProductEnum
     {
         Inativo = 4001,
         Ativo = 4002,

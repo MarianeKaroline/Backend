@@ -10,30 +10,28 @@ namespace SingleExperience
     {
         static void Main(string[] args)
         {
-            long session = 0;
-
             //Chama a função para pegar o IP do PC
             ClientService client = new ClientService();
-            var ipComputer = client.ClientId();
+            var session = client.ClientId();
 
             //Chama a função para pegar a quantidade que está no carrinho
             CartService cartService = new CartService();
-            var countProducts = cartService.TotalCart(ipComputer);
+            var countProducts = cartService.TotalCart(session);
 
             //Se a quantidade no carrinho for maior que 0, os produtos irão durar 20min
-            if (countProducts.TotalAmount > 0)
-            {
-                var periodTimeSpan = TimeSpan.FromMinutes(20);
+            //if (countProducts.TotalAmount > 0)
+            //{
+            //    var periodTimeSpan = TimeSpan.FromMinutes(20);
 
-                var timer = new Timer((e) =>
-                {
-                    cartService.RemoveAllCart(ipComputer);
-                }, null, periodTimeSpan, periodTimeSpan);
-            }
+            //    var timer = new Timer((e) =>
+            //    {
+            //        cartService.RemoveAllCart(session);
+            //    }, null, periodTimeSpan, periodTimeSpan);
+            //}
 
             //Chama a home para ser exibida inicialmente
             HomeView inicio = new HomeView();
-            inicio.ListProducts(countProducts.TotalAmount, ipComputer, session);
+            inicio.ListProducts(countProducts.TotalAmount, session);
         }
     }
 }

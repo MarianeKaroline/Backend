@@ -12,16 +12,17 @@ namespace SingleExperience.Views
     {
         public ProductCategoryView products = new ProductCategoryView();
         //Tela inicial
-        public void Menu(int countProductCart, string ipComputer, long session)
+        public void Menu(int countProductCart, string session)
         {
-            SelectedProductView selectedProduct = new SelectedProductView();
-            SignInView signIn = new SignInView();
-            SignUpView signUp = new SignUpView();
+            var selectedProduct = new SelectedProductView();
+            var signIn = new SignInView();
+            var signUp = new SignUpView();
+            var client = new ClientService();
             var cart = new CartView();
 
             Console.WriteLine("\n1. Buscar por categoria");
             Console.WriteLine($"2. Ver Carrinho (Quantidade: {countProductCart})");
-            if (session == 0)
+            if (session.Length == 10)
             {
                 Console.WriteLine("3. Fazer Login");
                 Console.WriteLine("4. Cadastrar-se");
@@ -36,25 +37,32 @@ namespace SingleExperience.Views
             switch (opc)
             {
                 case 1:
-                    Search(countProductCart, ipComputer, session);
+                    Search(countProductCart, session);
                     break;
                 case 2:
-                    cart.ListCart(ipComputer, session);
+                    cart.ListCart(session);
                     break;
                 case 3:
-                    signIn.Login(countProductCart, ipComputer);
+                    if (session.Length == 11)
+                    {
+                        client.SignOut();
+                    }
+                    else
+                    {
+                        signIn.Login(countProductCart, session, true);
+                    }
                     break;
                 case 4:
-                    signUp.SignUp(ipComputer);
+                    signUp.SignUp(countProductCart, session, true);
                     break;
                 default:
-                    selectedProduct.SelectedProduct(opc, countProductCart, ipComputer, session);
+                    selectedProduct.SelectedProduct(opc, countProductCart, session);
                     break;
             }
         }
 
         //Pesquisa
-        public void Search(int countProductCart, string ipComputer, long session)
+        public void Search(int countProductCart, string session)
         {
             Console.Clear();
 
@@ -71,33 +79,33 @@ namespace SingleExperience.Views
             switch (opc)
             {
                 case 0:
-                    ListProducts(countProductCart, ipComputer, session);
+                    ListProducts(countProductCart, session);
                     break;
                 case 1:
-                    products.Category(Convert.ToInt32(CategoryProductEnums.Acessorio), countProductCart, ipComputer, session);
+                    products.Category(Convert.ToInt32(CategoryProductEnum.Acessorio), countProductCart, session);
                     break;
                 case 2:
-                    products.Category(Convert.ToInt32(CategoryProductEnums.Celular), countProductCart, ipComputer, session);
+                    products.Category(Convert.ToInt32(CategoryProductEnum.Celular), countProductCart, session);
                     break;
                 case 3:
-                    products.Category(Convert.ToInt32(CategoryProductEnums.Computador), countProductCart, ipComputer, session);
+                    products.Category(Convert.ToInt32(CategoryProductEnum.Computador), countProductCart, session);
                     break;
                 case 4:
-                    products.Category(Convert.ToInt32(CategoryProductEnums.Notebook), countProductCart, ipComputer, session);
+                    products.Category(Convert.ToInt32(CategoryProductEnum.Notebook), countProductCart, session);
                     break;
                 case 5:
-                    products.Category(Convert.ToInt32(CategoryProductEnums.Tablets), countProductCart, ipComputer, session);
+                    products.Category(Convert.ToInt32(CategoryProductEnum.Tablets), countProductCart, session);
                     break;
                 default:
                     Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                     Console.ReadKey();
-                    Search(countProductCart, ipComputer, session);
+                    Search(countProductCart, session);
                     break;
             }
         }
 
         //Listar produtos na página inicial 
-        public void ListProducts(int countProductCart, string ipComputer, long session)
+        public void ListProducts(int countProductCart, string session)
         {
             var client = new ClientService();
             var productService = new ProductService();
@@ -118,7 +126,7 @@ namespace SingleExperience.Views
 
             Console.WriteLine("\nInício\n");
 
-            if (session > 0)
+            if (session != "")
             {
                 Console.WriteLine($"Usuário: {client.ClientName(session)}");
             }
@@ -131,7 +139,7 @@ namespace SingleExperience.Views
                 Console.WriteLine($"| R${p.Price.ToString("F2", CultureInfo.CurrentCulture)}{new string(' ', j - 6 - p.Price.ToString().Length)}|");
                 Console.WriteLine($"+{new string('-', j)}+");
             });
-            Menu(countProductCart, ipComputer, session);
+            Menu(countProductCart, session);
         }
     }
 }
