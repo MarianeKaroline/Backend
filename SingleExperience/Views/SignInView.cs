@@ -28,12 +28,13 @@ namespace SingleExperience.Views
             signIn.Password = ReadPassword();
 
             var sessionId = client.SignIn(signIn);
+            var total = cart.TotalCart(sessionId);
 
             cartDB.EditUserId(sessionId);
 
             if (home)
             {
-                Menu(countProductCart, sessionId);
+                Menu(total.TotalAmount, sessionId);
             }
             else
             {

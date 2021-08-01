@@ -64,7 +64,7 @@ namespace SingleExperience.Entities.DB
 
         public string GetHeader()
         {
-            string[] carts = File.ReadAllLines(path, Encoding.UTF8);
+            string[] carts = File.ReadAllLines(pathItens, Encoding.UTF8);
             return carts[0];
         }
 

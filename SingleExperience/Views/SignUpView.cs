@@ -12,6 +12,7 @@ namespace SingleExperience.Views
         public void SignUp(int countProductCart, bool home)
         {
             var payment = new PaymentMethodView();
+            var cart = new CartService();
             var client = new SignUpModel();
             var cartDB = new CartDB();
             var clientDB = new ClientDB();
@@ -64,9 +65,11 @@ namespace SingleExperience.Views
             Console.ReadKey();
 
             cartDB.EditUserId(client.Cpf);
+
+            var total = cart.TotalCart(client.Cpf);
             if (home)
             {
-                Menu(countProductCart, client.Cpf);
+                Menu(total.TotalAmount, client.Cpf);
             }
             else
             {
