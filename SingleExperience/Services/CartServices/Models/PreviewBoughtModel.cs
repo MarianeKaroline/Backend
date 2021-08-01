@@ -15,6 +15,6 @@ namespace SingleExperience.Services.CartServices.Models
         public string Phone { get; set; }
         public string NumberCard { get; set; }
         public Enum Method { get; set; }
-        public List<ProductsCartModel> Itens { get; set; }
+        public List<ProductCartModel> Itens { get; set; }
     }
 }

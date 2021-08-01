@@ -12,11 +12,11 @@ namespace SingleExperience.Services.ClientServices.Models
 {
     class FinishedView
     {
-        public void ProductsBought(List<BuyProductsModel> buyProducts, string session, Enum method, string lastNumbers)
+        public void ProductsBought(List<BuyProductModel> buyProducts, string session, Enum method, string lastNumbers)
         {
             var home = new HomeView();
             var cart = new CartService();
-            var bought = new BuyProductsModel();
+            var bought = new BuyProductModel();
             var total = cart.TotalCart(session);
             var payment = (MethodPaymentEnum)method;
             var j = 41;
@@ -50,7 +50,7 @@ namespace SingleExperience.Services.ClientServices.Models
                     Console.WriteLine($"\n+{new string('-', j)}+\n");
                     var item = p.Itens
                     .GroupBy(j => j.Name)
-                    .Select(i => new ProductsCartModel()
+                    .Select(i => new ProductCartModel()
                     {
                         ProductId = i.First().ProductId,
                         Name = i.First().Name,
@@ -68,7 +68,7 @@ namespace SingleExperience.Services.ClientServices.Models
                         Console.WriteLine(i.Price);
 
 
-                        var bought = new BuyProductsModel();
+                        var bought = new BuyProductModel();
                     });
                 });
                 Console.WriteLine($"Total do Pedido: R$ {total.TotalPrice}");

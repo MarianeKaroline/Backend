@@ -22,7 +22,7 @@ namespace SingleExperience.Views
         {
             var payment = (MethodPaymentEnum)method;
             var total = cart.TotalCart(session);
-            var listConfirmation = new List<BuyProductsModel>();
+            var listConfirmation = new List<BuyProductModel>();
             var j = 41;
 
             Console.WriteLine("\nCarrinho > Informações pessoais > Método de pagamento > Confirma compra\n");
@@ -49,7 +49,7 @@ namespace SingleExperience.Views
                     Console.WriteLine($"\n+{new string('-', j)}+\n");
                     var item = p.Itens
                     .GroupBy(j => j.Name)
-                    .Select(i => new ProductsCartModel()
+                    .Select(i => new ProductCartModel()
                     {
                         ProductId = i.First().ProductId,
                         Name = i.First().Name,
@@ -67,7 +67,7 @@ namespace SingleExperience.Views
                         Console.WriteLine(i.Price);
 
 
-                        var bought = new BuyProductsModel();
+                        var bought = new BuyProductModel();
 
                         bought.ProductId = i.ProductId;
                         bought.Amount = i.Amount;
@@ -85,7 +85,7 @@ namespace SingleExperience.Views
             Menu(listConfirmation, session, method, lastNumbers);
         }
 
-        public void Menu(List<BuyProductsModel> list, string session, Enum method, string lastNumbers)
+        public void Menu(List<BuyProductModel> list, string session, Enum method, string lastNumbers)
         {
             var total = cart.TotalCart(session);
             var finished = new FinishedView();

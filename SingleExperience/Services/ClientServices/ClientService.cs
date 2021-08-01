@@ -81,9 +81,9 @@ namespace SingleExperience.Services.ClientServices
         }
 
         //Lê o arquivo csv address
-        public List<AddressClientEntitie> ListAddress()
+        public List<AddressEntitie> ListAddress()
         {
-            var address = new List<AddressClientEntitie>();
+            var address = new List<AddressEntitie>();
             try
             {
                 string[] AddressList = File.ReadAllLines(pathAddress, Encoding.UTF8);
@@ -96,7 +96,7 @@ namespace SingleExperience.Services.ClientServices
                         {
                             string[] fields = p.Split(',');
 
-                            var addr = new AddressClientEntitie();
+                            var addr = new AddressEntitie();
                             addr.AddressId = int.Parse(fields[0]);
                             addr.Cep = fields[1];
                             addr.Street = fields[2];
@@ -117,9 +117,9 @@ namespace SingleExperience.Services.ClientServices
         }
 
         //Lê o arquivo csv card
-        public List<CardClientEntitie> ListCard()
+        public List<CardEntitie> ListCard()
         {
-            var card = new List<CardClientEntitie>();
+            var card = new List<CardEntitie>();
             try
             {
                 string[] cardList = File.ReadAllLines(pathCard, Encoding.UTF8);
@@ -132,7 +132,7 @@ namespace SingleExperience.Services.ClientServices
                         {
                             string[] fields = p.Split(',');
 
-                            var cardClient = new CardClientEntitie();
+                            var cardClient = new CardEntitie();
                             cardClient.CardNumber = long.Parse(fields[0]);
                             cardClient.Name = fields[1];
                             cardClient.DateTime = DateTime.Parse(fields[2]);

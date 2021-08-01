@@ -31,7 +31,7 @@ namespace SingleExperience.Views
 
             var itens = cart.ItemCart(session)
                 .GroupBy(p => p.Name)
-                .Select(p => new ProductsCartModel()
+                .Select(p => new ProductCartModel()
                 { 
                     ProductId = p.First().ProductId,
                     Name = p.First().Name,
@@ -59,7 +59,7 @@ namespace SingleExperience.Views
             Menu(itens, session);
         }
 
-        public void Menu(List<ProductsCartModel> list, string session)
+        public void Menu(List<ProductCartModel> list, string session)
         {
             var inicio = new HomeView();
             var productCategory = new ProductCategoryView();

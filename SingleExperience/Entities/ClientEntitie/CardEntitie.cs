@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SingleExperience.Entities.ClientsEntities
 {
-    class CardClientEntitie
+    class CardEntitie
     {
         public long CardNumber { get; set; }
         public string Name { get; set; }

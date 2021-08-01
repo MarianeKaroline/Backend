@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SingleExperience.Entities.ClientEntities
 {
-    class AddressClientEntitie
+    class AddressEntitie
     {
         public int AddressId { get; set; }
         public string Cep { get; set; }

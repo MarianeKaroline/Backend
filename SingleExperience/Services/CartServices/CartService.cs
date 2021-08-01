@@ -450,9 +450,9 @@ namespace SingleExperience.Services.CartServices
         }
 
         //Listar produtos no carrinho
-        public List<ProductsCartModel> ItemCart(string session)
+        public List<ProductCartModel> ItemCart(string session)
         {
-            var prod = new List<ProductsCartModel>();
+            var prod = new List<ProductCartModel>();
             var itensCart = ListItens();
 
             try
@@ -465,7 +465,7 @@ namespace SingleExperience.Services.CartServices
                         {
                             if (j.StatusId == Convert.ToInt32(StatusProductEnum.Ativo))
                             {
-                                var prodCart = new ProductsCartModel();
+                                var prodCart = new ProductCartModel();
                                 prodCart.ProductId = j.ProductId;
                                 prodCart.Name = j.Name;
                                 prodCart.StatusId = j.StatusId;
@@ -614,7 +614,7 @@ namespace SingleExperience.Services.CartServices
             return list;
         }
 
-        public bool Buy(List<BuyProductsModel> products, string session)
+        public bool Buy(List<BuyProductModel> products, string session)
         {
             var buy = false;
             var lines = new List<string>();
