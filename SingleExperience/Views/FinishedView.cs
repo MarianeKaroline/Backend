@@ -29,7 +29,7 @@ namespace SingleExperience.Services.ClientServices.Models
 
                 Console.WriteLine("\nCompra realizada com sucesso!!\n");
 
-                cart.PreviewBoughts(session, payment, lastNumbers)
+                cart.PreviewBoughts(session, payment, lastNumbers, StatusProductEnum.Comprado)
                 .ForEach(p =>
                 {
                     Console.WriteLine("Endereço de entrega");

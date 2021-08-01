@@ -1,4 +1,5 @@
-﻿using SingleExperience.Services.CartServices;
+﻿using SingleExperience.Entities.DB;
+using SingleExperience.Services.CartServices;
 using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.ClientServices.Models;
 using System;
@@ -15,7 +16,9 @@ namespace SingleExperience.Views
             var payment = new PaymentMethodView();
             var client = new SignUpModel();
             var cart = new CartService();
+            var cartDB = new CartDB();
             var clientService = new ClientService();
+            var clientDB = new ClientDB();
             var j = 41;
 
             Console.Clear();
@@ -60,13 +63,13 @@ namespace SingleExperience.Views
             Console.Write("Estado: ");
             client.State = Console.ReadLine();
 
-            var msg = clientService.SignUp(client);
+            var msg = clientDB.SignUp(client);
 
             Console.WriteLine(msg);
             Console.WriteLine("Tecle enter para continuar");
             Console.ReadKey();
 
-            cart.EditUserId(client.SessionId);
+            cartDB.EditUserId(client.SessionId);
             if (home)
             {
                 Menu(countProductCart, client.SessionId);

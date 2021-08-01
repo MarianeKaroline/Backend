@@ -8,60 +8,17 @@ using System.Linq;
 using SingleExperience.Services.ProductServices.Models.ProductModels;
 using System.Reflection;
 using SingleExperience.Entities.Enums;
+using SingleExperience.Entities.DB;
 
 namespace SingleExperience.Services.ProductServices
 {
     class ProductService
     {
-        //Lê o arquivo CSV Produtos
-        public List<ProductEntitie> ListProducts()
-        {
-            var CurrentDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            string path = CurrentDirectory + @"..\..\..\..\\Database\Products.csv";
-            var prod = new List<ProductEntitie>();
-
-            try
-            {
-                string[] products = File.ReadAllLines(path, Encoding.UTF8);
-
-                using (StreamReader sr = File.OpenText(path))
-                {
-                    products
-                        .Skip(1)
-                        .ToList()
-                        .ForEach(item =>
-                        {
-                            string[] fields = item.Split(',');
-
-                            var produto = new ProductEntitie();
-
-                            produto.ProductId = int.Parse(fields[0]);
-                            produto.Name = fields[1];
-                            produto.Price = double.Parse(fields[2]);
-                            produto.Detail = fields[3];
-                            produto.Amount = int.Parse(fields[4]);
-                            produto.CategoryId = int.Parse(fields[5]);
-                            produto.Ranking = int.Parse(fields[6]);
-                            produto.Available = bool.Parse(fields[7]);
-                            produto.Rating = float.Parse(fields[8]);
-
-
-                            prod.Add(produto);
-                        });
-                }
-            }
-            catch (IOException e)
-            {
-                Console.WriteLine("Ocorreu um erro");
-                Console.WriteLine(e.Message);
-            }
-            return prod;
-        }
-
         //Listar Produtos Home
         public List<BestSellingModel> ListProductsTable()
         {
-            var list = ListProducts();
+            ProductDB product = new ProductDB();
+            var list = product.ListProducts();
             var bestSellingModel = new List<BestSellingModel>();
 
             list
@@ -85,7 +42,8 @@ namespace SingleExperience.Services.ProductServices
         //Listar Produtos Categoria
         public List<CategoryModel> ListProductCategory(int categoryId)
         {
-            var list = ListProducts();
+            ProductDB product = new ProductDB();
+            var list = product.ListProducts();
             var bestSelling = new List<CategoryModel>();
 
             list
@@ -109,7 +67,8 @@ namespace SingleExperience.Services.ProductServices
         //Listar Produto Selecionado
         public ProductSelectedModel ListProductSelected(int productId)
         {
-            var list = ListProducts();
+            ProductDB product = new ProductDB();
+            var list = product.ListProducts();
             var selectedModels = new ProductSelectedModel();
 
             list

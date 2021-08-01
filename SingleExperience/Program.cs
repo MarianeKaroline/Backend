@@ -3,6 +3,7 @@ using SingleExperience.Views;
 using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.CartServices;
 using System.Threading;
+using SingleExperience.Entities.DB;
 
 namespace SingleExperience
 {
@@ -11,7 +12,7 @@ namespace SingleExperience
         static void Main(string[] args)
         {
             //Chama a função para pegar o IP do PC
-            ClientService client = new ClientService();
+            ClientDB client = new ClientDB();
             var session = client.ClientId();
 
             //Chama a função para pegar a quantidade que está no carrinho

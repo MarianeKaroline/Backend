@@ -1,4 +1,5 @@
-﻿using SingleExperience.Services.CartServices;
+﻿using SingleExperience.Entities.DB;
+using SingleExperience.Services.CartServices;
 using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.ClientServices.Models;
 using System;
@@ -13,6 +14,7 @@ namespace SingleExperience.Views
         {
             var inicio = new HomeView();
             var cart = new CartService();
+            var cartDB = new CartDB();
             var signIn = new SignInModel();
             var client = new ClientService();
             var payment = new PaymentMethodView();
@@ -27,7 +29,7 @@ namespace SingleExperience.Views
 
             var sessionId = client.SignIn(signIn);
 
-            cart.EditUserId(sessionId);
+            cartDB.EditUserId(sessionId);
 
             if (home)
             {

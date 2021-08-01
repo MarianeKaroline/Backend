@@ -1,4 +1,5 @@
-﻿using SingleExperience.Entities.Enums;
+﻿using SingleExperience.Entities.DB;
+using SingleExperience.Entities.Enums;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.ClientServices;
@@ -67,6 +68,7 @@ namespace SingleExperience.Views
             var client = new ClientService();
             var signUp = new SignUpView();
             var signIn = new SignInView();
+            var cartDB = new CartDB();
             var total = cart.TotalCart(session);
             var category = cart.ItemCart(session)
                 .Select(p => p.CategoryId)
@@ -116,7 +118,7 @@ namespace SingleExperience.Views
                             cartModel.StatusId = Convert.ToInt32(StatusProductEnum.Ativo);
                             cartModel.Price = p.Price;
 
-                            cart.AddCart(cartModel);
+                            cartDB.Add(cartModel);
                         }
                     });
 

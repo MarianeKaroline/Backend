@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.ProductServices.Models.ProductModels;
+using SingleExperience.Entities.DB;
 
 namespace SingleExperience.Views
 {
@@ -55,6 +56,7 @@ namespace SingleExperience.Views
             var cartList = new CartView();
             var category = (CategoryProductEnum)list.CategoryId;
             var cart = new CartService();
+            var cartDB = new CartDB();
 
             Console.WriteLine("\n0. Início");
             Console.WriteLine("1. Pesquisar por categoria");
@@ -92,7 +94,7 @@ namespace SingleExperience.Views
                     cartModel.StatusId = Convert.ToInt32(StatusProductEnum.Ativo);
                     cartModel.Price = list.Price;
 
-                    cart.AddCart(cartModel);
+                    cartDB.Add(cartModel);
                     var count = cart.TotalCart(session);
 
                     Console.WriteLine("Produto adicionado com sucesso (Aperte enter para continuar)");

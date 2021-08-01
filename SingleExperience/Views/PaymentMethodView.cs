@@ -5,6 +5,7 @@ using System;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Text;
+using SingleExperience.Entities.DB;
 
 namespace SingleExperience.Views
 {
@@ -13,11 +14,13 @@ namespace SingleExperience.Views
         public int j = 41;
         private PreviewBoughtView preview;
         private ClientService client;
+        private ClientDB clientDB;
 
         public PaymentMethodView()
         {
             preview = new PreviewBoughtView();
             client = new ClientService();
+            clientDB = new ClientDB();
         }
 
         public void Methods(string session)
@@ -52,7 +55,7 @@ namespace SingleExperience.Views
             CardModel card = new CardModel();
             if (client.HasCard(session))
             {
-                client.ListCardClient(session)
+                client.ShowCards(session)
                     .ForEach(p => 
                     {
                         Console.WriteLine($"\n(Crédito) com final {p.CardNumber.Substring(12, p.CardNumber.Length - 12)}        {p.Name}        {p.ShelfLife}\n");
@@ -80,7 +83,7 @@ namespace SingleExperience.Views
                         Console.Write("Código de segurança(CVV): ");
                         card.CVV = int.Parse(Console.ReadLine());
 
-                        client.AddCard(session, card);
+                        clientDB.AddCard(session, card);
                         preview.Bought(session, MethodPaymentEnum.CreditCard, card.CardNumber.ToString().Substring(12, card.CardNumber.ToString().Length - 12));
                         break;
                     default:
@@ -99,7 +102,7 @@ namespace SingleExperience.Views
                 Console.Write("Código de segurança(CVV): ");
                 card.CVV = int.Parse(Console.ReadLine());
 
-                client.AddCard(session, card);
+                clientDB.AddCard(session, card);
                 preview.Bought(session, MethodPaymentEnum.CreditCard, "");
             }
         }

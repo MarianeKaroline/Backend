@@ -28,7 +28,7 @@ namespace SingleExperience.Views
             Console.WriteLine("\nCarrinho > Informações pessoais > Método de pagamento > Confirma compra\n");
 
             Console.Clear();
-            cart.PreviewBoughts(session, payment, lastNumbers)
+            cart.PreviewBoughts(session, payment, lastNumbers, StatusProductEnum.Ativo)
                 .ForEach(p => 
                 {
                     Console.WriteLine("Endereço de entrega");
