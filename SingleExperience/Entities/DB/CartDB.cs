@@ -15,17 +15,13 @@ namespace SingleExperience.Entities.DB
         private string CurrentDirectory = null;
         private string path = null;
         private string pathItens = null;
-        private string pathProducts = null;
         private string header = null;
-        private ProductDB productDB;
 
         public CartDB()
         {
-            productDB = new ProductDB();
             CurrentDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             path = CurrentDirectory + @"..\..\..\..\\Database\Cart.csv";
             pathItens = CurrentDirectory + @"..\..\..\..\\Database\ItensCart.csv";
-            pathProducts = CurrentDirectory + @"..\..\..\..\\Database\Products.csv";
             header = "";
         }
 
@@ -112,7 +108,7 @@ namespace SingleExperience.Entities.DB
         }
 
         /* Editar Arquivo CSV */
-        //Adiciona itens na tabela
+        //Cria itens do carrinho, porém o carrinho só irá ser criado quando o usuário estiver logado
         public void AddItensCart(CartModel cart)
         {
             var cartDB = new CartDB();
@@ -174,9 +170,9 @@ namespace SingleExperience.Entities.DB
         }
 
         //Edita a quantidade do item, caso o usuário adiciona o produto mais uma vez no carrinho
-        public void EditAmount(int productId, string session, int sum)
+        public void EditAmount(int productId, string session, int sub)
         {
-            var cartDB = new CartDB(); ;
+            var cartDB = new CartDB();
             var listItens = cartDB.ListItens();
             var lines = new List<string>();
 
@@ -209,7 +205,7 @@ namespace SingleExperience.Entities.DB
                                 p.UserId.ToString(),
                                 p.Name,
                                 p.CategoryId.ToString(),
-                                sum.ToString(),
+                                sub.ToString(),
                                 p.StatusId.ToString(),
                                 p.Price.ToString(),
                                 p.IpComputer.ToString()
@@ -281,7 +277,6 @@ namespace SingleExperience.Entities.DB
             var currentCart = cart.GetCart(session);
             var linesCart = new List<string>();
             var linesItens = new List<string>();
-            var count = 0;
 
             //Create Cart
             if (currentCart == null)

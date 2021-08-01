@@ -14,6 +14,8 @@ namespace SingleExperience.Services.CartServices.Models
         public string Cep { get; set; }
         public string Phone { get; set; }
         public string NumberCard { get; set; }
+        public string Code { get; set; }
+        public string Pix { get; set; }
         public Enum Method { get; set; }
         public List<ProductCartModel> Itens { get; set; }
     }

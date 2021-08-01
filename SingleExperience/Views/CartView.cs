@@ -74,7 +74,7 @@ namespace SingleExperience.Views
                 .Select(p => p.CategoryId)
                 .FirstOrDefault();
 
-            Console.WriteLine("0. Início");
+            Console.WriteLine("\n0. Início");
             Console.WriteLine("1. Buscar por categoria");
             Console.WriteLine($"2. Voltar para a categoria: {(CategoryProductEnum)category}");
             Console.WriteLine("3. Adicionar o produto mais uma vez ao carrinho");
@@ -89,6 +89,7 @@ namespace SingleExperience.Views
             {
                 Console.WriteLine("6. Desconectar-se");
             }
+            Console.WriteLine("9. Sair do Sistema");
             int op = int.Parse(Console.ReadLine());
 
             switch (op)
@@ -146,6 +147,7 @@ namespace SingleExperience.Views
                         Console.WriteLine("1. Fazer login");
                         Console.WriteLine("2. Cadastrar-se");
                         Console.WriteLine("3. Cancelar");
+                        Console.WriteLine("9. Sair do Sistema");
                         int opc = int.Parse(Console.ReadLine());
 
                         switch (opc)
@@ -159,7 +161,13 @@ namespace SingleExperience.Views
                             case 3:
                                 ListCart(session);
                                 break;
+                            case 9:
+                                Environment.Exit(0);
+                                break;
                             default:
+                                Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
+                                Console.ReadKey();
+                                Menu(list, session);
                                 break;
                         }
                     }
@@ -181,7 +189,13 @@ namespace SingleExperience.Views
                 case 7:
                     signUp.SignUp(total.TotalAmount, true);
                     break;
+                case 9:
+                    Environment.Exit(0);
+                    break;
                 default:
+                    Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
+                    Console.ReadKey();
+                    Menu(list, session);
                     break;
             }
         }

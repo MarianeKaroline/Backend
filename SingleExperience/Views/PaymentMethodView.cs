@@ -3,8 +3,6 @@ using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.ClientServices.Models;
 using System;
 using System.Globalization;
-using System.Collections.Generic;
-using System.Text;
 using SingleExperience.Entities.DB;
 
 namespace SingleExperience.Views
@@ -40,7 +38,7 @@ namespace SingleExperience.Views
                     CreditCard(session);
                     break;
                 case 2:
-                    Bullet(session);
+                    BankSlip(session);
                     break;
                 case 3:
                     Pix(session);
@@ -66,10 +64,10 @@ namespace SingleExperience.Views
                 switch (opc)
                 {
                     case 's':
-                        Console.Write("Digite os últimos 4 números do cartão: ");
+                        Console.Write("\nDigite os últimos 4 números do cartão: ");
                         string op = Console.ReadLine();
 
-                        preview.Bought(session, MethodPaymentEnum.CreditCard, op);
+                        preview.Bought(session, PaymentMethodEnum.CreditCard, op);
                         break;
                     case 'n':
                         Console.Write("Novo Cartão\n");
@@ -84,9 +82,12 @@ namespace SingleExperience.Views
                         card.CVV = int.Parse(Console.ReadLine());
 
                         clientDB.AddCard(session, card);
-                        preview.Bought(session, MethodPaymentEnum.CreditCard, card.CardNumber.ToString().Substring(12, card.CardNumber.ToString().Length - 12));
+                        preview.Bought(session, PaymentMethodEnum.CreditCard, card.CardNumber.ToString().Substring(12, card.CardNumber.ToString().Length - 12));
                         break;
                     default:
+                        Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
+                        Console.ReadKey();
+                        CreditCard(session);
                         break;
                 }
             }
@@ -103,17 +104,22 @@ namespace SingleExperience.Views
                 card.CVV = int.Parse(Console.ReadLine());
 
                 clientDB.AddCard(session, card);
-                preview.Bought(session, MethodPaymentEnum.CreditCard, "");
+                preview.Bought(session, PaymentMethodEnum.CreditCard, card.CardNumber.ToString());
             }
         }
 
-        public void Bullet(string session)
+        public void BankSlip(string session)
         {
-            preview.Bought(session, MethodPaymentEnum.Bullet, "");
+            var rand = new Random();
+            var numberCode = rand.Next(100000000, 200000000);
+
+            preview.Bought(session, PaymentMethodEnum.BankSlip, numberCode.ToString());
         }
 
         public void Pix(string session)
         {
+            string opc = "";
+
             Console.WriteLine($"\n+{new string('-', j)}+\n");
             Console.WriteLine("Escolha uma chave");
             Console.WriteLine("1. CPF");
@@ -126,25 +132,25 @@ namespace SingleExperience.Views
             {
                 case 1:
                     Console.Write("Digite o CPF: ");
-
+                    opc = Console.ReadLine();
                     break;
                 case 2:
                     Console.Write("Digite o número de celular: ");
-
+                    opc = Console.ReadLine();
                     break;
                 case 3:
                     Console.Write("Digite o e-mail: ");
-
+                    opc = Console.ReadLine();
                     break;
                 case 4:
                     Console.Write("Digite o chave aleatória: ");
-
+                    opc = Console.ReadLine();
                     break;
                 default:
                     break;
             }
 
-            preview.Bought(session, MethodPaymentEnum.Pix, "");
+            preview.Bought(session, PaymentMethodEnum.Pix, opc);
         }
     }
 }

@@ -110,9 +110,9 @@ namespace SingleExperience.Entities.DB
         }
 
         //Card
-        public CardEntitie GetCard(string userId)
+        public List<CardEntitie> ListCard(string userId)
         {
-            var card = new CardEntitie();
+            var card = new List<CardEntitie>();
             try
             {
                 string[] cardList = File.ReadAllLines(pathCard, Encoding.UTF8);
@@ -120,6 +120,7 @@ namespace SingleExperience.Entities.DB
                 {
                     card = cardList
                         .Skip(1)
+                        .Where(i => i.Split(',')[4] == userId)
                         .Select(i => new CardEntitie
                         {
                             CardNumber = long.Parse(i.Split(',')[0]),
@@ -128,7 +129,7 @@ namespace SingleExperience.Entities.DB
                             CVV = int.Parse(i.Split(',')[3]),
                             ClientId = i.Split(',')[4],
                         })
-                        .FirstOrDefault(i => i.ClientId == userId);
+                        .ToList();
                 }
             }
             catch (IOException e)
@@ -218,21 +219,30 @@ namespace SingleExperience.Entities.DB
         public void AddCard(string session, CardModel card)
         {
             var client = GetClient(card.ClientId.ToString());
-            var existCard = GetCard(session);
+            var existCard = ListCard(session);
             var lines = new List<string>();
+            var exist = 0;
 
             try
             {
-                if (existCard == null)
+                existCard
+                    .ForEach(i =>
+                    {
+                        if (i.CardNumber == card.CardNumber)
+                        {
+                            exist++;
+                        }
+                    });
+                if (exist == 0)
                 {
-                    var aux = new string[] 
-                    { 
+                    var aux = new string[]
+                                        {
                         card.CardNumber.ToString(),
-                        card.Name, 
-                        card.ShelfLife.ToString(), 
-                        card.CVV.ToString(), 
-                        client.Cpf 
-                    };
+                        card.Name,
+                        card.ShelfLife.ToString(),
+                        card.CVV.ToString(),
+                        session,
+                                        };
                     lines.Add(String.Join(",", aux));
 
                     using (StreamWriter sw = File.AppendText(pathCard))
@@ -242,7 +252,7 @@ namespace SingleExperience.Entities.DB
                             sw.WriteLine(p);
                         });
                     }
-                }
+                }                    
             }
             catch (IOException e)
             {

@@ -1,15 +1,6 @@
-﻿using SingleExperience.Entities.ClientEntities;
-using SingleExperience.Entities.ClientsEntities;
-using SingleExperience.Entities.DB;
+﻿using SingleExperience.Entities.DB;
 using SingleExperience.Services.ClientServices.Models;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Reflection;
-using System.Text;
 
 namespace SingleExperience.Services.ClientServices
 {
@@ -50,7 +41,7 @@ namespace SingleExperience.Services.ClientServices
         public bool HasCard(string session)
         {
             var clientDB = new ClientDB();
-            var card = clientDB.GetCard(session);
+            var card = clientDB.ListCard(session);
             var hasCard = false;
 
             if (card != null)
@@ -65,19 +56,19 @@ namespace SingleExperience.Services.ClientServices
         public List<ShowCard> ShowCards(string session)
         {
             var clientDB = new ClientDB();
-            var client = clientDB.GetClient(session);
-            var card = clientDB.GetCard(session);
+            var card = clientDB.ListCard(session);
             var cards = new List<ShowCard>();
 
-            if (card.ClientId == client.Cpf)
+            card.ForEach(i =>
             {
                 var showCards = new ShowCard();
-                showCards.CardNumber = card.CardNumber.ToString();
-                showCards.Name = card.Name;
-                showCards.ShelfLife = card.ShelfLife;
+                showCards.CardNumber = i.CardNumber.ToString();
+                showCards.Name = i.Name;
+                showCards.ShelfLife = i.ShelfLife;
 
                 cards.Add(showCards);
-            }
+
+            });
             return cards;
         }        
     }

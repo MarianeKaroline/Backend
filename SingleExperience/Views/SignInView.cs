@@ -34,7 +34,7 @@ namespace SingleExperience.Views
 
             if (home)
             {
-                Menu(total.TotalAmount, sessionId);
+                Menu(total.TotalAmount, sessionId, home);
             }
             else
             {
@@ -42,7 +42,7 @@ namespace SingleExperience.Views
             }
         }
 
-        public void Menu(int countProductCart, string session)
+        public void Menu(int countProductCart, string session, bool home)
         {
             var selectedProduct = new SelectedProductView();
             var client = new ClientService();
@@ -56,7 +56,6 @@ namespace SingleExperience.Views
             {
                 Console.WriteLine("3. Desconectar-se");
             }
-            Console.WriteLine("Digite o codigo do produto # para mais detalhes\n");
             int op = int.Parse(Console.ReadLine());
 
             switch (op)
@@ -72,9 +71,12 @@ namespace SingleExperience.Views
                     break;
                 case 3:
                     client.SignOut();
+                    Login(countProductCart, session, home);
                     break;
                 default:
-                    selectedProduct.SelectedProduct(op, countProductCart, session);
+                    Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
+                    Console.ReadKey();
+                    Menu(countProductCart, session, home);
                     break;
             }
         }

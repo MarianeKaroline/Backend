@@ -1,9 +1,9 @@
 ﻿namespace SingleExperience.Entities.Enums
 {
-    enum MethodPaymentEnum
+    enum PaymentMethodEnum
     {
         CreditCard = 1,
-        Bullet = 2,
+        BankSlip = 2,
         Pix = 3
     }
 }

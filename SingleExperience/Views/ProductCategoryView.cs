@@ -13,6 +13,7 @@ namespace SingleExperience.Views
 {
     class ProductCategoryView
     {
+        ProductService product = new ProductService();
         //Chama ListaProdutos pela Categoria
         public void Category(int id, int countProductCart, string session)
         {
@@ -34,7 +35,7 @@ namespace SingleExperience.Views
             var cart = new CartView();
             var inicio = new HomeView();
 
-            Console.WriteLine("0. Início");
+            Console.WriteLine("\n0. Início");
             Console.WriteLine("1. Pesquisar por categoria");
             Console.WriteLine($"2. Ver Carrinho (quantidade: {countProductCart})");
             if (session.Length == 10)
@@ -46,7 +47,8 @@ namespace SingleExperience.Views
             {
                 Console.WriteLine("3. Desconectar-se");
             }
-            Console.WriteLine("Digite o codigo do produto # para mais detalhes\n");
+            Console.WriteLine("9. Sair do Sistema");
+            Console.WriteLine("\n5. Selecionar um produto");
             int op = int.Parse(Console.ReadLine());
 
             switch (op)
@@ -64,6 +66,7 @@ namespace SingleExperience.Views
                     if (session.Length == 11)
                     {
                         client.SignOut();
+                        ListProducts(op);
                     }
                     else
                     {
@@ -73,8 +76,27 @@ namespace SingleExperience.Views
                 case 4:
                     signUp.SignUp(countProductCart, true);
                     break;
+                case 5:
+                    Console.Write("\nDigite o código # do produto: ");
+                    int code = int.Parse(Console.ReadLine()); 
+                    if (product.HasProduct(code))
+                    {
+                        selectedProduct.SelectedProduct(code, countProductCart, session);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
+                        Console.ReadKey();
+                        Menu(countProductCart, session);
+                    }
+                    break;
+                case 9:
+                    Environment.Exit(0);
+                    break;
                 default:
-                    selectedProduct.SelectedProduct(op, countProductCart, session);
+                    Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
+                    Console.ReadKey();
+                    Menu(countProductCart, session);
                     break;
             }
 

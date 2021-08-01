@@ -24,29 +24,37 @@ namespace SingleExperience.Views
         public void SelectedProduct(int productId, int countProduct, string session)
         {
             Console.Clear();
-            var list = productService.ProductSelected(productId);
+            var product = productService.SelectedProduct(productId);
             var j = 41;
-            var category = (CategoryProductEnum)list.CategoryId;
+            var category = (CategoryProductEnum)product.CategoryId;
 
-            Console.WriteLine($"\nInício > Pesquisa > {category} > {list.Name}\n");
+            Console.WriteLine($"\nInício > Pesquisa > {category} > {product.Name}\n");
+
+            var aux = product.Detail.Split(';');
 
             Console.WriteLine($"+{new string('-', j)}+");
-            Console.WriteLine($"|#{list.ProductId}{new string(' ', j - 1 - list.ProductId.ToString().Length)}|");
-            Console.WriteLine($"|*{list.Rating.ToString("F1", CultureInfo.InvariantCulture)}{new string(' ', j - 3 - list.Rating.ToString().Length)}|");
-            Console.WriteLine($"|{list.Name}{new string(' ', j - list.Name.ToString().Length)}|");
-            Console.WriteLine($"|R${list.Price.ToString("F2", CultureInfo.CurrentCulture)}{new string(' ', j - 5 - list.Price.ToString().Length)}|");
+            Console.WriteLine($"|#{product.ProductId}{new string(' ', j - 1 - product.ProductId.ToString().Length)}|");
+            Console.WriteLine($"|*{product.Rating.ToString("F1", CultureInfo.InvariantCulture)}{new string(' ', j - 3 - product.Rating.ToString().Length)}|");
+            Console.WriteLine($"|{product.Name}{new string(' ', j - product.Name.ToString().Length)}|");
+            Console.WriteLine($"|R${product.Price.ToString("F2", CultureInfo.CurrentCulture)}{new string(' ', j - 5 - product.Price.ToString().Length)}|");
             Console.WriteLine($"|{new string(' ', j)}|");
             Console.WriteLine($"|Detalhes{new string(' ', j - "Detalhes".Length)}|");
-            Console.WriteLine($"|{list.Detail.Replace(";", "\n|")}|");
-            Console.WriteLine($"|Quantidade em estoque: {list.Amount}{new string(' ', j - "Quantidade em estoque".Length - 2 - list.Amount.ToString().Length)}|");
+
+            for (int i = 0; i < aux.Length; i++)
+            {
+                Console.WriteLine($"|{aux[i]}{new string(' ', j - aux[i].Length)}|");
+            }
+
+            Console.WriteLine($"|{new string(' ', j)}|");
+            Console.WriteLine($"|Quantidade em estoque: {product.Amount}{new string(' ', j - "Quantidade em estoque".Length - 2 - product.Amount.ToString().Length)}|");
             Console.WriteLine($"+{new string('-', j)}+");
 
 
-            Menu(list, countProduct, session);
+            Menu(product, countProduct, session, productId);
         }
 
         //Mostra Menu
-        public void Menu(ProductSelectedModel list, int countProduct, string session)
+        public void Menu(ProductSelectedModel list, int countProduct, string session, int productId)
         {
             var signIn = new SignInView();
             var signUp = new SignUpView();
@@ -72,6 +80,7 @@ namespace SingleExperience.Views
             {
                 Console.WriteLine("5. Desconectar-se");
             }
+            Console.WriteLine("9. Sair do Sistema");
             int op = int.Parse(Console.ReadLine());
 
             switch (op)
@@ -97,7 +106,7 @@ namespace SingleExperience.Views
                     cartDB.AddItensCart(cartModel);
                     var count = cart.TotalCart(session);
 
-                    Console.WriteLine("Produto adicionado com sucesso (Aperte enter para continuar)");
+                    Console.WriteLine("\nProduto adicionado com sucesso (Aperte enter para continuar)");
                     Console.ReadKey();
                     SelectedProduct(list.ProductId, count.TotalAmount, session);
                     break;
@@ -108,6 +117,7 @@ namespace SingleExperience.Views
                     if (session.Length == 11)
                     {
                         client.SignOut();
+                        SelectedProduct(productId, countProduct, session);
                     }
                     else
                     {
@@ -116,6 +126,9 @@ namespace SingleExperience.Views
                     break;
                 case 6:
                     signUp.SignUp(countProduct, true);
+                    break;
+                case 9:
+                    Environment.Exit(0);
                     break;
                 default:
                     break;

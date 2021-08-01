@@ -30,25 +30,20 @@ namespace SingleExperience.Services.CartServices
             try
             {
                 itensCart
+                    .Where(i => i.UserId == session && i.StatusId == Convert.ToInt32(status))
                     .ToList()
                     .ForEach(j =>
                     {
-                        if (j.UserId == session)
-                        {
-                            if (j.StatusId == Convert.ToInt32(status))
-                            {
-                                var prodCart = new ProductCartModel();
-                                prodCart.ProductId = j.ProductId;
-                                prodCart.Name = j.Name;
-                                prodCart.StatusId = j.StatusId;
-                                prodCart.CategoryId = j.CategoryId;
-                                prodCart.Price = j.Price;
-                                prodCart.Amount = j.Amount;
-                                prodCart.UserId = j.UserId;
+                        var prodCart = new ProductCartModel();
+                        prodCart.ProductId = j.ProductId;
+                        prodCart.Name = j.Name;
+                        prodCart.StatusId = j.StatusId;
+                        prodCart.CategoryId = j.CategoryId;
+                        prodCart.Price = j.Price;
+                        prodCart.Amount = j.Amount;
+                        prodCart.UserId = j.UserId;
 
-                                prod.Add(prodCart);
-                            }
-                        }
+                        prod.Add(prodCart);
                     });
             }
             catch (IOException e)
@@ -65,29 +60,12 @@ namespace SingleExperience.Services.CartServices
             var itens = ItemCart(session, StatusProductEnum.Ativo);
             var total = new TotalCartModel();
 
-            try
-            {
-                var totalItem = itens
-                    .Select(i => new
-                    {
-                        i.Amount
-                    })
-                    .ToList();
-                total.TotalAmount = itens
-                    .Where(item => item.UserId == session && item.StatusId == Convert.ToInt32(StatusProductEnum.Ativo))
-                    .Sum(item => item.Amount);
-                totalItem.ForEach(p =>
-                {
-                    total.TotalPrice = itens
-                        .Where(item => item.UserId == session && item.StatusId == Convert.ToInt32(StatusProductEnum.Ativo))
-                        .Sum(item => item.Price * p.Amount);
-                });
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
+            total.TotalAmount = itens
+                .Where(item => item.UserId == session && item.StatusId == Convert.ToInt32(StatusProductEnum.Ativo))
+                .Sum(item => item.Amount);
+            total.TotalPrice = itens
+                .Where(item => item.UserId == session && item.StatusId == Convert.ToInt32(StatusProductEnum.Ativo))
+                .Sum(item => item.Price * item.Amount);
 
             return total;
         }
@@ -96,30 +74,35 @@ namespace SingleExperience.Services.CartServices
         public void RemoveItem(int productId, string session)
         {
             var listItens = cartDB.ListItens();
-            var sum = 1;
+            var sum = 0;
+            var count = 0;
 
-            listItens.ForEach(p => 
-            {
-                if (p.Amount > 1)
+            listItens
+                .Where(i => i.UserId == session && i.ProductId == productId)
+                .ToList()
+                .ForEach(p => 
                 {
-                    sum -= p.Amount;
-                    cartDB.EditAmount(productId, session, sum);
-                }
-                else
-                {
-                    cartDB.EditStatusProduct(productId, session, StatusProductEnum.Inativo);
-                }
-            });            
+                    if (p.Amount > 1 && count == 0)
+                    {
+                        sum = p.Amount - 1;
+                        cartDB.EditAmount(productId, session, sum);
+                        count++;
+                    }
+                    else if (p.Amount == 1)
+                    {
+                        cartDB.EditStatusProduct(productId, session, StatusProductEnum.Inativo);
+                    }
+                });            
         }
 
-        //Ver produto antes de comprar
-        public List<PreviewBoughtModel> PreviewBoughts(string session, MethodPaymentEnum method, string lastNumbers, StatusProductEnum status)
+        //Ver produtos antes da compra e depois
+        public List<PreviewBoughtModel> PreviewBoughts(string session, PaymentMethodEnum method, string confirmation, StatusProductEnum status)
         {
             var list = new List<PreviewBoughtModel>();
             var preview = new PreviewBoughtModel();
             var client = clientDB.GetClient(session);
             var address = clientDB.ListAddress(client.AddressId);
-            var card = clientDB.GetCard(session);
+            var card = clientDB.ListCard(session);
             var itens = cartDB.ListItens();
 
             //Pega alguns atributos do cliente
@@ -138,12 +121,23 @@ namespace SingleExperience.Services.CartServices
                 });
 
             preview.Method = method;
-            if (Convert.ToInt32(method) == 1) //Só ira adicionar o número do cartão se o método for cartão
+            if (method == PaymentMethodEnum.CreditCard) //Só ira adicionar o número do cartão se o método for cartão
             {
-                if (card.CardNumber.ToString().Substring(12, card.CardNumber.ToString().Length - 12) == lastNumbers)
+                card.ForEach(i =>
                 {
-                    preview.NumberCard = card.CardNumber.ToString();
-                }
+                    if (i.CardNumber.ToString().Substring(12, i.CardNumber.ToString().Length - 12) == confirmation)
+                    {
+                        preview.NumberCard = i.CardNumber.ToString();
+                    }
+                });
+            }
+            else if (method == PaymentMethodEnum.BankSlip)
+            {
+                preview.Code = confirmation;
+            }
+            else
+            {
+                preview.Pix = confirmation;
             }
 
             preview.Itens = ItemCart(session, status);

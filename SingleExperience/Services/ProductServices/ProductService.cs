@@ -1,28 +1,30 @@
-﻿using System;
-using SingleExperience.Entities;
-using System.IO;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using SingleExperience.Services.ProductServices.Model;
-using System.Text;
 using System.Linq;
 using SingleExperience.Services.ProductServices.Models.ProductModels;
-using System.Reflection;
-using SingleExperience.Entities.Enums;
 using SingleExperience.Entities.DB;
+using SingleExperience.Entities;
 
 namespace SingleExperience.Services.ProductServices
 {
     class ProductService
     {
+        ProductDB product;
+
+        public ProductService()
+        {
+            product = new ProductDB();
+        }
+
         //Listar Produtos Home
         public List<BestSellingModel> ListProducts()
         {
-            ProductDB product = new ProductDB();
             var list = product.ListProducts();
             var bestSellingModel = new List<BestSellingModel>();
 
             list
-                .Where(p => p.Available == true && p.Ranking > 0)
+                .Where(p => p.Available == true && p.Ranking >= 15)
+                .Take(5)
                 .ToList()
                 .ForEach(p =>
                 {
@@ -42,7 +44,6 @@ namespace SingleExperience.Services.ProductServices
         //Listar Produtos Categoria
         public List<CategoryModel> ListProductCategory(int categoryId)
         {
-            ProductDB product = new ProductDB();
             var list = product.ListProducts();
             var bestSelling = new List<CategoryModel>();
 
@@ -65,9 +66,8 @@ namespace SingleExperience.Services.ProductServices
         }
 
         //Listar Produto Selecionado
-        public ProductSelectedModel ProductSelected(int productId)
+        public ProductSelectedModel SelectedProduct(int productId)
         {
-            ProductDB product = new ProductDB();
             var list = product.ListProducts();
             var selectedModels = new ProductSelectedModel();
 
@@ -89,6 +89,18 @@ namespace SingleExperience.Services.ProductServices
                 });
 
             return selectedModels;
+        }
+
+        public bool HasProduct(int code)
+        {
+            var list = product.ListProducts();
+            var has = false;
+
+            if (list.Single(i => i.ProductId == code) != null)
+            {
+                has = true;
+            }
+            return has;
         }
     }
 }

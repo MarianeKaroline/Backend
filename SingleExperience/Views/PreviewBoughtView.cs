@@ -5,6 +5,7 @@ using SingleExperience.Services.ClientServices.Models;
 using SingleExperience.Services.ProductServices.Models.CartModels;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -20,7 +21,7 @@ namespace SingleExperience.Views
         }
         public void Bought(string session, Enum method, string lastNumbers)
         {
-            var payment = (MethodPaymentEnum)method;
+            var payment = (PaymentMethodEnum)method;
             var total = cart.TotalCart(session);
             var listConfirmation = new List<BuyProductModel>();
             var j = 41;
@@ -31,22 +32,24 @@ namespace SingleExperience.Views
             cart.PreviewBoughts(session, payment, lastNumbers, StatusProductEnum.Ativo)
                 .ForEach(p => 
                 {
-                    Console.WriteLine("Endereço de entrega");
-                    Console.WriteLine(p.FullName);
-                    Console.WriteLine($"{p.Street}, {p.Number}");
-                    Console.WriteLine($"{p.City} - {p.State}");
-                    Console.WriteLine(p.Cep);
-                    Console.WriteLine($"Telefone: {p.Phone}");
-                    Console.WriteLine($"\n+{new string('-', j)}+\n");
-                    Console.WriteLine("Forma de pagamento");
-                    if (payment == MethodPaymentEnum.CreditCard)
-                        Console.WriteLine($"(Crédito) com final {p.NumberCard.Substring(12, p.NumberCard.Length - 12)}");
-                    else if (payment == MethodPaymentEnum.Bullet)
-                        Console.WriteLine($"(Boleto)");
+                    Console.WriteLine($"+{new string('-', j)}+");
+                    Console.WriteLine($"|Endereço de entrega{new string(' ', j - "Endereço de entrega".Length)}|");
+                    Console.WriteLine($"|{p.FullName}{new string(' ', j - p.FullName.Length)}|");
+                    Console.WriteLine($"|{p.Street}, {p.Number}{new string(' ', j - p.Street.Length - 2 - p.Number.Length)}|");
+                    Console.WriteLine($"|{p.City} - {p.State}{new string(' ', j - p.City.Length - 3 - p.State.Length)}|");
+                    Console.WriteLine($"|{p.Cep}{new string(' ', j - p.Cep.Length)}|");
+                    Console.WriteLine($"|Telefone: {p.Phone}{new string(' ', j - $"Telefone: {p.Phone}".Length)}|");
+                    Console.WriteLine($"|{new string(' ', j)}|");
+                    Console.WriteLine($"+{new string('-', j)}+");
+                    Console.WriteLine($"|Forma de pagamento{new string(' ', j - $"Forma de pagamento".Length)}|");
+                    if (payment == PaymentMethodEnum.CreditCard)
+                        Console.WriteLine($"|(Crédito) com final {p.NumberCard.Substring(12, p.NumberCard.Length - 12)}{new string(' ', j - $"(Crédito) com final {p.NumberCard.Substring(12, p.NumberCard.Length - 12)}".Length)}|");
+                    else if (payment == PaymentMethodEnum.BankSlip)
+                        Console.WriteLine($"(Boleto){new string(' ', j - "(Boleto)".Length)}|");
                     else
-                        Console.WriteLine($"(PIX)");
-
-                    Console.WriteLine($"\n+{new string('-', j)}+\n");
+                        Console.WriteLine($"(PIX){new string(' ', j - "(PIX)".Length)}|");
+                    Console.WriteLine($"|{new string(' ', j)}|");
+                    Console.WriteLine($"+{new string('-', j)}+");
                     var item = p.Itens
                     .GroupBy(j => j.Name)
                     .Select(i => new ProductCartModel()
@@ -61,10 +64,12 @@ namespace SingleExperience.Views
                     .ToList();
                     item.ForEach(i =>
                     {
-                        Console.WriteLine(i.ProductId);
-                        Console.WriteLine(i.Name);
-                        Console.WriteLine(i.Amount);
-                        Console.WriteLine(i.Price);
+                        Console.WriteLine($"|#{i.ProductId}{new string(' ', j - 1 - i.ProductId.ToString().Length)}|");
+                        Console.WriteLine($"|{i.Name}{new string(' ', j - i.Name.Length)}|");
+                        Console.WriteLine($"|Qtde: {i.Amount}{new string(' ', j - 6 -  i.Amount.ToString().Length)}|");
+                        Console.WriteLine($"|{i.Price.ToString("F2", CultureInfo.InvariantCulture)}{new string(' ', j - 3 - i.Price.ToString().Length)}|");
+                        Console.WriteLine($"|{new string(' ', j)}|");
+                        Console.WriteLine($"+{new string('-', j)}+");
 
 
                         var bought = new BuyProductModel();
@@ -77,15 +82,15 @@ namespace SingleExperience.Views
                     });
                 });
 
-            Console.WriteLine("Resumo do pedido");
+            Console.WriteLine("\nResumo do pedido");
             Console.WriteLine($"Itens: R$ {total.TotalPrice}");
             Console.WriteLine("Frete: R$ 0,00");
-            Console.WriteLine($"Total do Pedido: R$ {total.TotalPrice}");
+            Console.WriteLine($"\nTotal do Pedido: R$ {total.TotalPrice}");
 
-            Menu(listConfirmation, session, method, lastNumbers);
+            Menu(listConfirmation, session, method, lastNumbers, total.TotalPrice);
         }
 
-        public void Menu(List<BuyProductModel> list, string session, Enum method, string lastNumbers)
+        public void Menu(List<BuyProductModel> list, string session, Enum method, string lastNumbers, double totalPrice)
         {
             var total = cart.TotalCart(session);
             var finished = new FinishedView();
@@ -103,7 +108,7 @@ namespace SingleExperience.Views
                         i.Status = StatusProductEnum.Comprado;
                     });
 
-                    finished.ProductsBought(list, session, method, lastNumbers);
+                    finished.ProductsBought(list, session, method, lastNumbers, totalPrice);
                     break;
                 case 2:
                     cartView.ListCart(session);

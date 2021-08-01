@@ -69,7 +69,7 @@ namespace SingleExperience.Views
             var total = cart.TotalCart(client.Cpf);
             if (home)
             {
-                Menu(total.TotalAmount, client.Cpf);
+                Menu(total.TotalAmount, client.Cpf, home);
             }
             else
             {
@@ -94,9 +94,10 @@ namespace SingleExperience.Views
             return equal;
         }
 
-        public void Menu(int countProductCart, string session)
+        public void Menu(int countProductCart, string session, bool home)
         {
             var selectedProduct = new SelectedProductView();
+            var client = new ClientService();
             var cart = new CartView();
             var inicio = new HomeView();
 
@@ -117,8 +118,14 @@ namespace SingleExperience.Views
                 case 2:
                     cart.ListCart(session);
                     break;
+                case 3:
+                    client.SignOut();
+                    SignUp(countProductCart, home);
+                    break;
                 default:
-                    selectedProduct.SelectedProduct(op, countProductCart, session);
+                    Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
+                    Console.ReadKey();
+                    Menu(countProductCart, session, home);
                     break;
             }
         }
