@@ -3,7 +3,6 @@ using SingleExperience.Services.ProductServices.Model;
 using System.Linq;
 using SingleExperience.Services.ProductServices.Models.ProductModels;
 using SingleExperience.Entities.DB;
-using SingleExperience.Entities;
 
 namespace SingleExperience.Services.ProductServices
 {
@@ -23,7 +22,8 @@ namespace SingleExperience.Services.ProductServices
             var bestSellingModel = new List<BestSellingModel>();
 
             list
-                .Where(p => p.Available == true && p.Ranking >= 15)
+                .Where(p => p.Available == true)
+                .OrderByDescending(p => p.Ranking)
                 .Take(5)
                 .ToList()
                 .ForEach(p =>

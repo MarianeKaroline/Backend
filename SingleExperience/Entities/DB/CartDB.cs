@@ -169,9 +169,9 @@ namespace SingleExperience.Entities.DB
 
             if (File.Exists(pathItens))
             {
+                lines.Add(GetHeader());
                 using (StreamWriter writer = new StreamWriter(pathItens))
                 {
-                    lines.Add(GetHeader());
                     listItens.ForEach(p =>
                     {
                         var aux = new string[]
@@ -219,9 +219,9 @@ namespace SingleExperience.Entities.DB
 
             if (File.Exists(pathItens))
             {
+                lines.Add(GetHeader());
                 using (StreamWriter writer = new StreamWriter(pathItens))
                 {
-                    lines.Add(GetHeader());
                     listItens.ForEach(p =>
                     {
                         var aux = new string[]

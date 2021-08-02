@@ -1,5 +1,4 @@
-﻿using SingleExperience.Services.ProductServices;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -79,9 +78,9 @@ namespace SingleExperience.Entities.DB
             {
                 if (File.Exists(path))
                 {
+                    lines.Add(GetHeader());
                     using (StreamWriter writer = new StreamWriter(path))
                     {
-                        lines.Add(GetHeader());
                         listItens.ForEach(p =>
                         {
                             var aux = new string[]

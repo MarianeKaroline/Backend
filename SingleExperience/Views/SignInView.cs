@@ -31,14 +31,17 @@ namespace SingleExperience.Views
 
             if (sessionId == "")
             {
-                System.Console.WriteLine("Usuário não existe");
+                System.Console.WriteLine("\nUsuário não existe");
+                Console.WriteLine("Tecle enter para continuar");
+                Console.ReadKey();
+                inicio.ListProducts(countProductCart, session);
             }
             else
             {
                 cartDB.EditUserId(sessionId);
             }
 
-                var total = cart.TotalCart(sessionId);
+            var total = cart.TotalCart(sessionId);
 
 
             if (home)

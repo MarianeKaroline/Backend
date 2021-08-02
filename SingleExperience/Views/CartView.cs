@@ -63,7 +63,10 @@ namespace SingleExperience.Views
         public void Menu(List<ProductCartModel> list, string session)
         {
             var op = 0;
+            var code = 0;
             var invalid = true;
+            var invalidCode = true;
+            var invalidCodeRemove = true;
             var inicio = new HomeView();
             var productCategory = new ProductCategoryView();
             var payment = new PaymentMethodView();
@@ -82,7 +85,7 @@ namespace SingleExperience.Views
             Console.WriteLine("3. Adicionar o produto mais uma vez ao carrinho");
             Console.WriteLine("4. Excluir um produto");
             Console.WriteLine("5. Finalizar compra");
-            if (session.Length == 10)
+            if (session.Length < 11)
             {
                 Console.WriteLine("6. Fazer Login");
                 Console.WriteLine("7. Cadastrar-se");
@@ -119,8 +122,18 @@ namespace SingleExperience.Views
                     break;
                 case 3:
                     Console.Write("\nPor favor digite o código do produto #");
-                    int code = int.Parse(Console.ReadLine());
-
+                    while (invalidCode)
+                    {
+                        try
+                        {
+                            code = int.Parse(Console.ReadLine());
+                            invalidCode = false;
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Opção inválida, tente novamente.");
+                        }
+                    }
                     list.ForEach(p =>
                     {
                         if (p.ProductId == code)
@@ -146,44 +159,66 @@ namespace SingleExperience.Views
                     break;
                 case 4:
                     Console.Write("\nPor favor digite o codigo do produto #");
-                    int codeRemove = int.Parse(Console.ReadLine());
+                    while (invalidCodeRemove)
+                    {
+                        try
+                        {
+                            int codeRemove = int.Parse(Console.ReadLine());
+                            cart.RemoveItem(codeRemove, session);
+                            Console.WriteLine("\n\nProduto removido com sucesso (Aperte enter para continuar)");
+                            Console.ReadKey();
+                            invalidCodeRemove = false;
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Opção inválida, tente novamente.");
+                        }
+                    }
 
-                    cart.RemoveItem(codeRemove, session);
-                    Console.WriteLine("\n\nProduto removido com sucesso (Aperte enter para continuar)");
-                    Console.ReadKey();
 
                     ListCart(session);
                     break;
                 case 5:
-                    if (session.Length == 10)
+                    if (session.Length < 11)
                     {
                         Console.WriteLine("\nVocê não está logado!!\n");
                         Console.WriteLine("1. Fazer login");
                         Console.WriteLine("2. Cadastrar-se");
                         Console.WriteLine("3. Cancelar");
                         Console.WriteLine("9. Sair do Sistema");
-                        int opc = int.Parse(Console.ReadLine());
-
-                        switch (opc)
+                        while (true)
                         {
-                            case 1:
-                                signIn.Login(total.TotalAmount, session, false);
-                                break;
-                            case 2:
-                                signUp.SignUp(total.TotalAmount, false);
-                                break;
-                            case 3:
-                                ListCart(session);
-                                break;
-                            case 9:
-                                Environment.Exit(0);
-                                break;
-                            default:
-                                Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
-                                Console.ReadKey();
-                                Menu(list, session);
-                                break;
+                            try
+                            {
+                                int opc = int.Parse(Console.ReadLine());
+                                switch (opc)
+                                {
+                                    case 1:
+                                        signIn.Login(total.TotalAmount, session, false);
+                                        break;
+                                    case 2:
+                                        signUp.SignUp(total.TotalAmount, false);
+                                        break;
+                                    case 3:
+                                        ListCart(session);
+                                        break;
+                                    case 9:
+                                        Environment.Exit(0);
+                                        break;
+                                    default:
+                                        Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
+                                        Console.ReadKey();
+                                        Menu(list, session);
+                                        break;
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("Opção inválida, tente novamente.");
+                            }
                         }
+
+                        
                     }
                     else
                     {

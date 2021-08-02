@@ -121,6 +121,7 @@ namespace SingleExperience.Services.CartServices
                 });
 
             preview.Method = method;
+
             if (method == PaymentMethodEnum.CreditCard) //Só ira adicionar o número do cartão se o método for cartão
             {
                 card.ForEach(i =>
@@ -141,7 +142,9 @@ namespace SingleExperience.Services.CartServices
             }
 
             preview.Itens = ItemCart(session, status);
+
             list.Add(preview);
+
             return list;
         }
 

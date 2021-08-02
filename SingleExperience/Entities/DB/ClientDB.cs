@@ -58,7 +58,7 @@ namespace SingleExperience.Entities.DB
                         .Skip(1)
                         .Select(i => new ClientEntitie
                         {
-                            Cpf = i.Split(',')[0],
+                            UserId = i.Split(',')[0],
                             FullName = i.Split(',')[1],
                             Phone = i.Split(',')[2],
                             Email = i.Split(',')[3],
@@ -66,7 +66,7 @@ namespace SingleExperience.Entities.DB
                             Password = i.Split(',')[5],
                             AddressId = int.Parse(i.Split(',')[6])
                         })
-                        .FirstOrDefault(i => i.Cpf == authentication || i.Email == authentication);                    
+                        .FirstOrDefault(i => i.UserId == authentication || i.Email == authentication);                    
                 }
             }
             catch (IOException e)
@@ -127,7 +127,7 @@ namespace SingleExperience.Entities.DB
                             Name = i.Split(',')[1],
                             ShelfLife = DateTime.Parse(i.Split(',')[2]),
                             CVV = int.Parse(i.Split(',')[3]),
-                            ClientId = i.Split(',')[4],
+                            UserId = i.Split(',')[4],
                         })
                         .ToList();
                 }
@@ -144,8 +144,8 @@ namespace SingleExperience.Entities.DB
         //Client
         public bool SignUp(SignUpModel client)
         {
-            var existClient = GetClient(client.Cpf);
-            var existEmail = GetClient(client.Email);
+
+            var existClient = GetClient(client.UserId);
             var address = File.ReadAllLines(pathAddress, Encoding.UTF8);
             var signUp = false;
 
@@ -154,11 +154,11 @@ namespace SingleExperience.Entities.DB
                 var lines = new List<string>();
                 var linesAddress = new List<string>();
 
-                if (existClient == null && existEmail == null)
+                if (existClient == null)
                 {
                     var aux = new string[]
                     {
-                        client.Cpf.ToString(),
+                        client.UserId.ToString(),
                         client.FullName.ToString(),
                         client.Phone.ToString(), 
                         client.Email.ToString(),
@@ -166,6 +166,7 @@ namespace SingleExperience.Entities.DB
                         client.Password.ToString(),
                         address.Length.ToString()
                     };
+
                     var auxAddress = new string[]
                     {
                         address.Length.ToString(),
@@ -175,7 +176,9 @@ namespace SingleExperience.Entities.DB
                         client.City.ToString(),
                         client.State.ToString()
                     };
+
                     lines.Add(String.Join(",", aux));
+
                     linesAddress.Add(String.Join(",", auxAddress));
 
                     using (StreamWriter sw = File.AppendText(path))
@@ -193,6 +196,7 @@ namespace SingleExperience.Entities.DB
                             sw.WriteLine(p);
                         });
                     }
+
                     signUp = true;
                 }
                 else
@@ -212,7 +216,7 @@ namespace SingleExperience.Entities.DB
         //CreditCard
         public void AddCard(string session, CardModel card)
         {
-            var client = GetClient(card.ClientId.ToString());
+            var client = GetClient(card.UserId);
             var existCard = ListCard(session);
             var lines = new List<string>();
             var exist = 0;
