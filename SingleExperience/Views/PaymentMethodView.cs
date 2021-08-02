@@ -64,7 +64,7 @@ namespace SingleExperience.Views
         public void CreditCard(string session)
         {
             CardModel card = new CardModel();
-            var op = 0;
+            var op = "";
             char opc = '\0';
             var invalid = true;
             if (client.HasCard(session))
@@ -72,7 +72,8 @@ namespace SingleExperience.Views
                 client.ShowCards(session)
                     .ForEach(p => 
                     {
-                        Console.WriteLine($"\n(Crédito) com final {p.CardNumber.Substring(12, p.CardNumber.Length - 12)}        {p.Name}        {p.ShelfLife}\n");
+                        Console.WriteLine("Número do cartão                   Nome no cartão                 Validade");
+                        Console.WriteLine($"\n(Crédito) com final {p.CardNumber.Substring(12)}        {p.Name}        {p.ShelfLife.ToString("MM/yyyy")}\n");
                     });
                 Console.Write("Escolher um desses cartões: (s/n) ");
                 while (invalid)
@@ -98,7 +99,7 @@ namespace SingleExperience.Views
                         {
                             try
                             {
-                                op = int.Parse(Console.ReadLine());
+                                op = Console.ReadLine();
                                 invalid = false;
                             }
                             catch (Exception)

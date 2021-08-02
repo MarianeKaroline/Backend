@@ -1,2 +1,2 @@
-
-1,1014,12345678912,Tablet Multilaser,5,1,4004,399,12345678912
+ProductCartId,ProductId,UserId,Name,CategoryId,Amount,StatusId,Price,SessionId
+1,1008,12345678912,Notebook Asus,4,1,4004,3499,12345678912

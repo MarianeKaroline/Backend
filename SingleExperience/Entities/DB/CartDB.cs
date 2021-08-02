@@ -15,14 +15,12 @@ namespace SingleExperience.Entities.DB
         private string CurrentDirectory = null;
         private string path = null;
         private string pathItens = null;
-        private string header = null;
 
         public CartDB()
         {
             CurrentDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             path = CurrentDirectory + @"..\..\..\..\\Database\Cart.csv";
             pathItens = CurrentDirectory + @"..\..\..\..\\Database\ItensCart.csv";
-            header = "";
         }
 
         /* Lê Arquivo CSV */
@@ -33,10 +31,6 @@ namespace SingleExperience.Entities.DB
             try
             {
                 string[] carts = File.ReadAllLines(path, Encoding.UTF8);
-                if (carts.Length != 0)
-                {
-                    header = carts[0];
-                }
                 using (StreamReader sr = File.OpenText(path))
                 {
                     //Irá procurar o carrinho pelo userId
@@ -58,6 +52,7 @@ namespace SingleExperience.Entities.DB
             return cart;
         }
 
+        //Pega o header do CSV
         public string GetHeader()
         {
             string[] carts = File.ReadAllLines(pathItens, Encoding.UTF8);
@@ -71,10 +66,6 @@ namespace SingleExperience.Entities.DB
             try
             {
                 string[] itensCart = File.ReadAllLines(pathItens, Encoding.UTF8);
-                if (itensCart.Length != 0)
-                {
-                    header = itensCart[0];
-                }
                 using (StreamReader sr = File.OpenText(pathItens))
                 {
                     itensCart
@@ -180,7 +171,7 @@ namespace SingleExperience.Entities.DB
             {
                 using (StreamWriter writer = new StreamWriter(pathItens))
                 {
-                    lines.Add(header);
+                    lines.Add(GetHeader());
                     listItens.ForEach(p =>
                     {
                         var aux = new string[]
@@ -230,7 +221,7 @@ namespace SingleExperience.Entities.DB
             {
                 using (StreamWriter writer = new StreamWriter(pathItens))
                 {
-                    lines.Add(header);
+                    lines.Add(GetHeader());
                     listItens.ForEach(p =>
                     {
                         var aux = new string[]

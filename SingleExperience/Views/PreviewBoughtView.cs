@@ -43,7 +43,7 @@ namespace SingleExperience.Views
                     Console.WriteLine($"+{new string('-', j)}+");
                     Console.WriteLine($"|Forma de pagamento{new string(' ', j - $"Forma de pagamento".Length)}|");
                     if (payment == PaymentMethodEnum.CreditCard)
-                        Console.WriteLine($"|(Crédito) com final {p.NumberCard.Substring(12, p.NumberCard.Length - 12)}{new string(' ', j - $"(Crédito) com final {p.NumberCard.Substring(12, p.NumberCard.Length - 12)}".Length)}|");
+                        Console.WriteLine($"|(Crédito) com final {p.NumberCard.Substring(12)}{new string(' ', j - $"(Crédito) com final {p.NumberCard.Substring(12)}".Length)}|");
                     else if (payment == PaymentMethodEnum.BankSlip)
                         Console.WriteLine($"|(Boleto) {p.Code}{new string(' ', j - $"(Boleto) {p.Code}".Length)}|");
                     else

@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace SingleExperience.Services.ClientServices.Models
 {
@@ -34,21 +33,22 @@ namespace SingleExperience.Services.ClientServices.Models
                 {
                     Console.WriteLine($"+{new string('-', j)}+");
                     Console.WriteLine($"|Endereço de entrega{new string(' ', j - "Endereço de entrega".Length)}|");
-                    Console.WriteLine($"|{p.FullName}{new string(' ', p.FullName.Length)}|");
+                    Console.WriteLine($"|{p.FullName}{new string(' ', j - p.FullName.Length)}|");
                     Console.WriteLine($"|{p.Street}, {p.Number}{new string(' ', j - p.Street.Length - 2 - p.Number.Length)}|");
                     Console.WriteLine($"|{p.City} - {p.State}{new string(' ', j - p.City.Length - 3 - p.State.Length)}|");
                     Console.WriteLine($"|{p.Cep}{new string(' ', j - p.Cep.Length)}|");
                     Console.WriteLine($"|Telefone: {p.Phone}{new string(' ', j - $"Telefone: {p.Phone}".Length)}|");
-                    Console.WriteLine($"\n+{new string('-', j)}+\n");
+                    Console.WriteLine($"|{new string(' ', j)}|");
+                    Console.WriteLine($"+{new string('-', j)}+");
                     Console.WriteLine($"|Forma de pagamento{new string(' ', j - $"Forma de pagamento".Length)}|");
                     if (payment == PaymentMethodEnum.CreditCard)
-                        Console.WriteLine($"(Crédito) com final {p.NumberCard.Substring(12, p.NumberCard.Length - 12)}{new string(' ', j - $"(Crédito) com final {p.NumberCard.Substring(12, p.NumberCard.Length - 12)}".Length)}|");
+                        Console.WriteLine($"|(Crédito) com final {p.NumberCard.Substring(12)}{new string(' ', j - $"(Crédito) com final {p.NumberCard.Substring(12)}".Length)}|");
                     else if (payment == PaymentMethodEnum.BankSlip)
-                        Console.WriteLine($"(Boleto){new string(' ', j - "(Boleto)".Length)}|");
+                        Console.WriteLine($"|(Boleto) {p.Code}{new string(' ', j - $"(Boleto) {p.Code}".Length)}|");
                     else
-                        Console.WriteLine($"(PIX){new string(' ', j - "(PIX)".Length)}|");
-
-                    Console.WriteLine($"\n+{new string('-', j)}+\n");
+                        Console.WriteLine($"|(PIX) {p.Pix}{new string(' ', j - $"(PIX) {p.Pix}".Length)}|");
+                    Console.WriteLine($"|{new string(' ', j)}|");
+                    Console.WriteLine($"+{new string('-', j)}+");
                     var item = p.Itens
                     .GroupBy(j => j.Name)
                     .Select(i => new ProductCartModel()
@@ -66,8 +66,9 @@ namespace SingleExperience.Services.ClientServices.Models
                         Console.WriteLine($"|#{i.ProductId}{new string(' ', j - 1 - i.ProductId.ToString().Length)}|");
                         Console.WriteLine($"|{i.Name}{new string(' ', j - i.Name.Length)}|");
                         Console.WriteLine($"|Qtde: {i.Amount}{new string(' ', j - 6 - i.Amount.ToString().Length)}|");
-                        Console.WriteLine($"|{i.Price.ToString("F2", CultureInfo.InvariantCulture)}{new string(' ', j - i.Price.ToString().Length)}|");
-
+                        Console.WriteLine($"|{i.Price.ToString("F2", CultureInfo.InvariantCulture)}{new string(' ', j - 3 - i.Price.ToString().Length)}|");
+                        Console.WriteLine($"|{new string(' ', j)}|");
+                        Console.WriteLine($"+{new string('-', j)}+");
                     });
                     var total = cart.TotalCart(session);
                     Console.WriteLine($"Total do Pedido: R$ {totalPrice}");

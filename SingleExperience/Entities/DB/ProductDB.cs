@@ -12,13 +12,11 @@ namespace SingleExperience.Entities.DB
     {
         private string CurrentDirectory = null;
         private string path = null;
-        private string header;
 
         public ProductDB()
         {
             CurrentDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             path = CurrentDirectory + @"..\..\..\..\\Database\Products.csv";
-            header = "";
         }
 
         //Lê o arquivo CSV Produtos
@@ -64,6 +62,13 @@ namespace SingleExperience.Entities.DB
             return prod;
         }
 
+        //Pega o header do CSV
+        public string GetHeader()
+        {
+            string[] carts = File.ReadAllLines(path, Encoding.UTF8);
+            return carts[0];
+        }
+
         //Quando o usuario compra um item, a quantidade do produto diminui
         public bool EditAmount(int productId, int amount)
         {
@@ -76,7 +81,7 @@ namespace SingleExperience.Entities.DB
                 {
                     using (StreamWriter writer = new StreamWriter(path))
                     {
-                        lines.Add(header);
+                        lines.Add(GetHeader());
                         listItens.ForEach(p =>
                         {
                             var aux = new string[]

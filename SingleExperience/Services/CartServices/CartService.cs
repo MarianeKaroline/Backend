@@ -125,8 +125,7 @@ namespace SingleExperience.Services.CartServices
             {
                 card.ForEach(i =>
                 {
-                    var teste = i.CardNumber.ToString().Substring(12);
-                    if (teste == confirmation)
+                    if (i.CardNumber.ToString().Substring(12) == confirmation)
                     {
                         preview.NumberCard = i.CardNumber.ToString();
                     }
