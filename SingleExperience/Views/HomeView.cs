@@ -20,6 +20,8 @@ namespace SingleExperience.Views
             var signUp = new SignUpView();
             var client = new ClientService();
             var cart = new CartView();
+            var opc = 0;
+            var invalid = true;
 
             Console.WriteLine("\n0. Precisa de ajuda?");
             Console.WriteLine("1. Buscar por categoria");
@@ -35,7 +37,19 @@ namespace SingleExperience.Views
             }
             Console.WriteLine("9. Sair do Sistema");
             Console.WriteLine("\n5. Selecionar um produto");
-            int opc = int.Parse(Console.ReadLine());
+            while (invalid)
+            {
+                try
+                {
+                    opc = int.Parse(Console.ReadLine());
+                    invalid = false;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Opção inválida, tente novamente.");
+                }
+
+            }
 
             switch (opc)
             {
@@ -46,8 +60,10 @@ namespace SingleExperience.Views
                     Console.WriteLine("Contate-nos: ");
                     Console.WriteLine("Telefone: (41) 1234-5678");
                     Console.WriteLine("Email: exemplo@email.com");
+                    Console.WriteLine("Tecle enter para continuar");
+                    Console.ReadLine();
 
-                    Menu(countProductCart, session);
+                    ListProducts(countProductCart, session);
                     break;
                 case 1:
                     Search(countProductCart, session);
@@ -58,8 +74,8 @@ namespace SingleExperience.Views
                 case 3:
                     if (session.Length == 11)
                     {
-                        client.SignOut();
-                        ListProducts(countProductCart, session);
+                        var ip = client.SignOut();
+                        ListProducts(countProductCart, ip);
                     }
                     else
                     {

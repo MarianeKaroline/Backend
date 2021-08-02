@@ -1,6 +1,7 @@
 ﻿using SingleExperience.Entities.DB;
 using SingleExperience.Services.ClientServices.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SingleExperience.Services.ClientServices
 {
@@ -13,9 +14,12 @@ namespace SingleExperience.Services.ClientServices
             var client = clientDB.GetClient(signIn.Email);
             string session = "";
 
-            if (client.Password == signIn.Password)
+            if (client != null)
             {
-                session = client.Cpf;
+                if (client.Password == signIn.Password)
+                {
+                    session = client.Cpf;
+                }
             }
 
             return session;
@@ -44,7 +48,7 @@ namespace SingleExperience.Services.ClientServices
             var card = clientDB.ListCard(session);
             var hasCard = false;
 
-            if (card != null)
+            if (card.Count != 0)
             {
                 hasCard = true;
             }
@@ -59,16 +63,14 @@ namespace SingleExperience.Services.ClientServices
             var card = clientDB.ListCard(session);
             var cards = new List<ShowCard>();
 
-            card.ForEach(i =>
-            {
-                var showCards = new ShowCard();
-                showCards.CardNumber = i.CardNumber.ToString();
-                showCards.Name = i.Name;
-                showCards.ShelfLife = i.ShelfLife;
-
-                cards.Add(showCards);
-
-            });
+            cards = card
+                .Select(i => new ShowCard
+                {
+                    CardNumber = i.CardNumber.ToString(),
+                    Name = i.Name,
+                    ShelfLife = i.ShelfLife
+                })
+                .ToList();
             return cards;
         }        
     }

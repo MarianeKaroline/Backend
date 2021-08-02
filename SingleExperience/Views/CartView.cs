@@ -56,12 +56,14 @@ namespace SingleExperience.Views
                 }
             });
 
-            Console.WriteLine($"\nSubtotal ({total.TotalAmount} itens): R${total.TotalPrice}");
+            Console.WriteLine($"\nSubtotal ({total.TotalAmount} itens): R${total.TotalPrice.ToString("F2", CultureInfo.InvariantCulture)}");
             Menu(itens, session);
         }
 
         public void Menu(List<ProductCartModel> list, string session)
         {
+            var op = 0;
+            var invalid = true;
             var inicio = new HomeView();
             var productCategory = new ProductCategoryView();
             var payment = new PaymentMethodView();
@@ -90,7 +92,19 @@ namespace SingleExperience.Views
                 Console.WriteLine("6. Desconectar-se");
             }
             Console.WriteLine("9. Sair do Sistema");
-            int op = int.Parse(Console.ReadLine());
+            while (invalid)
+            {
+                try
+                {
+                    op = int.Parse(Console.ReadLine());
+                    invalid = false;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Opção inválida, tente novamente.");
+                }
+
+            }
 
             switch (op)
             {
@@ -179,7 +193,8 @@ namespace SingleExperience.Views
                 case 6:
                     if (session.Length == 11)
                     {
-                        client.SignOut();
+                        var ip = client.SignOut();
+                        ListCart(ip);
                     }
                     else
                     {

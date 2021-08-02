@@ -65,6 +65,8 @@ namespace SingleExperience.Views
             var category = (CategoryProductEnum)list.CategoryId;
             var cart = new CartService();
             var cartDB = new CartDB();
+            var op = 0;
+            var invalid = true;
 
             Console.WriteLine("\n0. Início");
             Console.WriteLine("1. Pesquisar por categoria");
@@ -80,8 +82,19 @@ namespace SingleExperience.Views
             {
                 Console.WriteLine("5. Desconectar-se");
             }
-            Console.WriteLine("9. Sair do Sistema");
-            int op = int.Parse(Console.ReadLine());
+            Console.WriteLine("9. Sair do Sistema"); 
+            while (invalid)
+            {
+                try
+                {
+                    op = int.Parse(Console.ReadLine());
+                    invalid = false;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Opção inválida, tente novamente.");
+                }
+            }
 
             switch (op)
             {
@@ -116,8 +129,8 @@ namespace SingleExperience.Views
                 case 5:
                     if (session.Length == 11)
                     {
-                        client.SignOut();
-                        SelectedProduct(productId, countProduct, session);
+                        var ip = client.SignOut();
+                        SelectedProduct(productId, countProduct, ip);
                     }
                     else
                     {

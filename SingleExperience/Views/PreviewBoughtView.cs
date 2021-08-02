@@ -45,9 +45,9 @@ namespace SingleExperience.Views
                     if (payment == PaymentMethodEnum.CreditCard)
                         Console.WriteLine($"|(Crédito) com final {p.NumberCard.Substring(12, p.NumberCard.Length - 12)}{new string(' ', j - $"(Crédito) com final {p.NumberCard.Substring(12, p.NumberCard.Length - 12)}".Length)}|");
                     else if (payment == PaymentMethodEnum.BankSlip)
-                        Console.WriteLine($"(Boleto){new string(' ', j - "(Boleto)".Length)}|");
+                        Console.WriteLine($"|(Boleto) {p.Code}{new string(' ', j - $"(Boleto) {p.Code}".Length)}|");
                     else
-                        Console.WriteLine($"(PIX){new string(' ', j - "(PIX)".Length)}|");
+                        Console.WriteLine($"|(PIX) {p.Pix}{new string(' ', j - $"(PIX) {p.Pix}".Length)}|");
                     Console.WriteLine($"|{new string(' ', j)}|");
                     Console.WriteLine($"+{new string('-', j)}+");
                     var item = p.Itens
@@ -83,9 +83,9 @@ namespace SingleExperience.Views
                 });
 
             Console.WriteLine("\nResumo do pedido");
-            Console.WriteLine($"Itens: R$ {total.TotalPrice}");
+            Console.WriteLine($"Itens: R$ {total.TotalPrice.ToString("F2", CultureInfo.InvariantCulture)}");
             Console.WriteLine("Frete: R$ 0,00");
-            Console.WriteLine($"\nTotal do Pedido: R$ {total.TotalPrice}");
+            Console.WriteLine($"\nTotal do Pedido: R$ {total.TotalPrice.ToString("F2", CultureInfo.InvariantCulture)}");
 
             Menu(listConfirmation, session, method, lastNumbers, total.TotalPrice);
         }

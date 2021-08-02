@@ -23,6 +23,8 @@ namespace SingleExperience.Views
 
         public void Methods(string session)
         {
+            var op = 0;
+            var invalid = true;
             Console.Clear();
 
             Console.WriteLine("\nCarrinho > Informações pessoais > Método de pagamento\n");
@@ -30,7 +32,18 @@ namespace SingleExperience.Views
             Console.WriteLine("1. Cartão de Crédito");
             Console.WriteLine("2. Boleto");
             Console.WriteLine("3. Pix");
-            int op = int.Parse(Console.ReadLine());
+            while (invalid)
+            {
+                try
+                {
+                    op = int.Parse(Console.ReadLine());
+                    invalid = false;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Opção inválida, tente novamente.");
+                }
+            }
 
             switch (op)
             {
@@ -51,6 +64,9 @@ namespace SingleExperience.Views
         public void CreditCard(string session)
         {
             CardModel card = new CardModel();
+            var op = 0;
+            char opc = '\0';
+            var invalid = true;
             if (client.HasCard(session))
             {
                 client.ShowCards(session)
@@ -59,13 +75,38 @@ namespace SingleExperience.Views
                         Console.WriteLine($"\n(Crédito) com final {p.CardNumber.Substring(12, p.CardNumber.Length - 12)}        {p.Name}        {p.ShelfLife}\n");
                     });
                 Console.Write("Escolher um desses cartões: (s/n) ");
-                char opc = char.Parse(Console.ReadLine().ToLower());
+                while (invalid)
+                {
+                    try
+                    {
+                        opc = char.Parse(Console.ReadLine());
+                        invalid = false;
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("Opção inválida, tente novamente.");
+                    }
+
+                }
 
                 switch (opc)
                 {
                     case 's':
+                        invalid = true;
                         Console.Write("\nDigite os últimos 4 números do cartão: ");
-                        string op = Console.ReadLine();
+                        while (invalid)
+                        {
+                            try
+                            {
+                                op = int.Parse(Console.ReadLine());
+                                invalid = false;
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("Opção inválida, tente novamente.");
+                            }
+
+                        }
 
                         preview.Bought(session, PaymentMethodEnum.CreditCard, op);
                         break;
@@ -119,6 +160,8 @@ namespace SingleExperience.Views
         public void Pix(string session)
         {
             string opc = "";
+            var op = 0;
+            var invalid = true;
 
             Console.WriteLine($"\n+{new string('-', j)}+\n");
             Console.WriteLine("Escolha uma chave");
@@ -126,7 +169,19 @@ namespace SingleExperience.Views
             Console.WriteLine("2. Celular");
             Console.WriteLine("3. E-mail");
             Console.WriteLine("4. Chave aleatória");
-            int op = int.Parse(Console.ReadLine());
+            while (invalid)
+            {
+                try
+                {
+                    op = int.Parse(Console.ReadLine());
+                    invalid = false;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Opção inválida, tente novamente.");
+                }
+
+            }
 
             switch (op)
             {

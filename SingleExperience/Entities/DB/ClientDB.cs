@@ -142,12 +142,13 @@ namespace SingleExperience.Entities.DB
 
         /* Cadastro */
         //Client
-        public string SignUp(SignUpModel client)
+        public bool SignUp(SignUpModel client)
         {
             var existClient = GetClient(client.Cpf);
             var existEmail = GetClient(client.Email);
             var address = File.ReadAllLines(pathAddress, Encoding.UTF8);
-            string msg = null;
+            var signUp = false;
+
             try
             {
                 var lines = new List<string>();
@@ -192,18 +193,11 @@ namespace SingleExperience.Entities.DB
                             sw.WriteLine(p);
                         });
                     }
-                    msg = "\nUsuário cadastrado com sucesso";
+                    signUp = true;
                 }
                 else
                 {
-                    if (existClient != null)
-                    {
-                        msg = "\nJá existe uma conta com este cpf";
-                    }
-                    else
-                    {
-                        msg = "\nJá existe uma conta com este email";
-                    }
+                    signUp = false;
                 }
             }
             catch (IOException e)
@@ -212,7 +206,7 @@ namespace SingleExperience.Entities.DB
                 Console.WriteLine(e.Message);
             }
 
-            return msg;
+            return signUp;
         }
 
         //CreditCard

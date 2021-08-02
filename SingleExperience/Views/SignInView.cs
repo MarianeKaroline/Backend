@@ -28,9 +28,18 @@ namespace SingleExperience.Views
             signIn.Password = ReadPassword();
 
             var sessionId = client.SignIn(signIn);
-            var total = cart.TotalCart(sessionId);
 
-            cartDB.EditUserId(sessionId);
+            if (sessionId == "")
+            {
+                System.Console.WriteLine("Usuário não existe");
+            }
+            else
+            {
+                cartDB.EditUserId(sessionId);
+            }
+
+                var total = cart.TotalCart(sessionId);
+
 
             if (home)
             {
@@ -48,6 +57,8 @@ namespace SingleExperience.Views
             var client = new ClientService();
             var cart = new CartView();
             var inicio = new HomeView();
+            var invalid = true;
+            var op = 0;
 
             Console.WriteLine("\n0. Início");
             Console.WriteLine("1. Pesquisar por categoria");
@@ -56,7 +67,19 @@ namespace SingleExperience.Views
             {
                 Console.WriteLine("3. Desconectar-se");
             }
-            int op = int.Parse(Console.ReadLine());
+            while (invalid)
+            {
+                try
+                {
+                    op = int.Parse(Console.ReadLine());
+                    invalid = false;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Opção inválida, tente novamente.");    
+                }
+
+            }
 
             switch (op)
             {
@@ -70,8 +93,8 @@ namespace SingleExperience.Views
                     cart.ListCart(session);
                     break;
                 case 3:
-                    client.SignOut();
-                    Login(countProductCart, session, home);
+                    var ip = client.SignOut();
+                    inicio.ListProducts(countProductCart, ip);
                     break;
                 default:
                     Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
@@ -96,15 +119,10 @@ namespace SingleExperience.Views
                 {
                     if (!string.IsNullOrEmpty(password))
                     {
-                        // remove one character from the list of password characters
                         password = password.Substring(0, password.Length - 1);
-                        // get the location of the cursor
                         int pos = Console.CursorLeft;
-                        // move the cursor to the left by one character
                         Console.SetCursorPosition(pos - 1, Console.CursorTop);
-                        // replace it with space
                         Console.Write(" ");
-                        // move the cursor to the left by one character again
                         Console.SetCursorPosition(pos - 1, Console.CursorTop);
                     }
                 }

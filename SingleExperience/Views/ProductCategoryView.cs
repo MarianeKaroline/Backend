@@ -22,11 +22,11 @@ namespace SingleExperience.Views
             Console.WriteLine($"\nInício > Pesquisa > {category}\n");
 
             ListProducts(id);
-            Menu(countProductCart, session);
+            Menu(countProductCart, session, id);
         }
         
         //Menu dos Produtos
-        public void Menu(int countProductCart, string session)
+        public void Menu(int countProductCart, string session, int id)
         {
             var client = new ClientService();
             var selectedProduct = new SelectedProductView();
@@ -34,6 +34,8 @@ namespace SingleExperience.Views
             var signUp = new SignUpView();
             var cart = new CartView();
             var inicio = new HomeView();
+            var op = 0;
+            var invalid = true;
 
             Console.WriteLine("\n0. Início");
             Console.WriteLine("1. Pesquisar por categoria");
@@ -49,7 +51,19 @@ namespace SingleExperience.Views
             }
             Console.WriteLine("9. Sair do Sistema");
             Console.WriteLine("\n5. Selecionar um produto");
-            int op = int.Parse(Console.ReadLine());
+            while (invalid)
+            {
+                try
+                {
+                    op = int.Parse(Console.ReadLine());
+                    invalid = false;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Opção inválida, tente novamente.");
+                }
+
+            }
 
             switch (op)
             {
@@ -65,8 +79,8 @@ namespace SingleExperience.Views
                 case 3:
                     if (session.Length == 11)
                     {
-                        client.SignOut();
-                        ListProducts(op);
+                        var ip = client.SignOut();
+                        Category(id, countProductCart, ip);
                     }
                     else
                     {
@@ -87,7 +101,7 @@ namespace SingleExperience.Views
                     {
                         Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                         Console.ReadKey();
-                        Menu(countProductCart, session);
+                        Menu(countProductCart, session, id);
                     }
                     break;
                 case 9:
@@ -96,7 +110,7 @@ namespace SingleExperience.Views
                 default:
                     Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                     Console.ReadKey();
-                    Menu(countProductCart, session);
+                    Menu(countProductCart, session, id);
                     break;
             }
 

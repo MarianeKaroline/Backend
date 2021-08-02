@@ -12,6 +12,7 @@ namespace SingleExperience.Views
         public void SignUp(int countProductCart, bool home)
         {
             var payment = new PaymentMethodView();
+            var cartView = new CartView();
             var cart = new CartService();
             var client = new SignUpModel();
             var cartDB = new CartDB();
@@ -58,23 +59,30 @@ namespace SingleExperience.Views
             Console.Write("Estado: ");
             client.State = Console.ReadLine();
 
-            var msg = clientDB.SignUp(client);
+            var signUp = clientDB.SignUp(client);
 
-            Console.WriteLine(msg);
-            Console.WriteLine("Tecle enter para continuar");
-            Console.ReadKey();
-
-            cartDB.EditUserId(client.Cpf);
-
-            var total = cart.TotalCart(client.Cpf);
-            if (home)
+            if (signUp)
             {
-                Menu(total.TotalAmount, client.Cpf, home);
+                cartDB.EditUserId(client.Cpf);
+                var total = cart.TotalCart(client.Cpf);
+                if (home)
+                {
+                    Menu(total.TotalAmount, client.Cpf, home);
+                }
+                else
+                {
+                    payment.Methods(client.Cpf);
+                }
             }
             else
             {
-                payment.Methods(client.Cpf);
+                Console.WriteLine("Tecle enter para continuar");
+                Console.ReadKey();
+                cartView.ListCart(clientDB.ClientId());
             }
+            
+
+
         }
 
         public bool passwords()
@@ -100,12 +108,26 @@ namespace SingleExperience.Views
             var client = new ClientService();
             var cart = new CartView();
             var inicio = new HomeView();
+            var op = 0;
+            var invalid = true;
 
             Console.WriteLine("\n0. Início");
             Console.WriteLine("1. Pesquisar por categoria");
             Console.WriteLine($"2. Ver Carrinho (quantidade: {countProductCart})");
             Console.WriteLine("3. Desconectar-se");
-            int op = int.Parse(Console.ReadLine());
+            while (invalid)
+            {
+                try
+                {
+                    op = int.Parse(Console.ReadLine());
+                    invalid = false;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Opção inválida, tente novamente.");
+                }
+
+            }
 
             switch (op)
             {
@@ -119,8 +141,8 @@ namespace SingleExperience.Views
                     cart.ListCart(session);
                     break;
                 case 3:
-                    client.SignOut();
-                    SignUp(countProductCart, home);
+                    var ip = client.SignOut();
+                    inicio.ListProducts(countProductCart, ip);
                     break;
                 default:
                     Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
@@ -145,15 +167,10 @@ namespace SingleExperience.Views
                 {
                     if (!string.IsNullOrEmpty(password))
                     {
-                        // remove one character from the list of password characters
                         password = password.Substring(0, password.Length - 1);
-                        // get the location of the cursor
                         int pos = Console.CursorLeft;
-                        // move the cursor to the left by one character
                         Console.SetCursorPosition(pos - 1, Console.CursorTop);
-                        // replace it with space
                         Console.Write(" ");
-                        // move the cursor to the left by one character again
                         Console.SetCursorPosition(pos - 1, Console.CursorTop);
                     }
                 }
