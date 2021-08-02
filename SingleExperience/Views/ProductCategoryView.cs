@@ -120,17 +120,7 @@ namespace SingleExperience.Views
         public void ListProducts(int categoryId)
         {
             var productService = new ProductService();
-            var itemCategory = productService.ListProductCategory(categoryId)
-                .GroupBy(i => i.Name)
-                .Select(j => new CategoryModel()
-                {
-                    ProductId = j.First().ProductId,
-                    Name = j.First().Name,
-                    Price = j.First().Price,
-                    CategoryId = j.First().CategoryId,
-                    Available = j.First().Available
-                })
-                .ToList();
+            var itemCategory = productService.ListProductCategory(categoryId);
             var j = 41;
 
             itemCategory.ForEach(p =>

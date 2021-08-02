@@ -15,12 +15,14 @@ namespace SingleExperience.Entities.DB
         private string CurrentDirectory = null;
         private string path = null;
         private string pathItens = null;
+        private string[] itensCart = null;
 
         public CartDB()
         {
             CurrentDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             path = CurrentDirectory + @"..\..\..\..\\Database\Cart.csv";
             pathItens = CurrentDirectory + @"..\..\..\..\\Database\ItensCart.csv";
+            itensCart = File.ReadAllLines(pathItens, Encoding.UTF8);
         }
 
         /* Lê Arquivo CSV */
@@ -55,39 +57,35 @@ namespace SingleExperience.Entities.DB
         //Pega o header do CSV
         public string GetHeader()
         {
-            string[] carts = File.ReadAllLines(pathItens, Encoding.UTF8);
-            return carts[0];
+            return itensCart[0];
         }
 
         //Itens Cart
-        public List<ItemEntitie> ListItens()
+        public List<ItemEntitie> ListItens(string userId)
         {
             var itens = new List<ItemEntitie>();
+            var iCarts = File.ReadAllLines(pathItens, Encoding.UTF8);
             try
             {
-                string[] itensCart = File.ReadAllLines(pathItens, Encoding.UTF8);
                 using (StreamReader sr = File.OpenText(pathItens))
                 {
-                    itensCart
+                    itens = itensCart
                         .Skip(1)
-                        .ToList()
-                        .ForEach(p =>
+                        .Select(i => new ItemEntitie
                         {
-                            string[] fields = p.Split(',');
+                            ProductCartId = int.Parse(i.Split(',')[0]),
+                            ProductId = int.Parse(i.Split(',')[1]),
+                            UserId = i.Split(',')[2],
+                            Name = i.Split(',')[3],
+                            CategoryId = int.Parse(i.Split(',')[4]),
+                            Amount = int.Parse(i.Split(',')[5]),
+                            StatusId = int.Parse(i.Split(',')[6]),
+                            Price = double.Parse(i.Split(',')[7]),
+                            IpComputer = i.Split(',')[8],
+                        })
+                        .Where(i => i.UserId == userId)
+                        .ToList();
 
-                            var item = new ItemEntitie();
-                            item.ProductCartId = int.Parse(fields[0]);
-                            item.ProductId = int.Parse(fields[1]);
-                            item.UserId = fields[2];
-                            item.Name = fields[3];
-                            item.CategoryId = int.Parse(fields[4]);
-                            item.Amount = int.Parse(fields[5]);
-                            item.StatusId = int.Parse(fields[6]);
-                            item.Price = double.Parse(fields[7]);
-                            item.IpComputer = fields[8];
-
-                            itens.Add(item);
-                        });
                 }
             }
             catch (IOException e)
@@ -103,7 +101,7 @@ namespace SingleExperience.Entities.DB
         public void AddItensCart(CartModel cart)
         {
             var cartDB = new CartDB();
-            var listItensCart = cartDB.ListItens();
+            var listItensCart = cartDB.ListItens(cart.UserId);
             var linesCart = new List<string>();
             var linesItens = new List<string>();
             var aux = 0;
@@ -113,12 +111,12 @@ namespace SingleExperience.Entities.DB
             {
                 listItensCart.ForEach(i =>
                 {
-                    if (i.ProductId == cart.ProductId && i.UserId == cart.UserId && i.StatusId != Convert.ToInt32(StatusProductEnum.Ativo))
+                    if (i.ProductId == cart.ProductId && i.StatusId != Convert.ToInt32(StatusProductEnum.Ativo))
                     {
                         EditStatusProduct(cart.ProductId, cart.UserId, StatusProductEnum.Ativo);
                         aux++;
                     }
-                    else if (i.ProductId == cart.ProductId && i.UserId == cart.UserId)
+                    else if (i.ProductId == cart.ProductId)
                     {
                         sum += i.Amount;
                         EditAmount(cart.ProductId, cart.UserId, sum);
@@ -164,7 +162,7 @@ namespace SingleExperience.Entities.DB
         public void EditAmount(int productId, string session, int sub)
         {
             var cartDB = new CartDB();
-            var listItens = cartDB.ListItens();
+            var listItens = cartDB.ListItens(session);
             var lines = new List<string>();
 
             if (File.Exists(pathItens))
@@ -187,7 +185,8 @@ namespace SingleExperience.Entities.DB
                             p.IpComputer.ToString()
                         };
 
-                        if (p.ProductId == productId && p.UserId == session)
+                        //Atualiza a linha que contém o produtoId
+                        if (p.ProductId == productId)
                         {
                             aux = new string[]
                             {
@@ -213,7 +212,7 @@ namespace SingleExperience.Entities.DB
         public void EditStatusProduct(int productId, string session, StatusProductEnum status)
         {
             var cartDB = new CartDB();
-            var listItens = cartDB.ListItens();
+            var listItens = cartDB.ListItens(session);
             var lines = new List<string>();
 
 
@@ -237,7 +236,7 @@ namespace SingleExperience.Entities.DB
                             p.IpComputer.ToString()
                         };
 
-                        if (p.ProductId == productId && p.UserId == session)
+                        if (p.ProductId == productId)
                         {
                             aux = new string[]
                             {
@@ -294,10 +293,10 @@ namespace SingleExperience.Entities.DB
                 }
             }
 
-            if (cart.ListItens() != null && cart.ListItens().Count != 0)
+            if (cart.ListItens(session) != null && cart.ListItens(session).Count != 0)
             {
                 linesItens.Add(GetHeader());
-                cart.ListItens()
+                cart.ListItens(session)
                     .ForEach(i =>
                     {
                         using (StreamWriter writer = new StreamWriter(pathItens))

@@ -187,17 +187,7 @@ namespace SingleExperience.Views
         {
             var client = new ClientService();
             var productService = new ProductService();
-            var products = productService.ListProducts()
-                .GroupBy(i => i.Name)
-                .Select(j => new BestSellingModel()
-                {
-                    ProductId = j.First().ProductId,
-                    Name = j.First().Name,
-                    Price = j.First().Price,
-                    Available = j.First().Available,
-                    Ranking = j.Sum(ij => ij.Ranking)
-                })
-                .ToList();
+            var products = productService.ListProducts();
             var j = 41;
 
             Console.Clear();
