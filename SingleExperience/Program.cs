@@ -19,17 +19,6 @@ namespace SingleExperience
             CartService cartService = new CartService();
             var countProducts = cartService.TotalCart(session);
 
-            //Se a quantidade no carrinho for maior que 0, os produtos irão durar 20min
-            //if (countProducts.TotalAmount > 0)
-            //{
-            //    var periodTimeSpan = TimeSpan.FromMinutes(20);
-
-            //    var timer = new Timer((e) =>
-            //    {
-            //        cartService.RemoveAllCart(session);
-            //    }, null, periodTimeSpan, periodTimeSpan);
-            //}
-
             //Chama a home para ser exibida inicialmente
             HomeView inicio = new HomeView();
             inicio.ListProducts(countProducts.TotalAmount, session);

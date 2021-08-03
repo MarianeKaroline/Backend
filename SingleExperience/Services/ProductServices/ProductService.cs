@@ -9,21 +9,23 @@ namespace SingleExperience.Services.ProductServices
 {
     class ProductService
     {
-        ProductDB product;
+        private ProductDB product;
+        private List<ProductEntitie> list;
 
         public ProductService()
         {
             product = new ProductDB();
+            list = product.ListProducts();
         }
 
         //Listar Produtos Home
         public List<BestSellingModel> ListProducts()
         {
-            var list = product.ListProducts();
             var bestSellingModel = new List<BestSellingModel>();
 
             list
-                .Where(p => p.Available == true && p.Ranking >= 15)
+                .Where(p => p.Available == true)
+                .OrderByDescending(p => p.Ranking)
                 .Take(5)
                 .ToList()
                 .ForEach(p =>
@@ -44,56 +46,48 @@ namespace SingleExperience.Services.ProductServices
         //Listar Produtos Categoria
         public List<CategoryModel> ListProductCategory(int categoryId)
         {
-            var list = product.ListProducts();
-            var bestSelling = new List<CategoryModel>();
+            var productCategory = new List<CategoryModel>();
 
-            list
+            productCategory = list
                 .Where(p => p.Available == true && p.CategoryId == categoryId)
-                .ToList()
-                .ForEach(p =>
+                .Select(i => new CategoryModel()
                 {
-                    var selling = new CategoryModel();
-                    selling.ProductId = p.ProductId;
-                    selling.Name = p.Name;
-                    selling.Price = p.Price;
-                    selling.CategoryId = p.CategoryId;
-                    selling.Available = p.Available;
+                    ProductId = i.ProductId,
+                    Name = i.Name,
+                    Price = i.Price,
+                    CategoryId = i.CategoryId,
+                    Available = i.Available
+                })
+                .ToList();                
 
-                    bestSelling.Add(selling);
-                });
-
-            return bestSelling;
+            return productCategory;
         }
 
         //Listar Produto Selecionado
         public ProductSelectedModel SelectedProduct(int productId)
         {
-            var list = product.ListProducts();
             var selectedModels = new ProductSelectedModel();
 
-            list
+            selectedModels = list
                 .Where(p => p.Available == true && p.ProductId == productId)
-                .ToList()
-                .ForEach(p =>
+                .Select(i => new ProductSelectedModel()
                 {
-                    var product = new ProductSelectedModel();
-                    product.Rating = p.Rating;
-                    product.CategoryId = p.CategoryId;
-                    product.ProductId = p.ProductId;
-                    product.Name = p.Name;
-                    product.Price = p.Price;
-                    product.Amount = p.Amount;
-                    product.Detail = p.Detail;
-
-                    selectedModels = product;
-                });
+                    Rating = i.Rating,
+                    CategoryId = i.CategoryId,
+                    ProductId = i.ProductId,
+                    Name = i.Name,
+                    Price = i.Price,
+                    Amount = i.Amount,
+                    Detail = i.Detail
+                })
+                .FirstOrDefault();                
 
             return selectedModels;
         }
 
+        //Se existe o produto com o id que o usuário digitou
         public bool HasProduct(int code)
         {
-            var list = product.ListProducts();
             var has = false;
 
             if (list.Single(i => i.ProductId == code) != null)

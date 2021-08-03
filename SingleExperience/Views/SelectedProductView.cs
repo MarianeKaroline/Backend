@@ -73,7 +73,7 @@ namespace SingleExperience.Views
             Console.WriteLine($"2. Voltar para a categoria: {category}");
             Console.WriteLine("3. Adicionar produto ao carrinho");
             Console.WriteLine($"4. Ver Carrinho (Quantidade: {countProduct})");
-            if (session.Length == 10)
+            if (session.Length < 11)
             {
                 Console.WriteLine("5. Fazer Login");
                 Console.WriteLine("6. Cadastrar-se");

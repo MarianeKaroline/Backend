@@ -22,11 +22,12 @@ namespace SingleExperience.Views
             var cart = new CartView();
             var opc = 0;
             var invalid = true;
+            var invalidCode = true;
 
             Console.WriteLine("\n0. Precisa de ajuda?");
             Console.WriteLine("1. Buscar por categoria");
             Console.WriteLine($"2. Ver Carrinho (Quantidade: {countProductCart})");
-            if (session.Length == 10)
+            if (session.Length < 11)
             {
                 Console.WriteLine("3. Fazer Login");
                 Console.WriteLine("4. Cadastrar-se");
@@ -86,18 +87,31 @@ namespace SingleExperience.Views
                     signUp.SignUp(countProductCart, true);
                     break;
                 case 5:
-                    Console.Write("\nDigite o código # do produto: ");
-                    int code = int.Parse(Console.ReadLine());
-                    if (product.HasProduct(code))
+                    Console.Write("\nDigite o código # do produto: "); 
+                    while (invalidCode)
                     {
-                        selectedProduct.SelectedProduct(code, countProductCart, session);
+                        try
+                        {
+                            int code = int.Parse(Console.ReadLine());
+                            if (product.HasProduct(code))
+                            {
+                                selectedProduct.SelectedProduct(code, countProductCart, session);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
+                                Console.ReadKey();
+                                Menu(countProductCart, session);
+                            }
+                            invalidCode = false;
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Opção inválida, tente novamente.");
+                        }
+
                     }
-                    else
-                    {
-                        Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
-                        Console.ReadKey();
-                        Menu(countProductCart, session);
-                    }
+                    
                     break;
                 case 9:
                     Environment.Exit(0);
@@ -173,17 +187,7 @@ namespace SingleExperience.Views
         {
             var client = new ClientService();
             var productService = new ProductService();
-            var products = productService.ListProducts()
-                .GroupBy(i => i.Name)
-                .Select(j => new BestSellingModel()
-                {
-                    ProductId = j.First().ProductId,
-                    Name = j.First().Name,
-                    Price = j.First().Price,
-                    Available = j.First().Available,
-                    Ranking = j.Sum(ij => ij.Ranking)
-                })
-                .ToList();
+            var products = productService.ListProducts();
             var j = 41;
 
             Console.Clear();

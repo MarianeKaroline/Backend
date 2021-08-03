@@ -10,6 +10,6 @@ namespace SingleExperience.Services.ClientServices.Models
         public string Name { get; set; }
         public DateTime ShelfLife { get; set; }
         public int CVV { get; set; }
-        public long ClientId { get; set; }
+        public string UserId { get; set; }
     }
 }

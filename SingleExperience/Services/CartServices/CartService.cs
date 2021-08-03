@@ -6,6 +6,7 @@ using SingleExperience.Services.ProductServices.Models.CartModels;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Entities.Enums;
 using SingleExperience.Entities.DB;
+using SingleExperience.Entities.CartEntities;
 
 namespace SingleExperience.Services.CartServices
 {
@@ -24,27 +25,24 @@ namespace SingleExperience.Services.CartServices
         //Listar produtos no carrinho
         public List<ProductCartModel> ItemCart(string session, StatusProductEnum status)
         {
-            var itensCart = cartDB.ListItens();
+            var itensCart = cartDB.ListItens(session);
             var prod = new List<ProductCartModel>();
 
             try
             {
-                itensCart
+                prod = itensCart
                     .Where(i => i.UserId == session && i.StatusId == Convert.ToInt32(status))
-                    .ToList()
-                    .ForEach(j =>
+                    .Select(j => new ProductCartModel()
                     {
-                        var prodCart = new ProductCartModel();
-                        prodCart.ProductId = j.ProductId;
-                        prodCart.Name = j.Name;
-                        prodCart.StatusId = j.StatusId;
-                        prodCart.CategoryId = j.CategoryId;
-                        prodCart.Price = j.Price;
-                        prodCart.Amount = j.Amount;
-                        prodCart.UserId = j.UserId;
-
-                        prod.Add(prodCart);
-                    });
+                        ProductId = j.ProductId,
+                        Name = j.Name,
+                        StatusId = j.StatusId,
+                        CategoryId = j.CategoryId,
+                        Price = j.Price,
+                        Amount = j.Amount,
+                        UserId = j.UserId
+                    })
+                    .ToList();
             }
             catch (IOException e)
             {
@@ -73,12 +71,12 @@ namespace SingleExperience.Services.CartServices
         //Remove um item do carrinho
         public void RemoveItem(int productId, string session)
         {
-            var listItens = cartDB.ListItens();
+            var listItens = cartDB.ListItens(session);
             var sum = 0;
             var count = 0;
 
             listItens
-                .Where(i => i.UserId == session && i.ProductId == productId)
+                .Where(i => i.ProductId == productId)
                 .ToList()
                 .ForEach(p => 
                 {
@@ -96,14 +94,13 @@ namespace SingleExperience.Services.CartServices
         }
 
         //Ver produtos antes da compra e depois
-        public List<PreviewBoughtModel> PreviewBoughts(string session, PaymentMethodEnum method, string confirmation, StatusProductEnum status)
+        public PreviewBoughtModel PreviewBoughts(string session, PaymentMethodEnum method, string confirmation, StatusProductEnum status)
         {
-            var list = new List<PreviewBoughtModel>();
             var preview = new PreviewBoughtModel();
             var client = clientDB.GetClient(session);
             var address = clientDB.ListAddress(client.AddressId);
             var card = clientDB.ListCard(session);
-            var itens = cartDB.ListItens();
+            var itens = cartDB.ListItens(session);
 
             //Pega alguns atributos do cliente
             preview.FullName = client.FullName;
@@ -121,15 +118,16 @@ namespace SingleExperience.Services.CartServices
                 });
 
             preview.Method = method;
-            if (method == PaymentMethodEnum.CreditCard) //Só ira adicionar o número do cartão se o método for cartão
+
+            if (method == PaymentMethodEnum.CreditCard)
             {
-                card.ForEach(i =>
-                {
-                    if (i.CardNumber.ToString().Substring(12) == confirmation)
+                card
+                    .Where(i => i.CardNumber.ToString().Contains(confirmation))
+                    .ToList()
+                    .ForEach(i =>
                     {
                         preview.NumberCard = i.CardNumber.ToString();
-                    }
-                });
+                    });
             }
             else if (method == PaymentMethodEnum.BankSlip)
             {
@@ -141,8 +139,9 @@ namespace SingleExperience.Services.CartServices
             }
 
             preview.Itens = ItemCart(session, status);
-            list.Add(preview);
-            return list;
+
+
+            return preview;
         }
 
         //Depois que confirma a compra, chama os métodos para alterar os status e diminuir a quantidade

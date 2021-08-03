@@ -72,7 +72,6 @@ namespace SingleExperience.Views
                 client.ShowCards(session)
                     .ForEach(p => 
                     {
-                        Console.WriteLine("Número do cartão                   Nome no cartão                 Validade");
                         Console.WriteLine($"\n(Crédito) com final {p.CardNumber.Substring(12)}        {p.Name}        {p.ShelfLife.ToString("MM/yyyy")}\n");
                     });
                 Console.Write("Escolher um desses cartões: (s/n) ");
@@ -152,61 +151,16 @@ namespace SingleExperience.Views
 
         public void BankSlip(string session)
         {
-            var rand = new Random();
-            var numberCode = rand.Next(100000000, 200000000);
+            var numberCode = Guid.NewGuid();
 
             preview.Bought(session, PaymentMethodEnum.BankSlip, numberCode.ToString());
         }
 
         public void Pix(string session)
-        {
-            string opc = "";
-            var op = 0;
-            var invalid = true;
+        {           
+            var numberPix = Guid.NewGuid();
 
-            Console.WriteLine($"\n+{new string('-', j)}+\n");
-            Console.WriteLine("Escolha uma chave");
-            Console.WriteLine("1. CPF");
-            Console.WriteLine("2. Celular");
-            Console.WriteLine("3. E-mail");
-            Console.WriteLine("4. Chave aleatória");
-            while (invalid)
-            {
-                try
-                {
-                    op = int.Parse(Console.ReadLine());
-                    invalid = false;
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("Opção inválida, tente novamente.");
-                }
-
-            }
-
-            switch (op)
-            {
-                case 1:
-                    Console.Write("Digite o CPF: ");
-                    opc = Console.ReadLine();
-                    break;
-                case 2:
-                    Console.Write("Digite o número de celular: ");
-                    opc = Console.ReadLine();
-                    break;
-                case 3:
-                    Console.Write("Digite o e-mail: ");
-                    opc = Console.ReadLine();
-                    break;
-                case 4:
-                    Console.Write("Digite o chave aleatória: ");
-                    opc = Console.ReadLine();
-                    break;
-                default:
-                    break;
-            }
-
-            preview.Bought(session, PaymentMethodEnum.Pix, opc);
+            preview.Bought(session, PaymentMethodEnum.Pix, numberPix.ToString());
         }
     }
 }
