@@ -19,7 +19,7 @@ namespace SingleExperience.Services.ClientServices.Models
             var bought = new BuyProductModel();
             var payment = (PaymentMethodEnum)method;
             var data = cart.PreviewBoughts(session, payment, lastNumbers, StatusProductEnum.Comprado);
-            var j = 41;
+            var j = 51;
 
             var buy = cart.Buy(buyProducts, session);
 

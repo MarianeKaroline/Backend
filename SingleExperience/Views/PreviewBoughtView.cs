@@ -25,11 +25,11 @@ namespace SingleExperience.Views
             var data = cart.PreviewBoughts(session, payment, lastNumbers, StatusProductEnum.Ativo);
             var total = cart.TotalCart(session);
             var listConfirmation = new List<BuyProductModel>();
-            var j = 41;
+            var j = 51;
 
-            Console.WriteLine("\nCarrinho > Informações pessoais > Método de pagamento > Confirma compra\n");
 
             Console.Clear();
+            Console.WriteLine("\nCarrinho > Informações pessoais > Método de pagamento > Confirma compra\n");
 
             Console.WriteLine($"+{new string('-', j)}+");
             Console.WriteLine($"|Endereço de entrega{new string(' ', j - "Endereço de entrega".Length)}|");
@@ -97,10 +97,23 @@ namespace SingleExperience.Views
             var total = cart.TotalCart(session);
             var finished = new FinishedView();
             var cartView = new CartView();
+            var validate = true;
+            var op = 0;
 
             Console.WriteLine("\n1. Confirmar Compra");
             Console.WriteLine($"2. Voltar para o carrinho {total.TotalAmount}");
-            var op = int.Parse(Console.ReadLine());
+            while (validate)
+            {
+                try
+                {
+                    op = int.Parse(Console.ReadLine());
+                    validate = false;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Opção inválida, tente novamente.\n");
+                }
+            }
 
             switch (op)
             {
@@ -116,6 +129,8 @@ namespace SingleExperience.Views
                     cartView.ListCart(session);
                     break;
                 default:
+                    Console.WriteLine("Opção inválida, tente novamente");
+                    Menu(list, session, method, lastNumbers, totalPrice);
                     break;
             }
         }

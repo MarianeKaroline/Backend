@@ -18,8 +18,6 @@ namespace SingleExperience.Services.CartServices
         public CartService()
         {
             productDB = new ProductDB();
-            //Quando eu chamo o cartDB, ele já lê o arquivo itensCart, porém enquanto as atualizações está ocorrendo aqui, ele não atualiza lá
-
             cartDB = new CartDB();
             clientDB = new ClientDB();
         }
@@ -133,6 +131,7 @@ namespace SingleExperience.Services.CartServices
             }
             else if (method == PaymentMethodEnum.BankSlip)
             {
+                var a = confirmation.Length;
                 preview.Code = confirmation;
             }
             else

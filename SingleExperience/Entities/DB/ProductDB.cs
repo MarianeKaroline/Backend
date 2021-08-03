@@ -12,6 +12,7 @@ namespace SingleExperience.Entities.DB
         private string CurrentDirectory = null;
         private string path = null;
         private string[] products;
+        public string header = "";
 
         public ProductDB()
         {
@@ -27,7 +28,7 @@ namespace SingleExperience.Entities.DB
 
             try
             {
-
+                header = products[0];
                 using (StreamReader sr = File.OpenText(path))
                 {
                     products
@@ -62,12 +63,6 @@ namespace SingleExperience.Entities.DB
             return prod;
         }
 
-        //Pega o header do CSV
-        public string GetHeader()
-        {
-            return products[0];
-        }
-
         //Quando o usuario compra um item, a quantidade do produto diminui
         public bool EditAmount(int productId, int amount)
         {
@@ -78,7 +73,7 @@ namespace SingleExperience.Entities.DB
             {
                 if (File.Exists(path))
                 {
-                    lines.Add(GetHeader());
+                    lines.Add(header);
                     using (StreamWriter writer = new StreamWriter(path))
                     {
                         listItens.ForEach(p =>

@@ -15,12 +15,20 @@ namespace SingleExperience.Entities.DB
         private string CurrentDirectory = null;
         private string path = null;
         private string pathItens = null;
+        public string header = "";
 
         public CartDB()
         {
             CurrentDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             path = CurrentDirectory + @"..\..\..\..\\Database\Cart.csv";
             pathItens = CurrentDirectory + @"..\..\..\..\\Database\ItensCart.csv";
+        }
+
+        //Lê Todas as linhas quando pedir
+        //Preciso pra que quando eu tiver que atualizar o arquivo csv, eu tenha todas as linhas da tabela
+        public string[] ReadItens()
+        {
+            return File.ReadAllLines(pathItens, Encoding.UTF8);
         }
 
         /* Lê Arquivo CSV */
@@ -52,24 +60,13 @@ namespace SingleExperience.Entities.DB
             return cart;
         }
 
-        //Lê Todas as linhas quando pedir
-        public string[] ReadItens()
-        {
-            return File.ReadAllLines(pathItens, Encoding.UTF8);
-        }
-
-        //Pega o header do CSV
-        public string GetHeader()
-        {
-            return ReadItens()[0];
-        }
-
         //Itens Cart
         public List<ItemEntitie> ListItens(string userId)
         {
-            var itens = new List<ItemEntitie>();            
+            var itens = new List<ItemEntitie>();
             try
             {
+                header = ReadItens()[0];
                 using (StreamReader sr = File.OpenText(pathItens))
                 {
                     itens = ReadItens()
@@ -103,8 +100,7 @@ namespace SingleExperience.Entities.DB
         //Cria itens do carrinho, porém o carrinho só irá ser criado quando o usuário estiver logado
         public void AddItensCart(CartModel cart)
         {
-            var cartDB = new CartDB();
-            var listItensCart = cartDB.ListItens(cart.UserId);
+            var listItensCart = ListItens(cart.UserId);
             var linesCart = new List<string>();
             var linesItens = new List<string>();
             var aux = 0;
@@ -164,13 +160,12 @@ namespace SingleExperience.Entities.DB
         //Edita a quantidade do item, caso o usuário adiciona o produto mais uma vez no carrinho
         public void EditAmount(int productId, string session, int sub)
         {
-            var cartDB = new CartDB();
-            var listItens = cartDB.ListItens(session);
+            var listItens = ListItens(session);
             var lines = new List<string>();
 
             if (File.Exists(pathItens))
             {
-                lines.Add(GetHeader());
+                lines.Add(header);
                 using (StreamWriter writer = new StreamWriter(pathItens))
                 {
                     listItens.ForEach(p =>
@@ -221,7 +216,7 @@ namespace SingleExperience.Entities.DB
 
             if (File.Exists(pathItens))
             {
-                lines.Add(GetHeader());
+                lines.Add(header);
                 using (StreamWriter writer = new StreamWriter(pathItens))
                 {
                     listItens.ForEach(p =>
@@ -269,7 +264,7 @@ namespace SingleExperience.Entities.DB
             var ipComputer = client.ClientId();
             var currentCart = cart.GetCart(session);
             var linesCart = new List<string>();
-            var linesItens = new List<string>();
+            var linesItens = new string[ReadItens().Length];
 
             //Create Cart
             if (currentCart == null)
@@ -296,50 +291,31 @@ namespace SingleExperience.Entities.DB
                 }
             }
 
-            if (cart.ListItens(session) != null && cart.ListItens(session).Count != 0)
+            //Atualiza os itens para a sessão do usuário logado
+            for (int i = 0; i < ReadItens().Length; i++)
             {
-                linesItens.Add(GetHeader());
-                cart.ListItens(session)
-                    .ForEach(i =>
-                    {
-                        using (StreamWriter writer = new StreamWriter(pathItens))
-                        {
-                            var auxItens = new string[]
-                            {
-                                i.ProductCartId.ToString(),
-                                i.ProductId.ToString(),
-                                i.UserId,
-                                i.Name,
-                                i.CategoryId.ToString(),
-                                i.Amount.ToString(),
-                                i.StatusId.ToString(),
-                                i.Price.ToString(),
-                                i.IpComputer,
-                            };
-
-                            if (i.IpComputer == i.UserId && i.IpComputer == ipComputer)
-                            {
-                                auxItens = new string[]
-                                {
-                                    i.ProductCartId.ToString(),
-                                    i.ProductId.ToString(),
-                                    session,
-                                    i.Name,
-                                    i.CategoryId.ToString(),
-                                    i.Amount.ToString(),
-                                    i.StatusId.ToString(),
-                                    i.Price.ToString(),
-                                    i.IpComputer,
-                                };
-                            }
-                            linesItens.Add(String.Join(",", auxItens));
-                        }
-                    });
-                if (linesItens.Count != 0)
+                linesItens[i] = ReadItens()[i];
+                if (ReadItens()[i].Contains($",{ipComputer},") && ReadItens()[i].Contains($",{ipComputer}"))
                 {
-                    File.WriteAllLines(pathItens, linesItens);
+                    var aux = ReadItens()[i].Split(',');
+
+                    var auxItens = new string[]
+                    {
+                        aux[0],
+                        aux[1],
+                        session,
+                        aux[3],
+                        aux[4],
+                        aux[5],
+                        aux[6],
+                        aux[7],
+                        aux[8]
+                    };
+                    linesItens[i] = String.Join(',', auxItens);
                 }
             }
+
+            File.WriteAllLines(pathItens, linesItens);
         }
     }
 }
