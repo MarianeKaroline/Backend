@@ -15,14 +15,12 @@ namespace SingleExperience.Entities.DB
         private string CurrentDirectory = null;
         private string path = null;
         private string pathItens = null;
-        private string[] itensCart = null;
 
         public CartDB()
         {
             CurrentDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             path = CurrentDirectory + @"..\..\..\..\\Database\Cart.csv";
             pathItens = CurrentDirectory + @"..\..\..\..\\Database\ItensCart.csv";
-            itensCart = File.ReadAllLines(pathItens, Encoding.UTF8);
         }
 
         /* Lê Arquivo CSV */
@@ -54,22 +52,27 @@ namespace SingleExperience.Entities.DB
             return cart;
         }
 
+        //Lê Todas as linhas quando pedir
+        public string[] ReadItens()
+        {
+            return File.ReadAllLines(pathItens, Encoding.UTF8);
+        }
+
         //Pega o header do CSV
         public string GetHeader()
         {
-            return itensCart[0];
+            return ReadItens()[0];
         }
 
         //Itens Cart
         public List<ItemEntitie> ListItens(string userId)
         {
-            var itens = new List<ItemEntitie>();
-            var iCarts = File.ReadAllLines(pathItens, Encoding.UTF8);
+            var itens = new List<ItemEntitie>();            
             try
             {
                 using (StreamReader sr = File.OpenText(pathItens))
                 {
-                    itens = itensCart
+                    itens = ReadItens()
                         .Skip(1)
                         .Select(i => new ItemEntitie
                         {
