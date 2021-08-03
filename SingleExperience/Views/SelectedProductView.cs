@@ -1,10 +1,8 @@
 ﻿using SingleExperience.Services.ProductServices;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Entities.Enums;
-using System.Linq;
 using System;
 using System.Globalization;
-using System.Collections.Generic;
 using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.ProductServices.Models.ProductModels;

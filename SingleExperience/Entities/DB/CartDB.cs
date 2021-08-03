@@ -81,7 +81,7 @@ namespace SingleExperience.Entities.DB
                             Amount = int.Parse(i.Split(',')[5]),
                             StatusId = int.Parse(i.Split(',')[6]),
                             Price = double.Parse(i.Split(',')[7]),
-                            IpComputer = i.Split(',')[8],
+                            IpComputer = i.Split(',')[8]
                         })
                         .Where(i => i.UserId == userId)
                         .ToList();
@@ -128,7 +128,7 @@ namespace SingleExperience.Entities.DB
                 {
                     var auxItens = new String[]
                     {
-                        (listItensCart.Count + 1).ToString(),
+                        ReadItens().Length.ToString(),
                         cart.ProductId.ToString(),
                         cart.UserId.ToString(),
                         cart.Name.ToString(),
@@ -212,7 +212,9 @@ namespace SingleExperience.Entities.DB
             var cartDB = new CartDB();
             var listItens = cartDB.ListItens(session);
             var lines = new List<string>();
+            var auxAmount = 0;
 
+            
 
             if (File.Exists(pathItens))
             {
@@ -236,6 +238,14 @@ namespace SingleExperience.Entities.DB
 
                         if (p.ProductId == productId)
                         {
+                            if (status == StatusProductEnum.Ativo)
+                            {
+                                auxAmount = 1;
+                            }
+                            else
+                            {
+                                auxAmount = p.Amount;
+                            }
                             aux = new string[]
                             {
                                 p.ProductCartId.ToString(),
@@ -243,7 +253,7 @@ namespace SingleExperience.Entities.DB
                                 p.UserId.ToString(),
                                 p.Name,
                                 p.CategoryId.ToString(),
-                                1.ToString(),
+                                auxAmount.ToString(),
                                 Convert.ToInt32(status).ToString(),
                                 p.Price.ToString(),
                                 p.IpComputer.ToString()

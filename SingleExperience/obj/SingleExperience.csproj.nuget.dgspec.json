@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\mariane.santos\\Documents\\ws-vs2019\\Backend\\SingleExperience\\SingleExperience.csproj": {}
+    "C:\\Users\\mariane.santos\\Documents\\Backend\\SingleExperience\\SingleExperience.csproj": {}
   },
   "projects": {
-    "C:\\Users\\mariane.santos\\Documents\\ws-vs2019\\Backend\\SingleExperience\\SingleExperience.csproj": {
+    "C:\\Users\\mariane.santos\\Documents\\Backend\\SingleExperience\\SingleExperience.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mariane.santos\\Documents\\ws-vs2019\\Backend\\SingleExperience\\SingleExperience.csproj",
+        "projectUniqueName": "C:\\Users\\mariane.santos\\Documents\\Backend\\SingleExperience\\SingleExperience.csproj",
         "projectName": "SingleExperience",
-        "projectPath": "C:\\Users\\mariane.santos\\Documents\\ws-vs2019\\Backend\\SingleExperience\\SingleExperience.csproj",
+        "projectPath": "C:\\Users\\mariane.santos\\Documents\\Backend\\SingleExperience\\SingleExperience.csproj",
         "packagesPath": "C:\\Users\\mariane.santos\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mariane.santos\\Documents\\ws-vs2019\\Backend\\SingleExperience\\obj\\",
+        "outputPath": "C:\\Users\\mariane.santos\\Documents\\Backend\\SingleExperience\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

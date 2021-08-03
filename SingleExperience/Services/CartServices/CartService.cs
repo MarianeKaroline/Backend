@@ -6,7 +6,6 @@ using SingleExperience.Services.ProductServices.Models.CartModels;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Entities.Enums;
 using SingleExperience.Entities.DB;
-using SingleExperience.Entities.CartEntities;
 
 namespace SingleExperience.Services.CartServices
 {
@@ -140,7 +139,6 @@ namespace SingleExperience.Services.CartServices
             }
 
             preview.Itens = ItemCart(session, status);
-
 
             return preview;
         }

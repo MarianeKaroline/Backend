@@ -12,6 +12,5 @@ namespace SingleExperience.Services.CartServices.Models
         public int CategoryId { get; set; }
         public int StatusId { get; set; }
         public double Price { get; set; }
-        public string IpComputer { get; set; }
     }
 }
