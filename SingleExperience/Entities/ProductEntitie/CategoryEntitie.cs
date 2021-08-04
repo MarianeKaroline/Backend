@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SingleExperience.Entities.ProductsEntities
+namespace SingleExperience.Entities.ProductEntities.ProductEntities
 {
     class CategoryEntitie
     {

@@ -1,7 +1,4 @@
-﻿using SingleExperience.Entities.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using SingleExperience.Entities.ProductEntities.Enums;
 
 namespace SingleExperience.Services.CartServices.Models
 {

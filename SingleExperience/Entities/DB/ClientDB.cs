@@ -1,5 +1,4 @@
-﻿using SingleExperience.Entities.ClientEntities;
-using SingleExperience.Entities.ClientsEntities;
+﻿using SingleExperience.Entities.ProductEntities.ClientEntities;
 using SingleExperience.Services.ClientServices.Models;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 
-namespace SingleExperience.Entities.DB
+namespace SingleExperience.Entities.ProductEntities.DB
 {
     class ClientDB
     {

@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using SingleExperience.Services.ProductServices.Model;
+﻿using SingleExperience.Services.ProductServices.Model;
+using SingleExperience.Entities.ProductEntities.DB;
+using SingleExperience.Entities.ProductEntities;
+using System.Collections.Generic;
 using System.Linq;
-using SingleExperience.Services.ProductServices.Models.ProductModels;
-using SingleExperience.Entities.DB;
-using SingleExperience.Entities;
 
 namespace SingleExperience.Services.ProductServices
 {

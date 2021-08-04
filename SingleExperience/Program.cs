@@ -3,7 +3,7 @@ using SingleExperience.Views;
 using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.CartServices;
 using System.Threading;
-using SingleExperience.Entities.DB;
+using SingleExperience.Entities.ProductEntities.DB;
 
 namespace SingleExperience
 {

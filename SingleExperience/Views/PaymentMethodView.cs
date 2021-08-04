@@ -1,9 +1,9 @@
-﻿using SingleExperience.Entities.Enums;
+﻿using SingleExperience.Entities.ProductEntities.Enums;
 using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.ClientServices.Models;
 using System;
 using System.Globalization;
-using SingleExperience.Entities.DB;
+using SingleExperience.Entities.ProductEntities.DB;
 
 namespace SingleExperience.Views
 {

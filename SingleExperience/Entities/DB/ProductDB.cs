@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace SingleExperience.Entities.DB
+namespace SingleExperience.Entities.ProductEntities.DB
 {
     class ProductDB
     {

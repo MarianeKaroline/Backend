@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace SingleExperience.Entities.ClientsEntities
+namespace SingleExperience.Entities.ProductEntities.ClientEntities
 {
     class CardEntitie
     {

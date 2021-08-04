@@ -1,4 +1,4 @@
-﻿namespace SingleExperience.Entities
+﻿namespace SingleExperience.Entities.ProductEntities
 {
     class ProductEntitie
     {

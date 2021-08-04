@@ -1,5 +1,4 @@
-﻿using SingleExperience.Services.ProductServices.Models.CartModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace SingleExperience.Services.CartServices.Models

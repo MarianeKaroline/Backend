@@ -1,5 +1,5 @@
-﻿using SingleExperience.Entities.CartEntities;
-using SingleExperience.Entities.Enums;
+﻿using SingleExperience.Entities.ProductEntities.CartEntities;
+using SingleExperience.Entities.ProductEntities.Enums;
 using SingleExperience.Services.CartServices.Models;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace SingleExperience.Entities.DB
+namespace SingleExperience.Entities.ProductEntities.DB
 {
     class CartDB
     {

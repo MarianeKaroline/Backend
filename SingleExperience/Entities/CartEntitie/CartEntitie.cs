@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SingleExperience.Entities.CartEntities
+namespace SingleExperience.Entities.ProductEntities.CartEntities
 {
     class CartEntitie
     {

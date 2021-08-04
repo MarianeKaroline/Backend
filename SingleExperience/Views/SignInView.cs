@@ -1,4 +1,4 @@
-﻿using SingleExperience.Entities.DB;
+﻿using SingleExperience.Entities.ProductEntities.DB;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.ClientServices.Models;
@@ -56,7 +56,6 @@ namespace SingleExperience.Views
 
         public void Menu(int countProductCart, string session, bool home)
         {
-            var selectedProduct = new SelectedProductView();
             var client = new ClientService();
             var cart = new CartView();
             var inicio = new HomeView();

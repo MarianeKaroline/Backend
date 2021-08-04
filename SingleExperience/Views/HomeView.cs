@@ -3,7 +3,7 @@ using SingleExperience.Services.ProductServices;
 using System.Globalization;
 using System.Linq;
 using SingleExperience.Services.ProductServices.Model;
-using SingleExperience.Entities.Enums;
+using SingleExperience.Entities.ProductEntities.Enums;
 using SingleExperience.Services.ClientServices;
 
 namespace SingleExperience.Views

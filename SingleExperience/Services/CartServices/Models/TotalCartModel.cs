@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SingleExperience.Services.CartServices.Models
+﻿namespace SingleExperience.Services.CartServices.Models
 {
     class TotalCartModel
     {

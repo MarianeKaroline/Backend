@@ -1,14 +1,13 @@
-﻿using SingleExperience.Entities.Enums;
+﻿using SingleExperience.Entities.ProductEntities.Enums;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.ProductServices.Models.CartModels;
-using SingleExperience.Views;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace SingleExperience.Services.ClientServices.Models
+namespace SingleExperience.Views
 {
     class FinishedView
     {
