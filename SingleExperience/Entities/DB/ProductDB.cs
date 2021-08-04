@@ -1,11 +1,12 @@
-﻿using System;
+﻿using SingleExperience.Entities.ProductEntities;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace SingleExperience.Entities.ProductEntities.DB
+namespace SingleExperience.Entities.DB
 {
     class ProductDB
     {

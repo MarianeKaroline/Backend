@@ -9,7 +9,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 
-namespace SingleExperience.Entities.ProductEntities.DB
+namespace SingleExperience.Entities.DB
 {
     class ClientDB
     {

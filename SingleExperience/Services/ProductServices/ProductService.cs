@@ -1,5 +1,5 @@
 ﻿using SingleExperience.Services.ProductServices.Model;
-using SingleExperience.Entities.ProductEntities.DB;
+using SingleExperience.Entities.DB;
 using SingleExperience.Entities.ProductEntities;
 using System.Collections.Generic;
 using System.Linq;
