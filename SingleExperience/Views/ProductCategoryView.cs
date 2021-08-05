@@ -3,10 +3,6 @@ using SingleExperience.Views;
 using SingleExperience.Entities.ProductEntities.Enums;
 using System;
 using System.Globalization;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SingleExperience.Services.ProductServices.Models.ProductModels;
 using SingleExperience.Services.ClientServices;
 
 namespace SingleExperience.Views

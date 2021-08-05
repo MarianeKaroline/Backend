@@ -3,7 +3,7 @@ using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.ClientServices.Models;
 using System;
 using System.Globalization;
-using SingleExperience.Entities.ProductEntities.DB;
+using SingleExperience.Entities.DB;
 
 namespace SingleExperience.Views
 {

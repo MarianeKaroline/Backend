@@ -1,9 +1,6 @@
-﻿using System;
-using SingleExperience.Views;
-using SingleExperience.Services.ClientServices;
+﻿using SingleExperience.Views;
 using SingleExperience.Services.CartServices;
-using System.Threading;
-using SingleExperience.Entities.ProductEntities.DB;
+using SingleExperience.Entities.DB;
 
 namespace SingleExperience
 {

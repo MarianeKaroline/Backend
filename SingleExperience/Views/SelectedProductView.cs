@@ -5,8 +5,8 @@ using System;
 using System.Globalization;
 using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.CartServices.Models;
-using SingleExperience.Services.ProductServices.Models.ProductModels;
-using SingleExperience.Entities.ProductEntities.DB;
+using SingleExperience.Services.ProductServices.Model;
+using SingleExperience.Entities.DB;
 
 namespace SingleExperience.Views
 {
