@@ -1,8 +1,6 @@
 ﻿using System;
 using SingleExperience.Services.ProductServices;
 using System.Globalization;
-using System.Linq;
-using SingleExperience.Services.ProductServices.Model;
 using SingleExperience.Entities.ProductEntities.Enums;
 using SingleExperience.Services.ClientServices;
 
@@ -49,7 +47,6 @@ namespace SingleExperience.Views
                 {
                     Console.WriteLine("Opção inválida, tente novamente.");
                 }
-
             }
 
             switch (opc)
@@ -109,7 +106,6 @@ namespace SingleExperience.Views
                         {
                             Console.WriteLine("Opção inválida, tente novamente.");
                         }
-
                     }
                     
                     break;

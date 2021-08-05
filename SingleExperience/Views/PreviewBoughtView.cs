@@ -16,10 +16,10 @@ namespace SingleExperience.Views
         {
             cart = new CartService();
         }
-        public void Bought(string session, Enum method, string lastNumbers)
+        public void Bought(string session, PaymentMethodEnum payment, string lastNumbers)
         {
-            var payment = (PaymentMethodEnum)method;
-            var data = cart.PreviewBoughts(session, payment, lastNumbers, StatusProductEnum.Ativo);
+            var ids = new List<int>();
+            var data = cart.PreviewBoughts(session, payment, lastNumbers, StatusProductEnum.Ativo, ids);
             var total = cart.TotalCart(session);
             var listConfirmation = new List<BuyProductModel>();
             var j = 51;
@@ -86,10 +86,10 @@ namespace SingleExperience.Views
             Console.WriteLine("Frete: R$ 0,00");
             Console.WriteLine($"\nTotal do Pedido: R$ {total.TotalPrice.ToString("F2", CultureInfo.InvariantCulture)}");
 
-            Menu(listConfirmation, session, method, lastNumbers, total.TotalPrice);
+            Menu(listConfirmation, session, payment, lastNumbers, total.TotalPrice);
         }
 
-        public void Menu(List<BuyProductModel> list, string session, Enum method, string lastNumbers, double totalPrice)
+        public void Menu(List<BuyProductModel> list, string session, PaymentMethodEnum method, string lastNumbers, double totalPrice)
         {
             var total = cart.TotalCart(session);
             var finished = new FinishedView();

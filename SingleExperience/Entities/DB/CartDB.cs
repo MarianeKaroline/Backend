@@ -212,9 +212,7 @@ namespace SingleExperience.Entities.DB
             var cartDB = new CartDB();
             var listItens = cartDB.ListItens(session);
             var lines = new List<string>();
-            var auxAmount = 0;
-
-            
+            var auxAmount = 0;            
 
             if (File.Exists(pathItens))
             {

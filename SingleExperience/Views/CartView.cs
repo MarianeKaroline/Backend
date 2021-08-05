@@ -213,9 +213,7 @@ namespace SingleExperience.Views
                             {
                                 Console.WriteLine("Opção inválida, tente novamente.");
                             }
-                        }
-
-                        
+                        }                        
                     }
                     else
                     {

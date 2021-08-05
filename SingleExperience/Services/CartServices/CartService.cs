@@ -92,13 +92,14 @@ namespace SingleExperience.Services.CartServices
         }
 
         //Ver produtos antes da compra e depois
-        public PreviewBoughtModel PreviewBoughts(string session, PaymentMethodEnum method, string confirmation, StatusProductEnum status)
+        public PreviewBoughtModel PreviewBoughts(string session, PaymentMethodEnum method, string confirmation, StatusProductEnum status, List<int> ids)
         {
             var preview = new PreviewBoughtModel();
             var client = clientDB.GetClient(session);
             var address = clientDB.ListAddress(client.AddressId);
             var card = clientDB.ListCard(session);
             var itens = cartDB.ListItens(session);
+            var listProducts = new List<ProductCartModel>();
 
             //Pega alguns atributos do cliente
             preview.FullName = client.FullName;
@@ -137,7 +138,20 @@ namespace SingleExperience.Services.CartServices
                 preview.Pix = confirmation;
             }
 
-            preview.Itens = ItemCart(session, status);
+            if (ids.Count > 0)
+            {
+                ids.ForEach(i =>
+                {
+                    listProducts.Add(ItemCart(session, status)
+                                    .Where(j => j.ProductId == i)
+                                    .FirstOrDefault());
+                });
+                preview.Itens = listProducts;
+            }
+            else
+            {
+                preview.Itens = ItemCart(session, status);
+            }
 
             return preview;
         }

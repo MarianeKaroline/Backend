@@ -10,19 +10,26 @@ namespace SingleExperience.Views
 {
     class FinishedView
     {
-        public void ProductsBought(List<BuyProductModel> buyProducts, string session, Enum method, string lastNumbers, double totalPrice)
+        public void ProductsBought(List<BuyProductModel> buyProducts, string session, PaymentMethodEnum payment, string lastNumbers, double totalPrice)
         {
             var home = new HomeView();
             var cart = new CartService();
             var bought = new BuyProductModel();
-            var payment = (PaymentMethodEnum)method;
-            var data = cart.PreviewBoughts(session, payment, lastNumbers, StatusProductEnum.Comprado);
-            var j = 51;
+            var ids = new List<int>();
+
+            buyProducts.ForEach(i =>
+            {
+                ids.Add(i.ProductId);
+            });
 
             var buy = cart.Buy(buyProducts, session);
+            var j = 51;
+
 
             if (buy)
             {
+                var data = cart.PreviewBoughts(session, payment, lastNumbers, StatusProductEnum.Comprado, ids);
+
                 Console.Clear();
 
                 Console.WriteLine("\nCompra realizada com sucesso!!\n");

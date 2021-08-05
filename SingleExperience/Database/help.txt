@@ -1,1 +1,1 @@
-ProductCartId,ProductId,UserId,Name,CategoryId,Amount,StatusId,Price,StatusId
+ProductCartId,ProductId,UserId,Name,CategoryId,Amount,StatusId,Price,SessionId
