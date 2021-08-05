@@ -21,47 +21,75 @@ namespace SingleExperience.Services.CartServices
         }
 
         //Listar produtos no carrinho
-        public List<ProductCartModel> ItemCart(string session, StatusProductEnum status)
+        public List<ProductCartModel> ItemCart(ParametersModel parameters, StatusProductEnum status)
         {
-            var itensCart = cartDB.ListItens(session);
+            var itensCart = cartDB.ListItens(parameters.Session);
             var prod = new List<ProductCartModel>();
 
-            try
+            if (parameters.Session.Length == 11)
             {
-                prod = itensCart
-                    .Where(i => i.UserId == session && i.StatusId == Convert.ToInt32(status))
-                    .Select(j => new ProductCartModel()
-                    {
-                        ProductId = j.ProductId,
-                        Name = j.Name,
-                        StatusId = j.StatusId,
-                        CategoryId = j.CategoryId,
-                        Price = j.Price,
-                        Amount = j.Amount,
-                        UserId = j.UserId
-                    })
-                    .ToList();
+                try
+                {
+                    prod = itensCart
+                        .Where(i => i.UserId == parameters.Session && i.StatusId == Convert.ToInt32(status))
+                        .Select(j => new ProductCartModel()
+                        {
+                            ProductId = j.ProductId,
+                            Name = j.Name,
+                            StatusId = j.StatusId,
+                            CategoryId = j.CategoryId,
+                            Price = j.Price,
+                            Amount = j.Amount,
+                            UserId = j.UserId
+                        })
+                        .ToList();
+                }
+                catch (IOException e)
+                {
+                    Console.WriteLine("Ocorreu um erro");
+                    Console.WriteLine(e.Message);
+                }
             }
-            catch (IOException e)
+            else
             {
-                Console.WriteLine("Ocorreu um erro");
-                Console.WriteLine(e.Message);
+                prod = parameters.CartMemory
+                        .Where(i => i.UserId == parameters.Session && i.StatusId == Convert.ToInt32(status))
+                        .Select(j => new ProductCartModel()
+                        {
+                            ProductId = j.ProductId,
+                            Name = j.Name,
+                            StatusId = j.StatusId,
+                            CategoryId = j.CategoryId,
+                            Price = j.Price,
+                            Amount = j.Amount,
+                            UserId = j.UserId
+                        })
+                        .ToList();
             }
             return prod;
         }
 
         //Total do Carrinho
-        public TotalCartModel TotalCart(string session)
+        public TotalCartModel TotalCart(ParametersModel parameters)
         {
-            var itens = ItemCart(session, StatusProductEnum.Ativo);
+            var itens = ItemCart(parameters, StatusProductEnum.Ativo);
             var total = new TotalCartModel();
 
-            total.TotalAmount = itens
-                .Where(item => item.UserId == session && item.StatusId == Convert.ToInt32(StatusProductEnum.Ativo))
-                .Sum(item => item.Amount);
-            total.TotalPrice = itens
-                .Where(item => item.UserId == session && item.StatusId == Convert.ToInt32(StatusProductEnum.Ativo))
-                .Sum(item => item.Price * item.Amount);
+            if (parameters.Session.Length == 11)
+            {
+                total.TotalAmount = itens
+                    .Where(item => item.UserId == parameters.Session && item.StatusId == Convert.ToInt32(StatusProductEnum.Ativo))
+                    .Sum(item => item.Amount);
+                total.TotalPrice = itens
+                    .Where(item => item.UserId == parameters.Session && item.StatusId == Convert.ToInt32(StatusProductEnum.Ativo))
+                    .Sum(item => item.Price * item.Amount);
+            }
+            else
+            {
+                total.TotalAmount = parameters.CartMemory.Sum(item => item.Amount);
+                total.TotalPrice = parameters.CartMemory.Sum(item => item.Price * item.Amount);
+            }
+
 
             return total;
         }
@@ -92,13 +120,13 @@ namespace SingleExperience.Services.CartServices
         }
 
         //Ver produtos antes da compra e depois
-        public PreviewBoughtModel PreviewBoughts(string session, PaymentMethodEnum method, string confirmation, StatusProductEnum status, List<int> ids)
+        public PreviewBoughtModel PreviewBoughts(ParametersModel parameters, BoughtModel bought)
         {
             var preview = new PreviewBoughtModel();
-            var client = clientDB.GetClient(session);
+            var client = clientDB.GetClient(bought.Session);
             var address = clientDB.ListAddress(client.AddressId);
-            var card = clientDB.ListCard(session);
-            var itens = cartDB.ListItens(session);
+            var card = clientDB.ListCard(bought.Session);
+            var itens = cartDB.ListItens(bought.Session);
             var listProducts = new List<ProductCartModel>();
 
             //Pega alguns atributos do cliente
@@ -116,33 +144,33 @@ namespace SingleExperience.Services.CartServices
                     preview.State = i.State;
                 });
 
-            preview.Method = method;
+            preview.Method = bought.Method;
 
-            if (method == PaymentMethodEnum.CreditCard)
+            if (bought.Method == PaymentMethodEnum.CreditCard)
             {
                 card
-                    .Where(i => i.CardNumber.ToString().Contains(confirmation))
+                    .Where(i => i.CardNumber.ToString().Contains(bought.Confirmation))
                     .ToList()
                     .ForEach(i =>
                     {
                         preview.NumberCard = i.CardNumber.ToString();
                     });
             }
-            else if (method == PaymentMethodEnum.BankSlip)
+            else if (bought.Method == PaymentMethodEnum.BankSlip)
             {
-                var a = confirmation.Length;
-                preview.Code = confirmation;
+                var a = bought.Confirmation.Length;
+                preview.Code = bought.Confirmation;
             }
             else
             {
-                preview.Pix = confirmation;
+                preview.Pix = bought.Confirmation;
             }
 
-            if (ids.Count > 0)
+            if (bought.Ids.Count > 0)
             {
-                ids.ForEach(i =>
+                bought.Ids.ForEach(i =>
                 {
-                    listProducts.Add(ItemCart(session, status)
+                    listProducts.Add(ItemCart(parameters, bought.Status)
                                     .Where(j => j.ProductId == i)
                                     .FirstOrDefault());
                 });
@@ -150,7 +178,7 @@ namespace SingleExperience.Services.CartServices
             }
             else
             {
-                preview.Itens = ItemCart(session, status);
+                preview.Itens = ItemCart(parameters, bought.Status);
             }
 
             return preview;

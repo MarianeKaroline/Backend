@@ -3,6 +3,7 @@ using SingleExperience.Services.ProductServices;
 using System.Globalization;
 using SingleExperience.Entities.ProductEntities.Enums;
 using SingleExperience.Services.ClientServices;
+using SingleExperience.Services.CartServices.Models;
 
 namespace SingleExperience.Views
 {
@@ -11,7 +12,7 @@ namespace SingleExperience.Views
         public ProductCategoryView products = new ProductCategoryView();
         public ProductService product = new ProductService();
         //Tela inicial
-        public void Menu(int countProductCart, string session)
+        public void Menu(ParametersModel parameters)
         {
             var selectedProduct = new SelectedProductView();
             var signIn = new SignInView();
@@ -24,8 +25,8 @@ namespace SingleExperience.Views
 
             Console.WriteLine("\n0. Precisa de ajuda?");
             Console.WriteLine("1. Buscar por categoria");
-            Console.WriteLine($"2. Ver Carrinho (Quantidade: {countProductCart})");
-            if (session.Length < 11)
+            Console.WriteLine($"2. Ver Carrinho (Quantidade: {parameters.CountProduct})");
+            if (parameters.Session.Length < 11)
             {
                 Console.WriteLine("3. Fazer Login");
                 Console.WriteLine("4. Cadastrar-se");
@@ -61,27 +62,27 @@ namespace SingleExperience.Views
                     Console.WriteLine("Tecle enter para continuar");
                     Console.ReadLine();
 
-                    ListProducts(countProductCart, session);
+                    ListProducts(parameters);
                     break;
                 case 1:
-                    Search(countProductCart, session);
+                    Search(parameters);
                     break;
                 case 2:
-                    cart.ListCart(session);
+                    cart.ListCart(parameters);
                     break;
                 case 3:
-                    if (session.Length == 11)
+                    if (parameters.Session.Length == 11)
                     {
-                        var ip = client.SignOut();
-                        ListProducts(countProductCart, ip);
+                        parameters.Session = client.SignOut();
+                        ListProducts(parameters);
                     }
                     else
                     {
-                        signIn.Login(countProductCart, session, true);
+                        signIn.Login(parameters, true);
                     }
                     break;
                 case 4:
-                    signUp.SignUp(countProductCart, true);
+                    signUp.SignUp(parameters, true);
                     break;
                 case 5:
                     Console.Write("\nDigite o código # do produto: "); 
@@ -92,13 +93,13 @@ namespace SingleExperience.Views
                             int code = int.Parse(Console.ReadLine());
                             if (product.HasProduct(code))
                             {
-                                selectedProduct.SelectedProduct(code, countProductCart, session);
+                                selectedProduct.SelectedProduct(code, parameters);
                             }
                             else
                             {
                                 Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                                 Console.ReadKey();
-                                Menu(countProductCart, session);
+                                Menu(parameters);
                             }
                             invalidCode = false;
                         }
@@ -115,13 +116,13 @@ namespace SingleExperience.Views
                 default:
                     Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                     Console.ReadKey();
-                    Menu(countProductCart, session);
+                    Menu(parameters);
                     break;
             }
         }
 
         //Pesquisa
-        public void Search(int countProductCart, string session)
+        public void Search(ParametersModel parameters)
         {
             Console.Clear();
 
@@ -140,22 +141,22 @@ namespace SingleExperience.Views
             switch (opc)
             {
                 case 0:
-                    ListProducts(countProductCart, session);
+                    ListProducts(parameters);
                     break;
                 case 1:
-                    products.Category(Convert.ToInt32(CategoryProductEnum.Acessorio), countProductCart, session);
+                    products.Category(Convert.ToInt32(CategoryProductEnum.Acessorio), parameters);
                     break;
                 case 2:
-                    products.Category(Convert.ToInt32(CategoryProductEnum.Celular), countProductCart, session);
+                    products.Category(Convert.ToInt32(CategoryProductEnum.Celular), parameters);
                     break;
                 case 3:
-                    products.Category(Convert.ToInt32(CategoryProductEnum.Computador), countProductCart, session);
+                    products.Category(Convert.ToInt32(CategoryProductEnum.Computador), parameters);
                     break;
                 case 4:
-                    products.Category(Convert.ToInt32(CategoryProductEnum.Notebook), countProductCart, session);
+                    products.Category(Convert.ToInt32(CategoryProductEnum.Notebook), parameters);
                     break;
                 case 5:
-                    products.Category(Convert.ToInt32(CategoryProductEnum.Tablets), countProductCart, session);
+                    products.Category(Convert.ToInt32(CategoryProductEnum.Tablets), parameters);
                     break;
                 case 6:
                     Console.Clear();
@@ -165,7 +166,7 @@ namespace SingleExperience.Views
                     Console.WriteLine("Telefone: (41) 1234-5678");
                     Console.WriteLine("Email: exemplo@email.com");
 
-                    Menu(countProductCart, session);
+                    Menu(parameters);
                     break;
                 case 9:
                     Environment.Exit(0);
@@ -173,13 +174,13 @@ namespace SingleExperience.Views
                 default:
                     Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                     Console.ReadKey();
-                    Search(countProductCart, session);
+                    Search(parameters);
                     break;
             }
         }
 
         //Listar produtos na página inicial 
-        public void ListProducts(int countProductCart, string session)
+        public void ListProducts(ParametersModel parameters)
         {
             var client = new ClientService();
             var productService = new ProductService();
@@ -190,9 +191,9 @@ namespace SingleExperience.Views
 
             Console.WriteLine("\nInício\n");
 
-            if (session.Length == 11)
+            if (parameters.Session.Length == 11)
             {
-                Console.WriteLine($"Usuário: {client.ClientName(session)}");
+                Console.WriteLine($"Usuário: {client.ClientName(parameters.Session)}");
             }
 
             products.ForEach(p =>
@@ -203,7 +204,7 @@ namespace SingleExperience.Views
                 Console.WriteLine($"| R${p.Price.ToString("F2", CultureInfo.CurrentCulture)}{new string(' ', j - 6 - p.Price.ToString().Length)}|");
                 Console.WriteLine($"+{new string('-', j)}+");
             });
-            Menu(countProductCart, session);
+            Menu(parameters);
         }
     }
 }

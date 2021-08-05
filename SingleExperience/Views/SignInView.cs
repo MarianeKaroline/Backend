@@ -1,14 +1,17 @@
 ﻿using SingleExperience.Entities.DB;
+using SingleExperience.Entities.ProductEntities.CartEntities;
 using SingleExperience.Services.CartServices;
+using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.ClientServices.Models;
 using System;
+using System.Collections.Generic;
 
 namespace SingleExperience.Views
 {
     class SignInView
     {
-        public void Login(int countProductCart, string session, bool home)
+        public void Login(ParametersModel parameters, bool home)
         {
             var inicio = new HomeView();
             var cart = new CartService();
@@ -32,27 +35,29 @@ namespace SingleExperience.Views
                 System.Console.WriteLine("\nUsuário não existe");
                 Console.WriteLine("Tecle enter para continuar");
                 Console.ReadKey();
-                inicio.ListProducts(countProductCart, session);
+                inicio.ListProducts(parameters);
             }
             else
             {
-                cartDB.EditUserId(sessionId);
+                parameters.Session = sessionId;
+                cartDB.PassItens(parameters);
+                parameters.CartMemory = new List<ItemEntitie>();
             }
 
-            var total = cart.TotalCart(sessionId);
+            parameters.CountProduct = cart.TotalCart(parameters).TotalAmount;
 
 
             if (home)
             {
-                Menu(total.TotalAmount, sessionId, home);
+                Menu(parameters, home);
             }
             else
             {
-                payment.Methods(sessionId);
+                payment.Methods(parameters);
             }
         }
 
-        public void Menu(int countProductCart, string session, bool home)
+        public void Menu(ParametersModel parameters, bool home)
         {
             var client = new ClientService();
             var cart = new CartView();
@@ -62,8 +67,8 @@ namespace SingleExperience.Views
 
             Console.WriteLine("\n0. Início");
             Console.WriteLine("1. Pesquisar por categoria");
-            Console.WriteLine($"2. Ver Carrinho (quantidade: {countProductCart})");
-            if (session.Length == 11)
+            Console.WriteLine($"2. Ver Carrinho (quantidade: {parameters.CountProduct})");
+            if (parameters.Session.Length == 11)
             {
                 Console.WriteLine("3. Desconectar-se");
             }
@@ -84,22 +89,22 @@ namespace SingleExperience.Views
             switch (op)
             {
                 case 0:
-                    inicio.ListProducts(countProductCart,session);
+                    inicio.ListProducts(parameters);
                     break;
                 case 1:
-                    inicio.Search(countProductCart, session);
+                    inicio.Search(parameters);
                     break;
                 case 2:
-                    cart.ListCart(session);
+                    cart.ListCart(parameters);
                     break;
                 case 3:
-                    var ip = client.SignOut();
-                    inicio.ListProducts(countProductCart, ip);
+                    parameters.Session = client.SignOut();
+                    inicio.ListProducts(parameters);
                     break;
                 default:
                     Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                     Console.ReadKey();
-                    Menu(countProductCart, session, home);
+                    Menu(parameters, home);
                     break;
             }
         }

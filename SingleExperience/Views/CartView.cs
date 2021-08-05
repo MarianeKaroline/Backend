@@ -1,4 +1,5 @@
 ﻿using SingleExperience.Entities.DB;
+using SingleExperience.Entities.ProductEntities.CartEntities;
 using SingleExperience.Entities.ProductEntities.Enums;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.CartServices.Models;
@@ -19,15 +20,15 @@ namespace SingleExperience.Views
             cart = new CartService();
         }
 
-        public void ListCart(string session)
+        public void ListCart(ParametersModel parameters)
         {
             Console.Clear();
-            var total = cart.TotalCart(session);
-            var j = 41; 
+            var total = cart.TotalCart(parameters);
+            var j = 41;
 
             Console.WriteLine($"\nInício > Carrinho\n");
 
-            var itens = cart.ItemCart(session, StatusProductEnum.Ativo)
+            var itens = cart.ItemCart(parameters, StatusProductEnum.Ativo)
                 .GroupBy(p => p.Name)
                 .Select(p => new ProductCartModel()
                 { 
@@ -39,6 +40,7 @@ namespace SingleExperience.Views
                     Amount = p.Sum(j => j.Amount)
                 })
                 .ToList();
+
 
             itens.ForEach(p =>
             {
@@ -54,10 +56,10 @@ namespace SingleExperience.Views
             });
 
             Console.WriteLine($"\nSubtotal ({total.TotalAmount} itens): R${total.TotalPrice.ToString("F2", CultureInfo.InvariantCulture)}");
-            Menu(itens, session);
+            Menu(itens, parameters);
         }
 
-        public void Menu(List<ProductCartModel> list, string session)
+        public void Menu(List<ProductCartModel> list, ParametersModel parameters)
         {
             var op = 0;
             var code = 0;
@@ -71,8 +73,8 @@ namespace SingleExperience.Views
             var signUp = new SignUpView();
             var signIn = new SignInView();
             var cartDB = new CartDB();
-            var total = cart.TotalCart(session);
-            var category = cart.ItemCart(session, StatusProductEnum.Ativo)
+            var total = cart.TotalCart(parameters);
+            var category = cart.ItemCart(parameters, StatusProductEnum.Ativo)
                 .Select(p => p.CategoryId)
                 .FirstOrDefault();
 
@@ -82,7 +84,7 @@ namespace SingleExperience.Views
             Console.WriteLine("3. Adicionar o produto mais uma vez ao carrinho");
             Console.WriteLine("4. Excluir um produto");
             Console.WriteLine("5. Finalizar compra");
-            if (session.Length < 11)
+            if (parameters.Session.Length < 11)
             {
                 Console.WriteLine("6. Fazer Login");
                 Console.WriteLine("7. Cadastrar-se");
@@ -109,13 +111,13 @@ namespace SingleExperience.Views
             switch (op)
             {
                 case 0:
-                    inicio.ListProducts(total.TotalAmount, session);
+                    inicio.ListProducts(parameters);
                     break;
                 case 1:
-                    inicio.Search(total.TotalAmount, session);
+                    inicio.Search(parameters);
                     break;
                 case 2:
-                    productCategory.Category(category, total.TotalAmount, session);
+                    productCategory.Category(category, parameters);
                     break;
                 case 3:
                     Console.Write("\nPor favor digite o código do produto #");
@@ -137,22 +139,31 @@ namespace SingleExperience.Views
                         {
                             CartModel cartModel = new CartModel();
                             cartModel.ProductId = p.ProductId;
-                            cartModel.UserId = session;
+                            cartModel.UserId = parameters.Session;
                             cartModel.Name = p.Name;
                             cartModel.CategoryId = p.CategoryId;
                             cartModel.StatusId = Convert.ToInt32(StatusProductEnum.Ativo);
                             cartModel.Price = p.Price;
 
-                            cartDB.AddItensCart(cartModel);
+                            if (parameters.Session.Length < 11)
+                            {
+
+                                cartDB.AddItensMemory(cartModel, parameters.CartMemory);
+                            }
+                            else
+                            {
+                                cartDB.AddItemCart(parameters, cartModel);
+                                parameters.CartMemory = new List<ItemEntitie>();
+                            }
                         }
                     });
 
-                    var count = cart.TotalCart(session);
+                    parameters.CountProduct = cart.TotalCart(parameters).TotalAmount;
 
                     Console.WriteLine("\n\nProduto adicionado com sucesso (Aperte enter para continuar)");
                     Console.ReadKey();
 
-                    ListCart(session);
+                    ListCart(parameters);
                     break;
                 case 4:
                     Console.Write("\nPor favor digite o codigo do produto #");
@@ -161,7 +172,7 @@ namespace SingleExperience.Views
                         try
                         {
                             int codeRemove = int.Parse(Console.ReadLine());
-                            cart.RemoveItem(codeRemove, session);
+                            cart.RemoveItem(codeRemove, parameters.Session);
                             Console.WriteLine("\n\nProduto removido com sucesso (Aperte enter para continuar)");
                             Console.ReadKey();
                             invalidCodeRemove = false;
@@ -173,10 +184,10 @@ namespace SingleExperience.Views
                     }
 
 
-                    ListCart(session);
+                    ListCart(parameters);
                     break;
                 case 5:
-                    if (session.Length < 11)
+                    if (parameters.Session.Length < 11)
                     {
                         Console.WriteLine("\nVocê não está logado!!\n");
                         Console.WriteLine("1. Fazer login");
@@ -191,13 +202,13 @@ namespace SingleExperience.Views
                                 switch (opc)
                                 {
                                     case 1:
-                                        signIn.Login(total.TotalAmount, session, false);
+                                        signIn.Login(parameters, false);
                                         break;
                                     case 2:
-                                        signUp.SignUp(total.TotalAmount, false);
+                                        signUp.SignUp(parameters, false);
                                         break;
                                     case 3:
-                                        ListCart(session);
+                                        ListCart(parameters);
                                         break;
                                     case 9:
                                         Environment.Exit(0);
@@ -205,7 +216,7 @@ namespace SingleExperience.Views
                                     default:
                                         Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                                         Console.ReadKey();
-                                        Menu(list, session);
+                                        Menu(list, parameters);
                                         break;
                                 }
                             }
@@ -217,22 +228,24 @@ namespace SingleExperience.Views
                     }
                     else
                     {
-                        payment.Methods(session);
+                        payment.Methods(parameters);
                     }
                     break;
                 case 6:
-                    if (session.Length == 11)
+                    if (parameters.Session.Length == 11)
                     {
-                        var ip = client.SignOut();
-                        ListCart(ip);
+                        parameters.Session = client.SignOut();
+                        ListCart(parameters);
                     }
                     else
                     {
-                        signIn.Login(total.TotalAmount, session, true);
+                        parameters.CountProduct = total.TotalAmount;
+                        signIn.Login(parameters, true);
                     }
                     break;
                 case 7:
-                    signUp.SignUp(total.TotalAmount, true);
+                    parameters.CountProduct = total.TotalAmount;
+                    signUp.SignUp(parameters, true);
                     break;
                 case 9:
                     Environment.Exit(0);
@@ -240,7 +253,7 @@ namespace SingleExperience.Views
                 default:
                     Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                     Console.ReadKey();
-                    Menu(list, session);
+                    Menu(list, parameters);
                     break;
             }
         }

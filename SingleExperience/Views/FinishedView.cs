@@ -10,7 +10,7 @@ namespace SingleExperience.Views
 {
     class FinishedView
     {
-        public void ProductsBought(List<BuyProductModel> buyProducts, string session, PaymentMethodEnum payment, string lastNumbers, double totalPrice)
+        public void ProductsBought(List<BuyProductModel> buyProducts, ParametersModel parameters, PaymentMethodEnum payment, string lastNumbers, double totalPrice)
         {
             var home = new HomeView();
             var cart = new CartService();
@@ -22,13 +22,21 @@ namespace SingleExperience.Views
                 ids.Add(i.ProductId);
             });
 
-            var buy = cart.Buy(buyProducts, session);
+            var boughtModel = new BoughtModel();
+
+            boughtModel.Session = parameters.Session;
+            boughtModel.Method = payment;
+            boughtModel.Confirmation = lastNumbers;
+            boughtModel.Status = StatusProductEnum.Comprado;
+            boughtModel.Ids = ids;
+
+            var buy = cart.Buy(buyProducts, parameters.Session);
             var j = 51;
 
 
             if (buy)
             {
-                var data = cart.PreviewBoughts(session, payment, lastNumbers, StatusProductEnum.Comprado, ids);
+                var data = cart.PreviewBoughts(parameters, boughtModel);
 
                 Console.Clear();
 
@@ -78,13 +86,13 @@ namespace SingleExperience.Views
                     Console.WriteLine($"+{new string('-', j)}+");
                 });
 
-                var total = cart.TotalCart(session);
+                var total = cart.TotalCart(parameters);
 
                 Console.WriteLine($"Total do Pedido: R$ {totalPrice}");
                 Console.WriteLine("\nTecle enter para continuar");
                 Console.ReadKey();
-
-                home.ListProducts(total.TotalAmount, session);
+                parameters.CountProduct = 0;
+                home.ListProducts(parameters);
             }
         }
     }

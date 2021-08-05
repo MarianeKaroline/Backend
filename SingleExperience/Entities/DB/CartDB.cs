@@ -15,13 +15,14 @@ namespace SingleExperience.Entities.DB
         private string CurrentDirectory = null;
         private string path = null;
         private string pathItens = null;
-        public string header = "";
+        private string header = "";
 
         public CartDB()
         {
             CurrentDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             path = CurrentDirectory + @"..\..\..\..\\Database\Cart.csv";
             pathItens = CurrentDirectory + @"..\..\..\..\\Database\ItensCart.csv";
+            header = ReadItens()[0];
         }
 
         //Lê Todas as linhas quando pedir
@@ -66,7 +67,6 @@ namespace SingleExperience.Entities.DB
             var itens = new List<ItemEntitie>();
             try
             {
-                header = ReadItens()[0];
                 using (StreamReader sr = File.OpenText(pathItens))
                 {
                     itens = ReadItens()
@@ -97,56 +97,95 @@ namespace SingleExperience.Entities.DB
         }
 
         /* Editar Arquivo CSV */
-        //Cria itens do carrinho, porém o carrinho só irá ser criado quando o usuário estiver logado
-        public void AddItensCart(CartModel cart)
+        //Criar carrinho e adiciona produtos
+        public void AddItemCart(ParametersModel parameters, CartModel cartModel)
         {
-            var listItensCart = ListItens(cart.UserId);
+            var client = new ClientDB();
+            var cart = new CartDB();
+            var ipComputer = client.ClientId();
+            var currentCart = cart.GetCart(parameters.Session);
+            var listItensCart = ListItens(parameters.Session);
             var linesCart = new List<string>();
             var linesItens = new List<string>();
             var aux = 0;
-            var sum = 1;
+            var sum = 1;            
 
             try
             {
-                listItensCart.ForEach(i =>
+                //Criar Carrinho
+                if (currentCart == null)
                 {
-                    if (i.ProductId == cart.ProductId && i.StatusId != Convert.ToInt32(StatusProductEnum.Ativo))
-                    {
-                        EditStatusProduct(cart.ProductId, cart.UserId, StatusProductEnum.Ativo);
-                        aux++;
-                    }
-                    else if (i.ProductId == cart.ProductId)
-                    {
-                        sum += i.Amount;
-                        EditAmount(cart.ProductId, cart.UserId, sum);
-                        aux++;
-                    }
-                });
+                    currentCart = new CartEntitie();
 
-                //Create item Cart
-                if (aux == 0)
-                {
-                    var auxItens = new String[]
+                    currentCart.UserId = parameters.Session;
+                    currentCart.DateCreated = DateTime.Now;
+
+                    var auxCart = new string[]
                     {
-                        ReadItens().Length.ToString(),
-                        cart.ProductId.ToString(),
-                        cart.UserId.ToString(),
-                        cart.Name.ToString(),
-                        cart.CategoryId.ToString(),
-                        sum.ToString(),
-                        cart.StatusId.ToString(),
-                        cart.Price.ToString(),
-                        cart.UserId.ToString()
+                        currentCart.UserId,
+                        currentCart.DateCreated.ToString()
                     };
 
-                    linesItens.Add(String.Join(",", auxItens));
+                    linesCart.Add(String.Join(",", auxCart));
 
-                    using (StreamWriter writer = File.AppendText(pathItens))
+                    using (StreamWriter writer = File.AppendText(path))
                     {
-                        linesItens.ForEach(i =>
+                        linesCart.ForEach(i =>
                         {
                             writer.WriteLine(i);
                         });
+                    }
+                }
+
+                if (parameters.CartMemory.Count > 0)
+                {
+                    if (aux == 0)
+                    {
+                        PassItens(parameters);
+                    }
+                }
+                else
+                {
+                    listItensCart.ForEach(j =>
+                    {
+                        if (j.ProductId == cartModel.ProductId && j.StatusId != Convert.ToInt32(StatusProductEnum.Ativo))
+                        {
+                            EditStatusProduct(cartModel.ProductId, cartModel.UserId, StatusProductEnum.Ativo);
+                            aux++;
+                        }
+                        else if (j.ProductId == cartModel.ProductId)
+                        {
+                            sum += j.Amount;
+                            EditAmount(cartModel.ProductId, cartModel.UserId, sum);
+                            aux++;
+                        }
+                    });
+
+                    //Criar item na tabela
+                    if (aux == 0)
+                    {
+                        var auxItens = new String[]
+                        {
+                            ReadItens().Length.ToString(),
+                            cartModel.ProductId.ToString(),
+                            cartModel.UserId.ToString(),
+                            cartModel.Name.ToString(),
+                            cartModel.CategoryId.ToString(),
+                            sum.ToString(),
+                            cartModel.StatusId.ToString(),
+                            cartModel.Price.ToString(),
+                            cartModel.UserId.ToString()
+                        };
+
+                        linesItens.Add(String.Join(",", auxItens));
+
+                        using (StreamWriter writer = File.AppendText(pathItens))
+                        {
+                            linesItens.ForEach(i =>
+                            {
+                                writer.WriteLine(i);
+                            });
+                        }
                     }
                 }
             }
@@ -155,7 +194,7 @@ namespace SingleExperience.Entities.DB
                 Console.WriteLine("Ocorreu um erro");
                 Console.WriteLine(e.Message);
             }
-        }
+        }        
 
         //Edita a quantidade do item, caso o usuário adiciona o produto mais uma vez no carrinho
         public void EditAmount(int productId, string session, int sub)
@@ -212,7 +251,7 @@ namespace SingleExperience.Entities.DB
             var cartDB = new CartDB();
             var listItens = cartDB.ListItens(session);
             var lines = new List<string>();
-            var auxAmount = 0;            
+            var auxAmount = 0;
 
             if (File.Exists(pathItens))
             {
@@ -262,68 +301,116 @@ namespace SingleExperience.Entities.DB
                 }
                 File.WriteAllLines(pathItens, lines);
             }
+        }        
+
+        //Passa os itens da memória para o banco
+        public void PassItens(ParametersModel parameters)
+        {
+            var listItensCart = ListItens(parameters.Session);
+            var linesItens = new List<string>();
+            var aux = 0;
+            var sum = 1;
+
+            if (listItensCart.Count() > 0)
+            {
+                listItensCart.ForEach(j =>
+                {
+                    parameters.CartMemory.ForEach(i =>
+                    {
+                        if (j.ProductId == i.ProductId && j.StatusId != Convert.ToInt32(StatusProductEnum.Ativo))
+                        {
+                            EditStatusProduct(i.ProductId, i.UserId, StatusProductEnum.Ativo);
+                            aux++;
+                        }
+                        else if (j.ProductId == i.ProductId)
+                        {
+                            sum += j.Amount;
+                            EditAmount(i.ProductId, i.UserId, sum);
+                            aux++;
+                        }
+                    });
+                });
+            }
+            if (aux == 0)
+            {
+                parameters.CartMemory.ForEach(i =>
+                {
+                    var auxItens = new String[]
+                    {
+                        ReadItens().Length.ToString(),
+                        i.ProductId.ToString(),
+                        parameters.Session,
+                        i.Name.ToString(),
+                        i.CategoryId.ToString(),
+                        sum.ToString(),
+                        i.StatusId.ToString(),
+                        i.Price.ToString(),
+                        i.UserId.ToString()
+                    };
+
+                    linesItens.Add(String.Join(",", auxItens));
+                });
+            }
+            using (StreamWriter writer = File.AppendText(pathItens))
+            {
+                linesItens.ForEach(i =>
+                {
+                    writer.WriteLine(i);
+                });
+            }
         }
 
-        //Criar carrinho e edita produtos quando o usuário logar
-        public void EditUserId(string session)
+        /*Memória*/
+        //Coloca produtos na memória quando usuário não estiver logado
+        public List<ItemEntitie> AddItensMemory(CartModel cart, List<ItemEntitie> cartMemory)
         {
-            var client = new ClientDB();
-            var cart = new CartDB();
-            var ipComputer = client.ClientId();
-            var currentCart = cart.GetCart(session);
-            var linesCart = new List<string>();
-            var linesItens = new string[ReadItens().Length];
-
-            //Create Cart
-            if (currentCart == null)
+            if (cartMemory == null)
             {
-                currentCart = new CartEntitie();
+                cartMemory = new List<ItemEntitie>();
+            }
+            var sum = 1;
 
-                currentCart.UserId = session;
-                currentCart.DateCreated = DateTime.Now;
+            if (cart.ProductId != 0)
+            {
 
-                var auxCart = new string[]
+                var aux = cartMemory
+                        .Where(i => i.ProductId == cart.ProductId)
+                        .FirstOrDefault();
+
+                if (aux == null)
                 {
-                        currentCart.UserId,
-                        currentCart.DateCreated.ToString()
-                };
-
-                linesCart.Add(String.Join(",", auxCart));
-
-                using (StreamWriter writer = File.AppendText(path))
-                {
-                    linesCart.ForEach(i =>
+                    var item = new ItemEntitie()
                     {
-                        writer.WriteLine(i);
+                        ProductCartId = 1,
+                        ProductId = cart.ProductId,
+                        UserId = cart.UserId,
+                        Name = cart.Name,
+                        CategoryId = cart.CategoryId,
+                        Amount = sum,
+                        StatusId = cart.StatusId,
+                        Price = cart.Price,
+                        IpComputer = cart.UserId,
+                    };
+                    cartMemory.Add(item);
+                }
+                else
+                {
+                    cartMemory.ForEach(i =>
+                    {
+                        i.ProductCartId = cartMemory.Count();
+                        i.ProductId = cart.ProductId;
+                        i.UserId = cart.UserId;
+                        i.Name = cart.Name;
+                        i.CategoryId = cart.CategoryId;
+                        i.Amount += sum;
+                        i.StatusId = cart.StatusId;
+                        i.Price = cart.Price;
+                        i.IpComputer = cart.UserId;
                     });
                 }
             }
 
-            //Atualiza os itens para a sessão do usuário logado
-            for (int i = 0; i < ReadItens().Length; i++)
-            {
-                linesItens[i] = ReadItens()[i];
-                if (ReadItens()[i].Contains($",{ipComputer},") && ReadItens()[i].Contains($",{ipComputer}"))
-                {
-                    var aux = ReadItens()[i].Split(',');
-
-                    var auxItens = new string[]
-                    {
-                        aux[0],
-                        aux[1],
-                        session,
-                        aux[3],
-                        aux[4],
-                        aux[5],
-                        aux[6],
-                        aux[7],
-                        aux[8]
-                    };
-                    linesItens[i] = String.Join(',', auxItens);
-                }
-            }
-
-            File.WriteAllLines(pathItens, linesItens);
+            return cartMemory;
         }
     }
 }

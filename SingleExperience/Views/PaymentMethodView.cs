@@ -4,6 +4,7 @@ using SingleExperience.Services.ClientServices.Models;
 using System;
 using System.Globalization;
 using SingleExperience.Entities.DB;
+using SingleExperience.Services.CartServices.Models;
 
 namespace SingleExperience.Views
 {
@@ -21,7 +22,7 @@ namespace SingleExperience.Views
             clientDB = new ClientDB();
         }
 
-        public void Methods(string session)
+        public void Methods(ParametersModel parameters)
         {
             var op = 0;
             var invalid = true;
@@ -48,28 +49,28 @@ namespace SingleExperience.Views
             switch (op)
             {
                 case 1:
-                    CreditCard(session);
+                    CreditCard(parameters);
                     break;
                 case 2:
-                    BankSlip(session);
+                    BankSlip(parameters);
                     break;
                 case 3:
-                    Pix(session);
+                    Pix(parameters);
                     break;
                 default:
                     break;
             }
         }
 
-        public void CreditCard(string session)
+        public void CreditCard(ParametersModel parameters)
         {
             CardModel card = new CardModel();
             var op = "";
             char opc = '\0';
             var invalid = true;
-            if (client.HasCard(session))
+            if (client.HasCard(parameters.Session))
             {
-                client.ShowCards(session)
+                client.ShowCards(parameters.Session)
                     .ForEach(p => 
                     {
                         Console.WriteLine($"\n(Crédito) com final {p.CardNumber.Substring(12)}        {p.Name}        {p.ShelfLife.ToString("MM/yyyy")}\n");
@@ -108,7 +109,7 @@ namespace SingleExperience.Views
 
                         }
 
-                        preview.Bought(session, PaymentMethodEnum.CreditCard, op);
+                        preview.Bought(parameters, PaymentMethodEnum.CreditCard, op);
                         break;
                     case 'n':
                         Console.Write("Novo Cartão\n");
@@ -122,13 +123,13 @@ namespace SingleExperience.Views
                         Console.Write("Código de segurança(CVV): ");
                         card.CVV = int.Parse(Console.ReadLine());
 
-                        clientDB.AddCard(session, card);
-                        preview.Bought(session, PaymentMethodEnum.CreditCard, card.CardNumber.ToString().Substring(12, card.CardNumber.ToString().Length - 12));
+                        clientDB.AddCard(parameters.Session, card);
+                        preview.Bought(parameters, PaymentMethodEnum.CreditCard, card.CardNumber.ToString().Substring(12, card.CardNumber.ToString().Length - 12));
                         break;
                     default:
                         Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                         Console.ReadKey();
-                        CreditCard(session);
+                        CreditCard(parameters);
                         break;
                 }
             }
@@ -144,23 +145,23 @@ namespace SingleExperience.Views
                 Console.Write("Código de segurança(CVV): ");
                 card.CVV = int.Parse(Console.ReadLine());
 
-                clientDB.AddCard(session, card);
-                preview.Bought(session, PaymentMethodEnum.CreditCard, card.CardNumber.ToString());
+                clientDB.AddCard(parameters.Session, card);
+                preview.Bought(parameters, PaymentMethodEnum.CreditCard, card.CardNumber.ToString());
             }
         }
 
-        public void BankSlip(string session)
+        public void BankSlip(ParametersModel parameters)
         {
             var numberCode = Guid.NewGuid();
 
-            preview.Bought(session, PaymentMethodEnum.BankSlip, numberCode.ToString());
+            preview.Bought(parameters, PaymentMethodEnum.BankSlip, numberCode.ToString());
         }
 
-        public void Pix(string session)
+        public void Pix(ParametersModel parameters)
         {           
             var numberPix = Guid.NewGuid();
 
-            preview.Bought(session, PaymentMethodEnum.Pix, numberPix.ToString());
+            preview.Bought(parameters, PaymentMethodEnum.Pix, numberPix.ToString());
         }
     }
 }

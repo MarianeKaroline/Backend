@@ -7,6 +7,8 @@ using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.ProductServices.Model;
 using SingleExperience.Entities.DB;
+using System.Collections.Generic;
+using SingleExperience.Entities.ProductEntities.CartEntities;
 
 namespace SingleExperience.Views
 {
@@ -19,7 +21,7 @@ namespace SingleExperience.Views
         }
 
         //Listar Produtos
-        public void SelectedProduct(int productId, int countProduct, string session)
+        public void SelectedProduct(int productId, ParametersModel parameters)
         {
             Console.Clear();
             var product = productService.SelectedProduct(productId);
@@ -48,11 +50,11 @@ namespace SingleExperience.Views
             Console.WriteLine($"+{new string('-', j)}+");
 
 
-            Menu(product, countProduct, session, productId);
+            Menu(product, parameters, productId);
         }
 
         //Mostra Menu
-        public void Menu(ProductSelectedModel list, int countProduct, string session, int productId)
+        public void Menu(ProductSelectedModel list, ParametersModel parameters, int productId)
         {
             var signIn = new SignInView();
             var signUp = new SignUpView();
@@ -70,8 +72,8 @@ namespace SingleExperience.Views
             Console.WriteLine("1. Pesquisar por categoria");
             Console.WriteLine($"2. Voltar para a categoria: {category}");
             Console.WriteLine("3. Adicionar produto ao carrinho");
-            Console.WriteLine($"4. Ver Carrinho (Quantidade: {countProduct})");
-            if (session.Length < 11)
+            Console.WriteLine($"4. Ver Carrinho (Quantidade: {parameters.CountProduct})");
+            if (parameters.Session.Length < 11)
             {
                 Console.WriteLine("5. Fazer Login");
                 Console.WriteLine("6. Cadastrar-se");
@@ -97,46 +99,56 @@ namespace SingleExperience.Views
             switch (op)
             {
                 case 0:
-                    inicio.ListProducts(countProduct, session);
+                    inicio.ListProducts(parameters);
                     break;
                 case 1:
-                    inicio.Search(countProduct, session);
+                    inicio.Search(parameters);
                     break;
                 case 2:
-                    categoryProduct.Category(list.CategoryId, countProduct, session);
+                    categoryProduct.Category(list.CategoryId, parameters);
                     break;
                 case 3:
                     CartModel cartModel = new CartModel();
                     cartModel.ProductId = list.ProductId;
-                    cartModel.UserId = session;
+                    cartModel.UserId = parameters.Session;
                     cartModel.Name = list.Name;
                     cartModel.CategoryId = list.CategoryId;
                     cartModel.StatusId = Convert.ToInt32(StatusProductEnum.Ativo);
                     cartModel.Price = list.Price;
 
-                    cartDB.AddItensCart(cartModel);
-                    var count = cart.TotalCart(session);
-
-                    Console.WriteLine("\nProduto adicionado com sucesso (Aperte enter para continuar)");
-                    Console.ReadKey();
-                    SelectedProduct(list.ProductId, count.TotalAmount, session);
-                    break;
-                case 4:
-                    cartList.ListCart(session);
-                    break;
-                case 5:
-                    if (session.Length == 11)
+                    if (parameters.Session.Length < 11)
                     {
-                        var ip = client.SignOut();
-                        SelectedProduct(productId, countProduct, ip);
+
+                        parameters.CartMemory = cartDB.AddItensMemory(cartModel, parameters.CartMemory);
                     }
                     else
                     {
-                        signIn.Login(countProduct, session, true);
+                        cartDB.AddItemCart(parameters, cartModel);
+                        parameters.CartMemory = new List<ItemEntitie>();
+                    }
+
+                    parameters.CountProduct = cart.TotalCart(parameters).TotalAmount;
+
+                    Console.WriteLine("\nProduto adicionado com sucesso (Aperte enter para continuar)");
+                    Console.ReadKey();
+                    SelectedProduct(list.ProductId, parameters);
+                    break;
+                case 4:
+                    cartList.ListCart(parameters);
+                    break;
+                case 5:
+                    if (parameters.Session.Length == 11)
+                    {
+                        var ip = client.SignOut();
+                        SelectedProduct(productId, parameters);
+                    }
+                    else
+                    {
+                        signIn.Login(parameters, true);
                     }
                     break;
                 case 6:
-                    signUp.SignUp(countProduct, true);
+                    signUp.SignUp(parameters, true);
                     break;
                 case 9:
                     Environment.Exit(0);
