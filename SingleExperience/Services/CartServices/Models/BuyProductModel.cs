@@ -1,4 +1,4 @@
-﻿using SingleExperience.Entities.ProductEntities.Enums;
+﻿using SingleExperience.Enums;
 
 namespace SingleExperience.Services.CartServices.Models
 {

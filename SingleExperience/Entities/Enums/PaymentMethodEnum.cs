@@ -1,4 +1,4 @@
-﻿namespace SingleExperience.Entities.ProductEntities.Enums
+﻿namespace SingleExperience.Enums
 {
     enum PaymentMethodEnum
     {

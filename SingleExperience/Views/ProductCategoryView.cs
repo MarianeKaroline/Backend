@@ -1,6 +1,6 @@
 ﻿using SingleExperience.Services.ProductServices;
 using SingleExperience.Views;
-using SingleExperience.Entities.ProductEntities.Enums;
+using SingleExperience.Enums;
 using System;
 using System.Globalization;
 using SingleExperience.Services.ClientServices;

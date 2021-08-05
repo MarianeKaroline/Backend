@@ -1,5 +1,5 @@
 ﻿using SingleExperience.Entities.DB;
-using SingleExperience.Entities.ProductEntities.CartEntities;
+using SingleExperience.Entities.CartEntities;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.ClientServices;

@@ -1,10 +1,10 @@
 ﻿using SingleExperience.Services.CartServices.Models;
-using SingleExperience.Entities.ProductEntities.Enums;
 using SingleExperience.Entities.DB;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using SingleExperience.Enums;
 
 namespace SingleExperience.Services.CartServices
 {

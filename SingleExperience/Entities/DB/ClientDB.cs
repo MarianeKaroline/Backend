@@ -1,4 +1,4 @@
-﻿using SingleExperience.Entities.ProductEntities.ClientEntities;
+﻿using SingleExperience.Entities.ClientEntities;
 using SingleExperience.Services.ClientServices.Models;
 using System;
 using System.Collections.Generic;

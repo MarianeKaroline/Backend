@@ -1,6 +1,6 @@
 ﻿using SingleExperience.Entities.DB;
-using SingleExperience.Entities.ProductEntities.CartEntities;
-using SingleExperience.Entities.ProductEntities.Enums;
+using SingleExperience.Entities.CartEntities;
+using SingleExperience.Enums;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.ClientServices;

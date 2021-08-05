@@ -1,7 +1,5 @@
-﻿using SingleExperience.Entities.ProductEntities.CartEntities;
-using System;
+﻿using SingleExperience.Entities.CartEntities;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SingleExperience.Services.CartServices.Models
 {

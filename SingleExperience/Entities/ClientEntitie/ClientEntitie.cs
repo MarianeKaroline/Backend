@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SingleExperience.Entities.ProductEntities.ClientEntities
+namespace SingleExperience.Entities.ClientEntities
 {
     class ClientEntitie
     {

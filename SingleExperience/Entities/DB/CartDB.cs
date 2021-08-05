@@ -1,5 +1,5 @@
-﻿using SingleExperience.Entities.ProductEntities.CartEntities;
-using SingleExperience.Entities.ProductEntities.Enums;
+﻿using SingleExperience.Entities.CartEntities;
+using SingleExperience.Enums;
 using SingleExperience.Services.CartServices.Models;
 using System;
 using System.Collections.Generic;

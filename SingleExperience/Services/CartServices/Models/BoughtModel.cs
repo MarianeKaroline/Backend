@@ -1,4 +1,4 @@
-﻿using SingleExperience.Entities.ProductEntities.Enums;
+﻿using SingleExperience.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;

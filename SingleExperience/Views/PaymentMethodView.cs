@@ -1,4 +1,4 @@
-﻿using SingleExperience.Entities.ProductEntities.Enums;
+﻿using SingleExperience.Enums;
 using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.ClientServices.Models;
 using System;

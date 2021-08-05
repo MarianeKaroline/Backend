@@ -1,2 +1,3 @@
 ProductCartId,ProductId,UserId,Name,CategoryId,Amount,StatusId,Price,SessionId
-1,1011,12345678912,Mouse Gamer,1,2,4002,139,1921680172
+1,1011,12345678912,Mouse Gamer,1,1,4004,139,1921680172
+2,1013,12345678912,Tablet Samsung,5,1,4004,1399,1921680172

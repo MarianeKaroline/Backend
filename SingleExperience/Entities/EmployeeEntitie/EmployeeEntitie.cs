@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SingleExperience.Entities.ProductEntities.EmployesEntities
+namespace SingleExperience.Entities.EmployesEntities
 {
     class EmployeeEntitie
     {
