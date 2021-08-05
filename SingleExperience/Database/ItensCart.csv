@@ -1,3 +1,2 @@
 ProductCartId,ProductId,UserId,Name,CategoryId,Amount,StatusId,Price,SessionId
-1,1011,12345678912,Mouse Gamer,1,2,4004,139,1921680172
-2,1014,12345678912,Tablet Multilaser,5,2,4004,399,1921680172
+1,1011,12345678912,Mouse Gamer,1,2,4002,139,1921680172

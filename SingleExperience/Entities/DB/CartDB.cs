@@ -319,13 +319,13 @@ namespace SingleExperience.Entities.DB
                     {
                         if (j.ProductId == i.ProductId && j.StatusId != Convert.ToInt32(StatusProductEnum.Ativo))
                         {
-                            EditStatusProduct(i.ProductId, i.UserId, StatusProductEnum.Ativo);
+                            EditStatusProduct(j.ProductId, j.UserId, StatusProductEnum.Ativo);
                             aux++;
                         }
                         else if (j.ProductId == i.ProductId)
                         {
                             sum += j.Amount;
-                            EditAmount(i.ProductId, i.UserId, sum);
+                            EditAmount(j.ProductId, j.UserId, sum);
                             aux++;
                         }
                     });
@@ -350,13 +350,14 @@ namespace SingleExperience.Entities.DB
 
                     linesItens.Add(String.Join(",", auxItens));
                 });
-            }
-            using (StreamWriter writer = File.AppendText(pathItens))
-            {
-                linesItens.ForEach(i =>
+
+                using (StreamWriter writer = File.AppendText(pathItens))
                 {
-                    writer.WriteLine(i);
-                });
+                    linesItens.ForEach(i =>
+                    {
+                        writer.WriteLine(i);
+                    });
+                }
             }
         }
 
