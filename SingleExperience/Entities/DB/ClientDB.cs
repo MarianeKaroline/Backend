@@ -143,7 +143,6 @@ namespace SingleExperience.Entities.DB
         //Client
         public bool SignUp(SignUpModel client)
         {
-
             var existClient = GetClient(client.Cpf);
             var address = File.ReadAllLines(pathAddress, Encoding.UTF8);
             var signUp = false;
@@ -233,13 +232,13 @@ namespace SingleExperience.Entities.DB
                 if (exist == 0)
                 {
                     var aux = new string[]
-                                        {
+                    {
                         card.CardNumber.ToString(),
                         card.Name,
                         card.ShelfLife.ToString(),
                         card.CVV.ToString(),
                         session,
-                                        };
+                    };
                     lines.Add(String.Join(",", aux));
 
                     using (StreamWriter sw = File.AppendText(pathCard))

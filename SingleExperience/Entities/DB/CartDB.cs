@@ -85,7 +85,6 @@ namespace SingleExperience.Entities.DB
                         })
                         .Where(i => i.Cpf == userId)
                         .ToList();
-
                 }
             }
             catch (IOException e)
@@ -309,7 +308,6 @@ namespace SingleExperience.Entities.DB
             var listItensCart = ListItens(parameters.Session);
             var linesItens = new List<string>();
             var aux = 0;
-            var sum = 1;
 
             if (listItensCart.Count() > 0)
             {
@@ -320,12 +318,12 @@ namespace SingleExperience.Entities.DB
                         if (j.ProductId == i.ProductId && j.StatusId != Convert.ToInt32(StatusProductEnum.Ativo))
                         {
                             EditStatusProduct(j.ProductId, j.Cpf, StatusProductEnum.Ativo);
+                            EditAmount(j.ProductId, j.Cpf, i.Amount);
                             aux++;
                         }
                         else if (j.ProductId == i.ProductId)
                         {
-                            sum += j.Amount;
-                            EditAmount(j.ProductId, j.Cpf, sum);
+                            EditAmount(j.ProductId, j.Cpf, i.Amount);
                             aux++;
                         }
                     });
