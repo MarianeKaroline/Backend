@@ -57,7 +57,7 @@ namespace SingleExperience.Entities.DB
                         .Skip(1)
                         .Select(i => new ClientEntitie
                         {
-                            UserId = i.Split(',')[0],
+                            Cpf = i.Split(',')[0],
                             FullName = i.Split(',')[1],
                             Phone = i.Split(',')[2],
                             Email = i.Split(',')[3],
@@ -65,7 +65,7 @@ namespace SingleExperience.Entities.DB
                             Password = i.Split(',')[5],
                             AddressId = int.Parse(i.Split(',')[6])
                         })
-                        .FirstOrDefault(i => i.UserId == authentication || i.Email == authentication);                    
+                        .FirstOrDefault(i => i.Cpf == authentication || i.Email == authentication);                    
                 }
             }
             catch (IOException e)
@@ -126,7 +126,7 @@ namespace SingleExperience.Entities.DB
                             Name = i.Split(',')[1],
                             ShelfLife = DateTime.Parse(i.Split(',')[2]),
                             CVV = int.Parse(i.Split(',')[3]),
-                            UserId = i.Split(',')[4],
+                            Cpf = i.Split(',')[4],
                         })
                         .ToList();
                 }
@@ -144,7 +144,7 @@ namespace SingleExperience.Entities.DB
         public bool SignUp(SignUpModel client)
         {
 
-            var existClient = GetClient(client.UserId);
+            var existClient = GetClient(client.Cpf);
             var address = File.ReadAllLines(pathAddress, Encoding.UTF8);
             var signUp = false;
 
@@ -157,7 +157,7 @@ namespace SingleExperience.Entities.DB
                 {
                     var aux = new string[]
                     {
-                        client.UserId.ToString(),
+                        client.Cpf.ToString(),
                         client.FullName.ToString(),
                         client.Phone.ToString(), 
                         client.Email.ToString(),
@@ -215,7 +215,7 @@ namespace SingleExperience.Entities.DB
         //CreditCard
         public void AddCard(string session, CardModel card)
         {
-            var client = GetClient(card.UserId);
+            var client = GetClient(card.Cpf);
             var existCard = ListCard(session);
             var lines = new List<string>();
             var exist = 0;

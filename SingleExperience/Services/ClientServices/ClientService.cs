@@ -25,7 +25,7 @@ namespace SingleExperience.Services.ClientServices
             {
                 if (client.Password == signIn.Password)
                 {
-                    session = client.UserId;
+                    session = client.Cpf;
                 }
             }
 

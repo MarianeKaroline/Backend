@@ -47,10 +47,10 @@ namespace SingleExperience.Entities.DB
                         .Skip(1)
                         .Select(p => new CartEntitie
                         {
-                            UserId = p.Split(',')[0],
+                            Cpf = p.Split(',')[0],
                             DateCreated = DateTime.Parse(p.Split(',')[1]),
                         })
-                        .FirstOrDefault(p => p.UserId == userId);
+                        .FirstOrDefault(p => p.Cpf == userId);
                 }
             }
             catch (IOException e)
@@ -75,7 +75,7 @@ namespace SingleExperience.Entities.DB
                         {
                             ProductCartId = int.Parse(i.Split(',')[0]),
                             ProductId = int.Parse(i.Split(',')[1]),
-                            UserId = i.Split(',')[2],
+                            Cpf = i.Split(',')[2],
                             Name = i.Split(',')[3],
                             CategoryId = int.Parse(i.Split(',')[4]),
                             Amount = int.Parse(i.Split(',')[5]),
@@ -83,7 +83,7 @@ namespace SingleExperience.Entities.DB
                             Price = double.Parse(i.Split(',')[7]),
                             IpComputer = i.Split(',')[8]
                         })
-                        .Where(i => i.UserId == userId)
+                        .Where(i => i.Cpf == userId)
                         .ToList();
 
                 }
@@ -117,12 +117,12 @@ namespace SingleExperience.Entities.DB
                 {
                     currentCart = new CartEntitie();
 
-                    currentCart.UserId = parameters.Session;
+                    currentCart.Cpf = parameters.Session;
                     currentCart.DateCreated = DateTime.Now;
 
                     var auxCart = new string[]
                     {
-                        currentCart.UserId,
+                        currentCart.Cpf,
                         currentCart.DateCreated.ToString()
                     };
 
@@ -213,7 +213,7 @@ namespace SingleExperience.Entities.DB
                         {
                             p.ProductCartId.ToString(),
                             p.ProductId.ToString(),
-                            p.UserId.ToString(),
+                            p.Cpf.ToString(),
                             p.Name,
                             p.CategoryId.ToString(),
                             p.Amount.ToString(),
@@ -229,7 +229,7 @@ namespace SingleExperience.Entities.DB
                             {
                                 p.ProductCartId.ToString(),
                                 p.ProductId.ToString(),
-                                p.UserId.ToString(),
+                                p.Cpf.ToString(),
                                 p.Name,
                                 p.CategoryId.ToString(),
                                 sub.ToString(),
@@ -264,7 +264,7 @@ namespace SingleExperience.Entities.DB
                         {
                             p.ProductCartId.ToString(),
                             p.ProductId.ToString(),
-                            p.UserId.ToString(),
+                            p.Cpf.ToString(),
                             p.Name,
                             p.CategoryId.ToString(),
                             p.Amount.ToString(),
@@ -287,7 +287,7 @@ namespace SingleExperience.Entities.DB
                             {
                                 p.ProductCartId.ToString(),
                                 p.ProductId.ToString(),
-                                p.UserId.ToString(),
+                                p.Cpf.ToString(),
                                 p.Name,
                                 p.CategoryId.ToString(),
                                 auxAmount.ToString(),
@@ -319,13 +319,13 @@ namespace SingleExperience.Entities.DB
                     {
                         if (j.ProductId == i.ProductId && j.StatusId != Convert.ToInt32(StatusProductEnum.Ativo))
                         {
-                            EditStatusProduct(j.ProductId, j.UserId, StatusProductEnum.Ativo);
+                            EditStatusProduct(j.ProductId, j.Cpf, StatusProductEnum.Ativo);
                             aux++;
                         }
                         else if (j.ProductId == i.ProductId)
                         {
                             sum += j.Amount;
-                            EditAmount(j.ProductId, j.UserId, sum);
+                            EditAmount(j.ProductId, j.Cpf, sum);
                             aux++;
                         }
                     });
@@ -345,7 +345,7 @@ namespace SingleExperience.Entities.DB
                         i.Amount.ToString(),
                         i.StatusId.ToString(),
                         i.Price.ToString(),
-                        i.UserId.ToString()
+                        i.Cpf.ToString()
                     };
 
                     linesItens.Add(String.Join(",", auxItens));
@@ -384,7 +384,7 @@ namespace SingleExperience.Entities.DB
                     {
                         ProductCartId = 1,
                         ProductId = cart.ProductId,
-                        UserId = cart.UserId,
+                        Cpf = cart.UserId,
                         Name = cart.Name,
                         CategoryId = cart.CategoryId,
                         Amount = sum,
@@ -400,7 +400,7 @@ namespace SingleExperience.Entities.DB
                     {
                         i.ProductCartId = cartMemory.Count();
                         i.ProductId = cart.ProductId;
-                        i.UserId = cart.UserId;
+                        i.Cpf = cart.UserId;
                         i.Name = cart.Name;
                         i.CategoryId = cart.CategoryId;
                         i.Amount += sum;

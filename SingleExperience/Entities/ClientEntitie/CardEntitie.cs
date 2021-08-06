@@ -8,6 +8,6 @@ namespace SingleExperience.Entities.ClientEntities
         public string Name { get; set; }
         public DateTime ShelfLife { get; set; }
         public int CVV { get; set; }
-        public string UserId { get; set; }
+        public string Cpf { get; set; }
     }
 }

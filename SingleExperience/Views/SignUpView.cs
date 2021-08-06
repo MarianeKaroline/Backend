@@ -71,7 +71,7 @@ namespace SingleExperience.Views
                     string cpf = Console.ReadLine();
                     if (cpf.All(char.IsDigit) && cpf.Length == 11)
                     {
-                        client.UserId = cpf;
+                        client.Cpf = cpf;
                         validate = false;
                     }
                     else
@@ -180,7 +180,7 @@ namespace SingleExperience.Views
 
             if (signUp)
             {
-                parameters.Session = client.UserId;
+                parameters.Session = client.Cpf;
                 cartDB.PassItens(parameters);
                 parameters.CartMemory = new List<ItemEntitie>();
                 parameters.CountProduct = cart.TotalCart(parameters).TotalAmount;
