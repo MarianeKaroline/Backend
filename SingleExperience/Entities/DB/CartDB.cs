@@ -342,7 +342,7 @@ namespace SingleExperience.Entities.DB
                         parameters.Session,
                         i.Name.ToString(),
                         i.CategoryId.ToString(),
-                        sum.ToString(),
+                        i.Amount.ToString(),
                         i.StatusId.ToString(),
                         i.Price.ToString(),
                         i.UserId.ToString()

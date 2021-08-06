@@ -5,6 +5,7 @@ using System;
 using System.Globalization;
 using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.CartServices.Models;
+using SingleExperience.Services.CartServices;
 
 namespace SingleExperience.Views
 {
@@ -27,6 +28,7 @@ namespace SingleExperience.Views
         {
             var client = new ClientService();
             var selectedProduct = new SelectedProductView();
+            var cartService = new CartService();
             var signIn = new SignInView();
             var signUp = new SignUpView();
             var cart = new CartView();
@@ -77,6 +79,7 @@ namespace SingleExperience.Views
                     if (parameters.Session.Length == 11)
                     {
                         parameters.Session = client.SignOut();
+                        parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
                         Category(id, parameters);
                     }
                     else

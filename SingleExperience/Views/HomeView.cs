@@ -4,6 +4,7 @@ using System.Globalization;
 using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Enums;
+using SingleExperience.Services.CartServices;
 
 namespace SingleExperience.Views
 {
@@ -14,6 +15,7 @@ namespace SingleExperience.Views
         //Tela inicial
         public void Menu(ParametersModel parameters)
         {
+            var cartService = new CartService();
             var selectedProduct = new SelectedProductView();
             var signIn = new SignInView();
             var signUp = new SignUpView();
@@ -74,6 +76,7 @@ namespace SingleExperience.Views
                     if (parameters.Session.Length == 11)
                     {
                         parameters.Session = client.SignOut();
+                        parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
                         ListProducts(parameters);
                     }
                     else

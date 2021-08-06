@@ -80,10 +80,15 @@ namespace SingleExperience.Views
 
             Console.WriteLine("\n0. Início");
             Console.WriteLine("1. Buscar por categoria");
-            Console.WriteLine($"2. Voltar para a categoria: {(CategoryProductEnum)category}");
-            Console.WriteLine("3. Adicionar o produto mais uma vez ao carrinho");
-            Console.WriteLine("4. Excluir um produto");
-            Console.WriteLine("5. Finalizar compra");
+
+            if (parameters.CountProduct > 0)
+            {
+                Console.WriteLine($"2. Voltar para a categoria: {(CategoryProductEnum)category}");
+                Console.WriteLine("3. Adicionar o produto mais uma vez ao carrinho");
+                Console.WriteLine("4. Excluir um produto");
+                Console.WriteLine("5. Finalizar compra");
+            }
+
             if (parameters.Session.Length < 11)
             {
                 Console.WriteLine("6. Fazer Login");
@@ -171,11 +176,21 @@ namespace SingleExperience.Views
                     {
                         try
                         {
-                            int codeRemove = int.Parse(Console.ReadLine());
-                            cart.RemoveItem(codeRemove, parameters.Session);
-                            Console.WriteLine("\n\nProduto removido com sucesso (Aperte enter para continuar)");
-                            Console.ReadKey();
-                            invalidCodeRemove = false;
+                            if (parameters.CountProduct == 0)
+                            {
+                                Console.WriteLine("Carrinho vazio. Não é mais possível remover um item (Aperte enter para continuar)");
+                                Console.ReadKey();
+                                ListCart(parameters);
+                            }
+                            else
+                            {
+                                int codeRemove = int.Parse(Console.ReadLine());
+                                cart.RemoveItem(codeRemove, parameters.Session, parameters);
+                                parameters.CountProduct = cart.TotalCart(parameters).TotalAmount;
+                                Console.WriteLine("\n\nProduto removido com sucesso (Aperte enter para continuar)");
+                                Console.ReadKey();
+                                invalidCodeRemove = false;
+                            }
                         }
                         catch (Exception)
                         {
@@ -235,6 +250,7 @@ namespace SingleExperience.Views
                     if (parameters.Session.Length == 11)
                     {
                         parameters.Session = client.SignOut();
+                        parameters.CountProduct = cart.TotalCart(parameters).TotalAmount;
                         ListCart(parameters);
                     }
                     else

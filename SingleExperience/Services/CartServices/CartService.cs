@@ -86,8 +86,16 @@ namespace SingleExperience.Services.CartServices
             }
             else
             {
-                total.TotalAmount = parameters.CartMemory.Sum(item => item.Amount);
-                total.TotalPrice = parameters.CartMemory.Sum(item => item.Price * item.Amount);
+                if (parameters.CartMemory.Count == 0)
+                {
+                    total.TotalAmount = 0;
+                    total.TotalPrice = 0;
+                }
+                else
+                {
+                    total.TotalAmount = parameters.CartMemory.Sum(item => item.Amount);
+                    total.TotalPrice = parameters.CartMemory.Sum(item => item.Price * item.Amount);
+                }
             }
 
 
@@ -95,28 +103,53 @@ namespace SingleExperience.Services.CartServices
         }
 
         //Remove um item do carrinho
-        public void RemoveItem(int productId, string session)
+        public void RemoveItem(int productId, string session, ParametersModel parameters)
         {
             var listItens = cartDB.ListItens(session);
             var sum = 0;
             var count = 0;
 
-            listItens
-                .Where(i => i.ProductId == productId)
-                .ToList()
-                .ForEach(p => 
+            if (session.Length == 11)
+            {
+                listItens
+                    .Where(i => i.ProductId == productId)
+                    .ToList()
+                    .ForEach(p => 
+                    {
+                        if (p.Amount > 1 && count == 0)
+                        {
+                            sum = p.Amount - 1;
+                            cartDB.EditAmount(productId, session, sum);
+                            count++;
+                        }
+                        else if (p.Amount == 1)
+                        {
+                            cartDB.EditStatusProduct(productId, session, StatusProductEnum.Inativo);
+                        }
+                    });          
+            }
+            else
+            {
+                var aux = 0;
+                parameters.CartMemory.ForEach(i =>
                 {
-                    if (p.Amount > 1 && count == 0)
+                    if (i.ProductId == productId && i.Amount > 1)
                     {
-                        sum = p.Amount - 1;
-                        cartDB.EditAmount(productId, session, sum);
-                        count++;
+                        i.Amount -= 1;
                     }
-                    else if (p.Amount == 1)
+                    else if (i.ProductId == productId && i.Amount == 1)
                     {
-                        cartDB.EditStatusProduct(productId, session, StatusProductEnum.Inativo);
+                        aux++;
                     }
-                });            
+                });
+
+                if (aux > 0)
+                {
+                    parameters.CartMemory.RemoveAll(x => x.ProductId == productId);
+                }
+
+            }
+
         }
 
         //Ver produtos antes da compra e depois

@@ -60,6 +60,7 @@ namespace SingleExperience.Views
         public void Menu(ParametersModel parameters, bool home)
         {
             var client = new ClientService();
+            var cartService = new CartService();
             var cart = new CartView();
             var inicio = new HomeView();
             var invalid = true;
@@ -99,6 +100,7 @@ namespace SingleExperience.Views
                     break;
                 case 3:
                     parameters.Session = client.SignOut();
+                    parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
                     inicio.ListProducts(parameters);
                     break;
                 default:

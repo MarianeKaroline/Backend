@@ -139,7 +139,8 @@ namespace SingleExperience.Views
                 case 5:
                     if (parameters.Session.Length == 11)
                     {
-                        var ip = client.SignOut();
+                        parameters.Session = client.SignOut();
+                        parameters.CountProduct = cart.TotalCart(parameters).TotalAmount;
                         SelectedProduct(productId, parameters);
                     }
                     else

@@ -7,10 +7,10 @@ ProdutoId,Nome,Preco,Details,Qtde,CategoriaId,Ranking,Disponibilidade,Avaliacao
 1005,Computador IBM,3893,Processador:  Intel Pentium G4560;Velocidade do Processador: 3.5GHz;Tamanho da Memoria: 8 GB;Tecnologia HD: 1TB;Placa de Video: GTX 1050 4GB,50,3,10,True,0
 1006,Celular Iphone 12,4999,Marca: Apple;Modelo: 12;Armazenamento: 64 GB;Tela: 6.1 Polegadas;Câmera Traseira: 12MP;Câmera Frontal: 12MP,99,2,5,True,0
 1007,Notebook Dell,2800,Marca: Dell;Processador: Intel® Pentium;Velocidade do Processador: 2GHz;Tamanho da Memoria: 4 GB;Tecnologia HD: SSD 128 GB;Placa de Video: Placa de vídeo integrada,200,4,9,True,0
-1008,Notebook Asus,3499,Marca: ASUS;Processador: AMD RYZEN 5;Velocidade do Processador: 2.1 GHz;Tamanho da Memoria: 8 GB;Tecnologia HD: SSD 256 GB;Placa de Video: Placa de vídeo integrada,144,4,20,True,0
+1008,Notebook Asus,3499,Marca: ASUS;Processador: AMD RYZEN 5;Velocidade do Processador: 2.1 GHz;Tamanho da Memoria: 8 GB;Tecnologia HD: SSD 256 GB;Placa de Video: Placa de vídeo integrada,143,4,20,True,0
 1009,Teclado Gamer,129,Marca: Trust;Tipo de teclado: Membrana;Comprimento do cabo: 180 cm;Fonte de Alimentação: USB;Iluminação: LED Rainbow,99,1,10,True,0
 1010,Headset Gamer,1149,Marca: Audio Technica;Resposta em frequência: 20 - 20.000 HZ;Sensibilidade: 96 dB/mW,90,1,5,True,0
-1011,Mouse Gamer,139,Marca: Corsair;Botões: 8;DPI: 12.400;Tipo de Sensor: Ótico;Conectividade: com fio,90,1,15,True,0
+1011,Mouse Gamer,139,Marca: Corsair;Botões: 8;DPI: 12.400;Tipo de Sensor: Ótico;Conectividade: com fio,89,1,15,True,0
 1012,iPad,2549,Marca: Apple;Memória RAM: 6GB;Armazenamento: 32 GB,50,5,10,True,0
 1013,Tablet Samsung,1399,Marca: Samsung;Câmera Traseira: 8MP;Câmera Frontal: 5MP;Memória RAM: 3GB;Armazenamento: 64GB,98,5,13,True,0
 1014,Tablet Multilaser,399,Marca: Multilaser;Sistema operacional: Android 8.1; Armazenamento: 16 GB;Memória: 1GB,294,5,20,True,0
