@@ -1,4 +1,5 @@
-﻿using SingleExperience.Enums;
+﻿using SingleExperience.Entities.DB;
+using SingleExperience.Enums;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.CartServices.Models;
 using System;
@@ -13,6 +14,7 @@ namespace SingleExperience.Views
         public void ProductsBought(List<BuyProductModel> buyProducts, ParametersModel parameters, PaymentMethodEnum payment, string lastNumbers, double totalPrice)
         {
             var home = new HomeView();
+            var boughtDB = new BoughtDB();
             var cart = new CartService();
             var bought = new BuyProductModel();
             var ids = new List<int>();
@@ -31,6 +33,8 @@ namespace SingleExperience.Views
             boughtModel.Ids = ids;
 
             var buy = cart.Buy(buyProducts, parameters.Session);
+            boughtDB.Add(parameters, payment, buyProducts);
+
             var j = 51;
 
 
@@ -63,20 +67,7 @@ namespace SingleExperience.Views
                 Console.WriteLine($"|{new string(' ', j)}|");
                 Console.WriteLine($"+{new string('-', j)}+");
 
-                var item = data.Itens
-                .GroupBy(j => j.Name)
-                .Select(i => new ProductCartModel()
-                {
-                    ProductId = i.First().ProductId,
-                    Name = i.First().Name,
-                    Price = i.First().Price,
-                    StatusId = i.First().StatusId,
-                    CategoryId = i.First().CategoryId,
-                    Amount = i.Sum(j => j.Amount)
-                })
-                .ToList();
-
-                item.ForEach(i =>
+                data.Itens.ForEach(i =>
                 {
                     Console.WriteLine($"|#{i.ProductId}{new string(' ', j - 1 - i.ProductId.ToString().Length)}|");
                     Console.WriteLine($"|{i.Name}{new string(' ', j - i.Name.Length)}|");

@@ -1,1 +1,1 @@
-BoughtId,CartId,ProductId,Amount,Price
+BoughtId,ProductId,UserId,Name,CategoryId,Amount,StatusId,Price,AddressId,PaymentId,CardId,DateBought

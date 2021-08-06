@@ -4,7 +4,7 @@
     {
         public int ProductCartId { get; set; }
         public int ProductId { get; set; }
-        public string UserId { get; set; }
+        public string Cpf { get; set; }
         public string Name { get; set; }
         public int CategoryId { get; set; }
         public int Amount { get; set; }

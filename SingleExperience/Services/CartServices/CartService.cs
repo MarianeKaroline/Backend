@@ -31,7 +31,7 @@ namespace SingleExperience.Services.CartServices
                 try
                 {
                     prod = itensCart
-                        .Where(i => i.UserId == parameters.Session && i.StatusId == Convert.ToInt32(status))
+                        .Where(i => i.Cpf == parameters.Session && i.StatusId == Convert.ToInt32(status))
                         .Select(j => new ProductCartModel()
                         {
                             ProductId = j.ProductId,
@@ -40,7 +40,7 @@ namespace SingleExperience.Services.CartServices
                             CategoryId = j.CategoryId,
                             Price = j.Price,
                             Amount = j.Amount,
-                            UserId = j.UserId
+                            UserId = j.Cpf
                         })
                         .ToList();
                 }
@@ -53,7 +53,7 @@ namespace SingleExperience.Services.CartServices
             else
             {
                 prod = parameters.CartMemory
-                        .Where(i => i.UserId == parameters.Session && i.StatusId == Convert.ToInt32(status))
+                        .Where(i => i.Cpf == parameters.Session && i.StatusId == Convert.ToInt32(status))
                         .Select(j => new ProductCartModel()
                         {
                             ProductId = j.ProductId,
@@ -62,7 +62,7 @@ namespace SingleExperience.Services.CartServices
                             CategoryId = j.CategoryId,
                             Price = j.Price,
                             Amount = j.Amount,
-                            UserId = j.UserId
+                            UserId = j.Cpf
                         })
                         .ToList();
             }

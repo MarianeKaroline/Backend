@@ -57,20 +57,7 @@ namespace SingleExperience.Views
             Console.WriteLine($"|{new string(' ', j)}|");
             Console.WriteLine($"+{new string('-', j)}+");
 
-            var item = data.Itens
-            .GroupBy(j => j.Name)
-            .Select(i => new ProductCartModel()
-            {
-                ProductId = i.First().ProductId,
-                Name = i.First().Name,
-                Price = i.First().Price,
-                StatusId = i.First().StatusId,
-                CategoryId = i.First().CategoryId,
-                Amount = i.Sum(j => j.Amount)
-            })
-            .ToList();
-
-            item.ForEach(i =>
+            data.Itens.ForEach(i =>
             {
                 Console.WriteLine($"|#{i.ProductId}{new string(' ', j - 1 - i.ProductId.ToString().Length)}|");
                 Console.WriteLine($"|{i.Name}{new string(' ', j - i.Name.Length)}|");
