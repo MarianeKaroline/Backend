@@ -14,9 +14,10 @@ namespace SingleExperience.Entities.ClientEntities
         public int Amount { get; set; }
         public int StatusId { get; set; }
         public double Price { get; set; }
+        public double TotalPrice { get; set; }
         public int AddressId { get; set; }
         public int PaymentId { get; set; }
-        public int CardId { get; set; }
+        public string NumberPayment { get; set; }
         public DateTime DateBought { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using SingleExperience.Entities.DB;
 using SingleExperience.Enums;
+using SingleExperience.Services.BoughtServices;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.CartServices.Models;
 using System;
@@ -24,7 +25,8 @@ namespace SingleExperience.Views
                 ids.Add(i.ProductId);
             });
 
-            var boughtModel = new BoughtModel();
+
+            var boughtModel = new BuyModel();
 
             boughtModel.Session = parameters.Session;
             boughtModel.Method = payment;
@@ -33,7 +35,7 @@ namespace SingleExperience.Views
             boughtModel.Ids = ids;
 
             var buy = cart.Buy(buyProducts, parameters.Session);
-            boughtDB.Add(parameters, payment, buyProducts);
+            boughtDB.Add(parameters, payment, buyProducts, lastNumbers, totalPrice);
 
             var j = 51;
 

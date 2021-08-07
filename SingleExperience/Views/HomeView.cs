@@ -5,6 +5,7 @@ using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Enums;
 using SingleExperience.Services.CartServices;
+using SingleExperience.Services.BoughtServices;
 
 namespace SingleExperience.Views
 {
@@ -19,7 +20,9 @@ namespace SingleExperience.Views
             var selectedProduct = new SelectedProductView();
             var signIn = new SignInView();
             var signUp = new SignUpView();
+            var perfilClientView = new PerfilClientView();
             var client = new ClientService();
+            var boughtService = new BoughtService();
             var cart = new CartView();
             var opc = 0;
             var invalid = true;
@@ -35,7 +38,8 @@ namespace SingleExperience.Views
             }
             else
             {
-                Console.WriteLine("3. Desconectar-se");
+                Console.WriteLine("3. Ver perfil");
+                Console.WriteLine("4. Desconectar-se");
             }
             Console.WriteLine("9. Sair do Sistema");
             Console.WriteLine("\n5. Selecionar um produto");
@@ -75,9 +79,8 @@ namespace SingleExperience.Views
                 case 3:
                     if (parameters.Session.Length == 11)
                     {
-                        parameters.Session = client.SignOut();
-                        parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
-                        ListProducts(parameters);
+                        var listBought = boughtService.ClientBought(parameters.Session);
+                        perfilClientView.Menu(listBought, parameters);
                     }
                     else
                     {
@@ -85,7 +88,16 @@ namespace SingleExperience.Views
                     }
                     break;
                 case 4:
-                    signUp.SignUp(parameters, true);
+                    if (parameters.Session.Length == 11)
+                    {
+                        parameters.Session = client.SignOut();
+                        parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
+                        ListProducts(parameters);
+                    }
+                    else
+                    {
+                        signUp.SignUp(parameters, true);
+                    }
                     break;
                 case 5:
                     Console.Write("\nDigite o código # do produto: "); 
@@ -139,6 +151,8 @@ namespace SingleExperience.Views
             Console.WriteLine("5. Tablets");
             Console.WriteLine("6. Precisa de ajuda?");
             Console.WriteLine("9. Sair do Sistema");
+
+            //Colocar try catch
             int opc = int.Parse(Console.ReadLine());
 
             switch (opc)

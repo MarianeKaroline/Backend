@@ -19,7 +19,7 @@ namespace SingleExperience.Views
         public void Bought(ParametersModel parameters, PaymentMethodEnum payment, string lastNumbers)
         {
             var ids = new List<int>();
-            var bought = new BoughtModel();
+            var bought = new BuyModel();
 
             bought.Session = parameters.Session;
             bought.Method = payment;

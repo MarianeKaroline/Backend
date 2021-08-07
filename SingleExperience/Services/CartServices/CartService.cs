@@ -98,7 +98,6 @@ namespace SingleExperience.Services.CartServices
                 }
             }
 
-
             return total;
         }
 
@@ -153,7 +152,7 @@ namespace SingleExperience.Services.CartServices
         }
 
         //Ver produtos antes da compra e depois
-        public PreviewBoughtModel PreviewBoughts(ParametersModel parameters, BoughtModel bought)
+        public PreviewBoughtModel PreviewBoughts(ParametersModel parameters, BuyModel bought)
         {
             var preview = new PreviewBoughtModel();
             var client = clientDB.GetClient(bought.Session);

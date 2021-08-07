@@ -8,6 +8,7 @@ namespace SingleExperience.Services.BoughtServices.Models
 {
     class BoughtModel
     {
+        public int BoughtId { get; set; }
         public string ClientName { get; set; }
         public string Street { get; set; }
         public string Number { get; set; }
@@ -18,7 +19,8 @@ namespace SingleExperience.Services.BoughtServices.Models
         public string NumberCard { get; set; }
         public string Code { get; set; }
         public string Pix { get; set; }
-        public Enum Method { get; set; }
         public List<ProductBought> Itens { get; set; }
+        public double TotalPrice { get; set; }
+        public DateTime DateBought { get; set; }
     }
 }

@@ -15,7 +15,6 @@ namespace SingleExperience.Entities.DB
     {
         private string CurrentDirectory = null;
         private string path = null;
-        private string[] boughts = null;
         private CartDB cartDB = null;
         private ClientDB clientDB = null;
 
@@ -23,7 +22,6 @@ namespace SingleExperience.Entities.DB
         {
             CurrentDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             path = CurrentDirectory + @"..\..\..\..\\Database\Bought.csv";
-            boughts = File.ReadAllLines(path, Encoding.UTF8);
             cartDB = new CartDB();
             clientDB = new ClientDB();
         }
@@ -33,6 +31,7 @@ namespace SingleExperience.Entities.DB
             var boughtEntitie = new List<BoughtEntitie>();
             try
             {
+                string[] boughts = File.ReadAllLines(path, Encoding.UTF8);
                 using (StreamReader sr = File.OpenText(path))
                 {
                     //Irá procurar o carrinho pelo userId
@@ -48,10 +47,11 @@ namespace SingleExperience.Entities.DB
                             Amount = int.Parse(p.Split(',')[5]),
                             StatusId = int.Parse(p.Split(',')[6]),
                             Price = double.Parse(p.Split(',')[7]),
-                            AddressId = int.Parse(p.Split(',')[8]),
-                            PaymentId = int.Parse(p.Split(',')[9]),
-                            CardId = int.Parse(p.Split(',')[10]),
-                            DateBought = DateTime.Parse(p.Split(',')[11])
+                            TotalPrice = double.Parse(p.Split(',')[8]),
+                            AddressId = int.Parse(p.Split(',')[9]),
+                            PaymentId = int.Parse(p.Split(',')[10]),
+                            NumberPayment = p.Split(',')[11],
+                            DateBought = DateTime.Parse(p.Split(',')[12])
                         })
                         .Where(p => p.Cpf == userId)
                         .ToList();
@@ -65,11 +65,29 @@ namespace SingleExperience.Entities.DB
             return boughtEntitie;
         }
 
-        public void Add(ParametersModel parameters, PaymentMethodEnum payment, List<BuyProductModel> buyProducts, string lastNumbers)
+        public void Add(ParametersModel parameters, PaymentMethodEnum payment, List<BuyProductModel> buyProducts, string lastNumbers, double totalPrice)
         {
+            var listBought = List(parameters.Session);
             var listItens = new List<ItemEntitie>();
             var linesBought = new List<string>();
             var address = 0;
+            string numberCard = "";
+            var card = new ClientDB();
+
+            if (payment == PaymentMethodEnum.CreditCard)
+            {
+                numberCard = card.ListCard(parameters.Session)
+                    .Where(p => p.CardNumber
+                        .ToString()
+                        .Contains(lastNumbers))
+                    .FirstOrDefault()
+                    .CardNumber
+                    .ToString();
+            }
+            else
+            {
+                numberCard = lastNumbers;
+            }
 
             try
             {
@@ -88,7 +106,7 @@ namespace SingleExperience.Entities.DB
                 {
                     var aux = new string[]
                     {
-                        boughts.Length.ToString(),
+                        (listBought.Count() + 1).ToString(),
                         i.ProductId.ToString(),
                         i.Cpf,
                         i.Name,
@@ -96,10 +114,11 @@ namespace SingleExperience.Entities.DB
                         i.Amount.ToString(),
                         i.StatusId.ToString(),
                         i.Price.ToString(),
+                        totalPrice.ToString(),
                         address.ToString(),
                         Convert.ToInt32(payment).ToString(),
-                        lastNumbers,
-                        DateTime.Now.ToString("dd MMM yyyy")
+                        numberCard.ToString(),
+                        DateTime.Now.ToString("dd/MMM/yyyy")
                     };
 
                     linesBought.Add(String.Join(",", aux));

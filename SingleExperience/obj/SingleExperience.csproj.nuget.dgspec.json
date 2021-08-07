@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\mariane.santos\\Desktop\\Backend\\SingleExperience\\SingleExperience.csproj": {}
+    "E:\\Backend\\SingleExperience\\SingleExperience.csproj": {}
   },
   "projects": {
-    "C:\\Users\\mariane.santos\\Desktop\\Backend\\SingleExperience\\SingleExperience.csproj": {
+    "E:\\Backend\\SingleExperience\\SingleExperience.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mariane.santos\\Desktop\\Backend\\SingleExperience\\SingleExperience.csproj",
+        "projectUniqueName": "E:\\Backend\\SingleExperience\\SingleExperience.csproj",
         "projectName": "SingleExperience",
-        "projectPath": "C:\\Users\\mariane.santos\\Desktop\\Backend\\SingleExperience\\SingleExperience.csproj",
-        "packagesPath": "C:\\Users\\mariane.santos\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mariane.santos\\Desktop\\Backend\\SingleExperience\\obj\\",
+        "projectPath": "E:\\Backend\\SingleExperience\\SingleExperience.csproj",
+        "packagesPath": "C:\\Users\\nani_\\.nuget\\packages\\",
+        "outputPath": "E:\\Backend\\SingleExperience\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\mariane.santos\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\nani_\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
