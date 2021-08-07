@@ -12,7 +12,7 @@ namespace SingleExperience.Views
 {
     class FinishedView
     {
-        public void ProductsBought(List<BuyProductModel> buyProducts, ParametersModel parameters, PaymentMethodEnum payment, string lastNumbers, double totalPrice)
+        public void ProductsBought(List<BuyProductModel> buyProducts, ParametersModel parameters, PaymentMethodEnum payment, string lastNumbers, double totalPrice, int addressId)
         {
             var home = new HomeView();
             var boughtDB = new BoughtDB();
@@ -35,14 +35,14 @@ namespace SingleExperience.Views
             boughtModel.Ids = ids;
 
             var buy = cart.Buy(buyProducts, parameters.Session);
-            boughtDB.Add(parameters, payment, buyProducts, lastNumbers, totalPrice);
+            boughtDB.Add(parameters, payment, buyProducts, lastNumbers, totalPrice, addressId);
 
             var j = 51;
 
 
             if (buy)
             {
-                var data = cart.PreviewBoughts(parameters, boughtModel);
+                var data = cart.PreviewBoughts(parameters, boughtModel, addressId);
 
                 Console.Clear();
 

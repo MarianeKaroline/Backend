@@ -68,7 +68,7 @@ namespace SingleExperience.Views
             var invalidCodeRemove = true;
             var inicio = new HomeView();
             var productCategory = new ProductCategoryView();
-            var payment = new PaymentMethodView();
+            var address = new SendingAddressView();
             var client = new ClientService();
             var signUp = new SignUpView();
             var signIn = new SignInView();
@@ -243,7 +243,7 @@ namespace SingleExperience.Views
                     }
                     else
                     {
-                        payment.Methods(parameters);
+                        address.Address(parameters);
                     }
                     break;
                 case 6:

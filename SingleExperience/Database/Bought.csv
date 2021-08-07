@@ -1,4 +1,3 @@
-BoughtId,ProductId,UserId,Name,CategoryId,Amount,StatusId,Price,TotalPrice,AddressId,PaymentId,CardId,DateBought
-1,1006,12345678912,Celular Iphone 12,2,1,4004,4999,4999,1,1,9876543219876543,07/ago/2021
-2,1011,12345678912,Mouse Gamer,1,1,4004,139,3638,1,3,27b5f12a-d17c-4841-832e-ecc35a7b8cab,07/ago/2021
-2,1008,12345678912,Notebook Asus,4,1,4004,3499,3638,1,3,27b5f12a-d17c-4841-832e-ecc35a7b8cab,07/ago/2021
+BoughtId,TotalPrice,AddressId,PaymentId,CodeBought,UserId,DateBought
+1,2629,2,2,09d7dded-7cbc-44b7-93d4-c325a97f98be,10328698954,07/08/2021 18:10:21
+2,3499,1,3,65186224-947e-4a45-9f6a-b766600ebb21,10328698954,07/08/2021 18:29:10

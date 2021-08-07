@@ -1,2 +1,3 @@
-EnderecoId,CEP,Rua,Numero,Cidade,Estado
-1,1234567,Maria Teste,16,Curitiba,Paraná
+EnderecoId,CEP,Rua,Numero,Cidade,Estado,ClientId
+1,82100660,Maria Correa Godoy,20,Curitiba,Paraná,10328698954
+2,1234567,Rua Teste,1000,Curitiba,Paraná,10328698954

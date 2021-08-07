@@ -21,36 +21,37 @@ namespace SingleExperience.Services.BoughtServices
 
         public List<BoughtModel> ClientBought(string session)
         {
-            var boughtModel = new BoughtModel();
             var client = clientDB.GetClient(session);
-            var address = clientDB.ListAddress(client.AddressId);
+            var address = clientDB.ListAddress(session);
             var card = clientDB.ListCard(session);
             var itens = cartDB.ListItens(session);
             var listProducts = new List<BoughtModel>();
-            var product = new ProductBought();
-            boughtModel.Itens = new List<ProductBought>();
 
             var listBought = boughtDB.List(session);
-            boughtModel.ClientName = client.FullName;
+            var listProductBought = boughtDB.ListProductBought(session);
 
-            address.ForEach(i =>
-            {
-                boughtModel.Cep = i.Cep;
-                boughtModel.Street = i.Street;
-                boughtModel.Number = i.Number;
-                boughtModel.City = i.City;
-                boughtModel.State = i.State;
-            });
-
-            
             listBought.ForEach(i =>
             {
+                var boughtModel = new BoughtModel();
+                boughtModel.Itens = new List<ProductBought>();
+
+                boughtModel.ClientName = client.FullName;
+                var aux = address
+                .FirstOrDefault(j => j.AddressId == i.AddressId);
+
+                boughtModel.Cep = aux.Cep;
+                boughtModel.Street = aux.Street;
+                boughtModel.Number = aux.Number;
+                boughtModel.City = aux.City;
+                boughtModel.State = aux.State;
+
                 boughtModel.BoughtId = i.BoughtId;
                 boughtModel.paymentMethod = (PaymentMethodEnum)i.PaymentId;
+
                 if (i.PaymentId == Convert.ToInt32(PaymentMethodEnum.CreditCard))
                 {
                     card
-                    .Where(j => j.CardNumber.ToString().Contains(i.NumberPayment))
+                    .Where(j => j.CardNumber.ToString().Contains(i.CodeBought))
                     .ToList()
                     .ForEach(k =>
                     {
@@ -59,28 +60,35 @@ namespace SingleExperience.Services.BoughtServices
                 }
                 else if (i.PaymentId == Convert.ToInt32(PaymentMethodEnum.BankSlip))
                 {
-                    boughtModel.Code = i.NumberPayment;
+                    boughtModel.Code = i.CodeBought;
                 }
                 else
                 {
-                    boughtModel.Pix = i.NumberPayment;
+                    boughtModel.Pix = i.CodeBought;
                 }
-
-                product.ProductId = i.ProductId;
-                product.ProductName = i.Name;
-                product.CategoryId = i.CategoryId;
-                product.Amount = i.Amount;
-                product.StatusId = i.StatusId;
-                product.Price = i.Price;
                 boughtModel.TotalPrice = i.TotalPrice;
-
-
                 boughtModel.DateBought = i.DateBought;
+
+                listProductBought
+                .Where(j => j.BoughtId == i.BoughtId)
+                .ToList()
+                .ForEach(j =>
+                {
+                    var product = new ProductBought();
+
+                    product.ProductId = j.ProductId;
+                    product.ProductName = j.Name;
+                    product.CategoryId = j.CategoryId;
+                    product.Amount = j.Amount;
+                    product.StatusId = j.StatusId;
+                    product.Price = j.Price;
+
+                    boughtModel.Itens.Add(product);
+                });
+
+                listProducts.Add(boughtModel);
             });
 
-            boughtModel.Itens.Add(product);
-
-            listProducts.Add(boughtModel);
 
             return listProducts;
         }
@@ -88,9 +96,17 @@ namespace SingleExperience.Services.BoughtServices
         //Verifica se o número que o cliente digitou está correto
         public bool HasBought(string session, int boughtId)
         {
-            var aux = boughtDB.List(session).Where(i => i.BoughtId == boughtId).ToList();
+            var aux = boughtDB.List(session).FirstOrDefault(i => i.BoughtId == boughtId);
 
-            return aux.Count > 0;
+            return aux != null;
+        }
+
+        //Verifica se cliente já cadastrou algum endereço
+        public bool HasAddress(string session)
+        {
+            var aux = clientDB.ListAddress(session).FirstOrDefault();
+
+            return aux != null;
         }
     }
 }

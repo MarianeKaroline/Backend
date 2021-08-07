@@ -11,7 +11,7 @@ namespace SingleExperience.Views
     {
         public void Boughts(List<BoughtModel> boughtModels, ParametersModel parameters)
         {
-            int j = 51;
+            int j = 71;
 
             Console.Clear();
 
@@ -25,10 +25,16 @@ namespace SingleExperience.Views
                     Console.WriteLine($"|Pedido n° : {i.BoughtId}{new string(' ', j - $"Pedido n° : {i.BoughtId}".Length)}|");
                     Console.WriteLine($"|Pedido Realizado  Total     Enviar Para{new string(' ', j - "Pedido Realizado  Total     Enviar Para".Length)}|");
                     Console.WriteLine($"|{i.DateBought}  R${i.TotalPrice.ToString("F2")}   {i.ClientName}{new string(' ', j - $"{i.DateBought}  R${i.TotalPrice.ToString("F2")}   {i.ClientName}".Length)}|");
+                    Console.WriteLine($"|{new string(' ', j)}|");
+                    Console.WriteLine($"+{new string('-', j)}+");
 
                     i.Itens.ForEach(k =>
                     {
+                        Console.WriteLine($"|{new string(' ', j)}|");
                         Console.WriteLine($"|{k.ProductName}{new string(' ', j - k.ProductName.Length)}|");
+                        Console.WriteLine($"|Qtde: {k.Amount}{new string(' ', j - $"Qtde: {k.Amount}".Length)}|");
+                        Console.WriteLine($"|R${k.Price}{new string(' ', j - $"R${k.Price}".Length)}|");
+                        Console.WriteLine($"|{new string(' ', j)}|");
                         Console.WriteLine($"+{new string('-', j)}+");
                     });
                 }

@@ -22,13 +22,13 @@ namespace SingleExperience.Views
             clientDB = new ClientDB();
         }
 
-        public void Methods(ParametersModel parameters)
+        public void Methods(ParametersModel parameters, int addressId)
         {
             var op = 0;
             var invalid = true;
             Console.Clear();
 
-            Console.WriteLine("\nCarrinho > Informações pessoais > Método de pagamento\n");
+            Console.WriteLine("\nCarrinho > Informações pessoais > Endereço > Método de pagamento\n");
 
             Console.WriteLine("1. Cartão de Crédito");
             Console.WriteLine("2. Boleto");
@@ -49,20 +49,20 @@ namespace SingleExperience.Views
             switch (op)
             {
                 case 1:
-                    CreditCard(parameters);
+                    CreditCard(parameters, addressId);
                     break;
                 case 2:
-                    BankSlip(parameters);
+                    BankSlip(parameters, addressId);
                     break;
                 case 3:
-                    Pix(parameters);
+                    Pix(parameters, addressId);
                     break;
                 default:
                     break;
             }
         }
 
-        public void CreditCard(ParametersModel parameters)
+        public void CreditCard(ParametersModel parameters, int addressId)
         {
             CardModel card = new CardModel();
             var op = "";
@@ -109,7 +109,7 @@ namespace SingleExperience.Views
 
                         }
 
-                        preview.Bought(parameters, PaymentMethodEnum.CreditCard, op);
+                        preview.Bought(parameters, PaymentMethodEnum.CreditCard, op, addressId);
                         break;
                     case 'n':
                         Console.Write("Novo Cartão\n");
@@ -124,12 +124,12 @@ namespace SingleExperience.Views
                         card.CVV = int.Parse(Console.ReadLine());
 
                         clientDB.AddCard(parameters.Session, card);
-                        preview.Bought(parameters, PaymentMethodEnum.CreditCard, card.CardNumber.ToString().Substring(12, card.CardNumber.ToString().Length - 12));
+                        preview.Bought(parameters, PaymentMethodEnum.CreditCard, card.CardNumber.ToString().Substring(12, card.CardNumber.ToString().Length - 12), addressId);
                         break;
                     default:
                         Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                         Console.ReadKey();
-                        CreditCard(parameters);
+                        CreditCard(parameters, addressId);
                         break;
                 }
             }
@@ -146,22 +146,22 @@ namespace SingleExperience.Views
                 card.CVV = int.Parse(Console.ReadLine());
 
                 clientDB.AddCard(parameters.Session, card);
-                preview.Bought(parameters, PaymentMethodEnum.CreditCard, card.CardNumber.ToString());
+                preview.Bought(parameters, PaymentMethodEnum.CreditCard, card.CardNumber.ToString(), addressId);
             }
         }
 
-        public void BankSlip(ParametersModel parameters)
+        public void BankSlip(ParametersModel parameters, int addressId)
         {
             var numberCode = Guid.NewGuid();
 
-            preview.Bought(parameters, PaymentMethodEnum.BankSlip, numberCode.ToString());
+            preview.Bought(parameters, PaymentMethodEnum.BankSlip, numberCode.ToString(), addressId);
         }
 
-        public void Pix(ParametersModel parameters)
+        public void Pix(ParametersModel parameters, int addressId)
         {           
             var numberPix = Guid.NewGuid();
 
-            preview.Bought(parameters, PaymentMethodEnum.Pix, numberPix.ToString());
+            preview.Bought(parameters, PaymentMethodEnum.Pix, numberPix.ToString(), addressId);
         }
     }
 }

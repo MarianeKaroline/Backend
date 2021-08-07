@@ -152,11 +152,11 @@ namespace SingleExperience.Services.CartServices
         }
 
         //Ver produtos antes da compra e depois
-        public PreviewBoughtModel PreviewBoughts(ParametersModel parameters, BuyModel bought)
+        public PreviewBoughtModel PreviewBoughts(ParametersModel parameters, BuyModel bought, int addressId)
         {
             var preview = new PreviewBoughtModel();
             var client = clientDB.GetClient(bought.Session);
-            var address = clientDB.ListAddress(client.AddressId);
+            var address = clientDB.ListAddress(parameters.Session);
             var card = clientDB.ListCard(bought.Session);
             var itens = cartDB.ListItens(bought.Session);
             var listProducts = new List<ProductCartModel>();
@@ -166,15 +166,14 @@ namespace SingleExperience.Services.CartServices
             preview.Phone = client.Phone;
 
             //Pega alguns atributos do endereço
-            address
-                .ForEach(i =>
-                {
-                    preview.Cep = i.Cep;
-                    preview.Street = i.Street;
-                    preview.Number = i.Number;
-                    preview.City = i.City;
-                    preview.State = i.State;
-                });
+            var aux = address
+                .FirstOrDefault(i => i.AddressId == addressId);
+
+            preview.Cep = aux.Cep;
+            preview.Street = aux.Street;
+            preview.Number = aux.Number;
+            preview.City = aux.City;
+            preview.State = aux.State;
 
             preview.Method = bought.Method;
 

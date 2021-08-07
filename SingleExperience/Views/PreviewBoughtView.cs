@@ -16,7 +16,7 @@ namespace SingleExperience.Views
         {
             cart = new CartService();
         }
-        public void Bought(ParametersModel parameters, PaymentMethodEnum payment, string lastNumbers)
+        public void Bought(ParametersModel parameters, PaymentMethodEnum payment, string lastNumbers, int addressId)
         {
             var ids = new List<int>();
             var bought = new BuyModel();
@@ -27,7 +27,7 @@ namespace SingleExperience.Views
             bought.Status = StatusProductEnum.Ativo;
             bought.Ids = ids;
 
-            var data = cart.PreviewBoughts(parameters, bought);
+            var data = cart.PreviewBoughts(parameters, bought, addressId);
             var total = cart.TotalCart(parameters);
             var listConfirmation = new List<BuyProductModel>();
             var j = 51;
@@ -81,10 +81,10 @@ namespace SingleExperience.Views
             Console.WriteLine("Frete: R$ 0,00");
             Console.WriteLine($"\nTotal do Pedido: R$ {total.TotalPrice.ToString("F2", CultureInfo.InvariantCulture)}");
 
-            Menu(listConfirmation, parameters, payment, lastNumbers, total.TotalPrice);
+            Menu(listConfirmation, parameters, payment, lastNumbers, total.TotalPrice, addressId);
         }
 
-        public void Menu(List<BuyProductModel> list, ParametersModel parameters, PaymentMethodEnum method, string lastNumbers, double totalPrice)
+        public void Menu(List<BuyProductModel> list, ParametersModel parameters, PaymentMethodEnum method, string lastNumbers, double totalPrice, int addressId)
         {
             var total = cart.TotalCart(parameters);
             var finished = new FinishedView();
@@ -115,14 +115,14 @@ namespace SingleExperience.Views
                         i.Status = StatusProductEnum.Comprado;
                     });
 
-                    finished.ProductsBought(list, parameters, method, lastNumbers, totalPrice);
+                    finished.ProductsBought(list, parameters, method, lastNumbers, totalPrice, addressId);
                     break;
                 case 2:
                     cartView.ListCart(parameters);
                     break;
                 default:
                     Console.WriteLine("Opção inválida, tente novamente");
-                    Menu(list, parameters, method, lastNumbers, totalPrice);
+                    Menu(list, parameters, method, lastNumbers, totalPrice, addressId);
                     break;
             }
         }

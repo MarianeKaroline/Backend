@@ -16,22 +16,27 @@ namespace SingleExperience.Views
         public string password = null;
         public void SignUp(ParametersModel parameters, bool home)
         {
-            var payment = new PaymentMethodView();
+            var sendingAddress = new SendingAddressView();
             var cartView = new CartView();
             var cart = new CartService();
             var client = new SignUpModel();
             var cartDB = new CartDB();
             var clientDB = new ClientDB();
             var validate = true;
-            var validateNumber = true;
-            var validateCep = true;
             var validatePhone = true;
             var validateBirth = true;
-            var j = 41;
 
             Console.Clear();
 
-            Console.WriteLine("Inicio > Cadastrar-se\n");
+            if (home)
+            {
+                Console.WriteLine("Inicio > Cadastrar-se\n");
+            }
+            else
+            {
+                Console.WriteLine("\nCarrinho > Informações pessoais\n");
+            }
+
             Console.WriteLine("Informações pessoais\n");
             Console.Write("Nome Completo: ");
             client.FullName = Console.ReadLine();
@@ -114,67 +119,7 @@ namespace SingleExperience.Views
             if (equal)
             {
                 client.Password = password;
-            }
-
-            Console.WriteLine($"\n+{new string('-', j)}+\n");
-
-            Console.WriteLine("Endereço\n");
-
-            while (validateCep)
-            {
-                try
-                {
-                    Console.Write("CEP: ");
-                    string cep = Console.ReadLine();
-                    if (cep.All(char.IsDigit))
-                    {
-                        client.Cep = cep;
-                        validateCep = false;
-                    }
-                    else
-                    {
-                        Console.WriteLine("O cep deve conter apenas números.");
-                        Console.WriteLine("Por favor, tente novamente.\n");
-                    }
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("O cep deve conter apenas números.");
-                    Console.WriteLine("Por favor, tente novamente.\n");
-                }
-            }
-
-            Console.Write("Rua: ");
-            client.Street = Console.ReadLine();
-
-            while (validateNumber)
-            {
-                try
-                {
-                    Console.Write("Número: ");
-                    string number = Console.ReadLine();
-                    if (number.All(char.IsDigit))
-                    {
-                        client.Number = number;
-                        validateNumber = false;
-                    }
-                    else
-                    {
-                        Console.WriteLine("O número de residência deve conter apenas números.");
-                        Console.WriteLine("Por favor, tente novamente.\n");
-                    }
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("O número de residência deve conter apenas números.");
-                    Console.WriteLine("Por favor, tente novamente.\n");
-                }
-            }
-
-            Console.Write("Cidade: ");
-            client.City = Console.ReadLine();
-            Console.Write("Estado: ");
-            client.State = Console.ReadLine();
+            }                       
 
             var signUp = clientDB.SignUp(client);
 
@@ -190,7 +135,7 @@ namespace SingleExperience.Views
                 }
                 else
                 {
-                    payment.Methods(parameters);
+                    sendingAddress.Address(parameters);
                 }
             }
             else

@@ -18,7 +18,7 @@ namespace SingleExperience.Views
             var cartDB = new CartDB();
             var signIn = new SignInModel();
             var client = new ClientService();
-            var payment = new PaymentMethodView();
+            var address = new SendingAddressView();
             Console.Clear();
 
             Console.WriteLine("Início > Login\n");
@@ -53,7 +53,7 @@ namespace SingleExperience.Views
             }
             else
             {
-                payment.Methods(parameters);
+                address.Address(parameters);
             }
         }
 

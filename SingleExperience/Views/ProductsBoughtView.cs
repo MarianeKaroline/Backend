@@ -57,7 +57,11 @@ namespace SingleExperience.Views
 
                     i.Itens.ForEach(k =>
                     {
-                        Console.WriteLine($"|{k.ProductName}{new string(' ', j - k.ProductName.Length)}|");
+                        Console.WriteLine($"|{new string(' ', j)}|");
+                        Console.WriteLine($"|{k.ProductName}{new string(' ', j - k.ProductName.Length)}|"); 
+                        Console.WriteLine($"|Qtde: {k.Amount}{new string(' ', j - $"Qtde: {k.Amount}".Length)}|");
+                        Console.WriteLine($"|R${k.Price}{new string(' ', j - $"R${k.Price}".Length)}|");
+                        Console.WriteLine($"|{new string(' ', j)}|");
                         Console.WriteLine($"+{new string('-', j)}+");
                     });
                 });
