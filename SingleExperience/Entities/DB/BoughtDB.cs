@@ -1,5 +1,6 @@
 ﻿using SingleExperience.Entities.CartEntities;
 using SingleExperience.Entities.ClientEntities;
+using SingleExperience.Entities.Enums;
 using SingleExperience.Enums;
 using SingleExperience.Services.CartServices.Models;
 using System;
@@ -18,6 +19,7 @@ namespace SingleExperience.Entities.DB
         private string pathProducts = null;
         private CartDB cartDB = null;
         private ClientDB clientDB = null;
+        private string header = null;
 
         public BoughtDB()
         {
@@ -26,6 +28,45 @@ namespace SingleExperience.Entities.DB
             pathProducts = CurrentDirectory + @"..\..\..\..\\Database\ProductBought.csv";
             cartDB = new CartDB();
             clientDB = new ClientDB();
+            header = ReadBought()[0];
+        }
+
+        public string[] ReadBought()
+        {
+            return File.ReadAllLines(path, Encoding.UTF8);
+        }
+
+        //Lista todas as compras para o employee
+        public List<BoughtEntitie> ListAll()
+        {
+            var boughtEntitie = new List<BoughtEntitie>();
+            try
+            {
+                string[] boughts = File.ReadAllLines(path, Encoding.UTF8);
+                using (StreamReader sr = File.OpenText(path))
+                {
+                    boughtEntitie = boughts
+                        .Skip(1)
+                        .Select(p => new BoughtEntitie
+                        {
+                            BoughtId = int.Parse(p.Split(',')[0]),
+                            TotalPrice = double.Parse(p.Split(',')[1]),
+                            AddressId = int.Parse(p.Split(',')[2]),
+                            PaymentId = int.Parse(p.Split(',')[3]),
+                            CodeBought = p.Split(',')[4],
+                            Cpf = p.Split(',')[5],
+                            StatusId = int.Parse(p.Split(',')[6]),
+                            DateBought = DateTime.Parse(p.Split(',')[7])
+                        })
+                        .ToList();
+                }
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine("Ocorreu um erro");
+                Console.WriteLine(e.Message);
+            }
+            return boughtEntitie;
         }
 
         public List<BoughtEntitie> List(string userId)
@@ -47,7 +88,8 @@ namespace SingleExperience.Entities.DB
                             PaymentId = int.Parse(p.Split(',')[3]),
                             CodeBought = p.Split(',')[4],
                             Cpf = p.Split(',')[5],
-                            DateBought = DateTime.Parse(p.Split(',')[6])
+                            StatusId = int.Parse(p.Split(',')[6]),
+                            DateBought = DateTime.Parse(p.Split(',')[7])
                         })
                         .Where(p => p.Cpf == userId)
                         .ToList();
@@ -108,6 +150,16 @@ namespace SingleExperience.Entities.DB
             string numberCard = "";
             var card = new ClientDB();
             var data = DateTime.Now.ToString("G");
+            int statusBought = 0;
+
+            if (payment != PaymentMethodEnum.BankSlip)
+            {
+                statusBought = Convert.ToInt32(StatusBoughtEnum.ConfirmacaoPendente);
+            }
+            else
+            {
+                statusBought = Convert.ToInt32(StatusBoughtEnum.PagamentoPendente);
+            }
 
             if (payment == PaymentMethodEnum.CreditCard)
             {
@@ -135,6 +187,7 @@ namespace SingleExperience.Entities.DB
                     Convert.ToInt32(payment).ToString(),
                     numberCard,
                     parameters.Session,
+                    statusBought.ToString(),
                     data
                 };
 
@@ -189,6 +242,52 @@ namespace SingleExperience.Entities.DB
             {
                 Console.WriteLine("Ocorreu um erro");
                 Console.WriteLine(e.Message);
+            }
+        }
+
+        public void UpdateStatus(int boughtId, StatusBoughtEnum status)
+        {
+            var allBought = ListAll();
+            var lines = new List<string>();
+
+            if (File.Exists(path))
+            {
+                lines.Add(header);
+                using (StreamWriter writer = new StreamWriter(path))
+                {
+                    allBought.ForEach(p =>
+                    {
+                        var aux = new string[]
+                        {
+                            p.BoughtId.ToString(),
+                            p.TotalPrice.ToString(),
+                            p.AddressId.ToString(),
+                            p.PaymentId.ToString(),
+                            p.CodeBought.ToString(),
+                            p.Cpf.ToString(),
+                            p.StatusId.ToString(),
+                            p.DateBought.ToString()
+                        };
+
+                        //Atualiza a linha que contém o produtoId
+                        if (p.BoughtId == boughtId)
+                        {
+                            aux = new string[]
+                            {
+                                p.BoughtId.ToString(),
+                                p.TotalPrice.ToString(),
+                                p.AddressId.ToString(),
+                                p.PaymentId.ToString(),
+                                p.CodeBought.ToString(),
+                                p.Cpf.ToString(),
+                                Convert.ToInt32(status).ToString(),
+                                p.DateBought.ToString()
+                            };
+                        }
+                        lines.Add(String.Join(",", aux));
+                    });
+                }
+                File.WriteAllLines(path, lines);
             }
         }
     }

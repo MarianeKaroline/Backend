@@ -10,11 +10,11 @@ using System.Linq;
 
 namespace SingleExperience.Views
 {
-    class FinishedView
+    class ClientFinishedView
     {
         public void ProductsBought(List<BuyProductModel> buyProducts, ParametersModel parameters, PaymentMethodEnum payment, string lastNumbers, double totalPrice, int addressId)
         {
-            var home = new HomeView();
+            var home = new ClientHomeView();
             var boughtDB = new BoughtDB();
             var cart = new CartService();
             var bought = new BuyProductModel();
@@ -25,7 +25,6 @@ namespace SingleExperience.Views
                 ids.Add(i.ProductId);
             });
 
-
             var boughtModel = new BuyModel();
 
             boughtModel.Session = parameters.Session;
@@ -35,6 +34,7 @@ namespace SingleExperience.Views
             boughtModel.Ids = ids;
 
             var buy = cart.Buy(buyProducts, parameters.Session);
+
             boughtDB.Add(parameters, payment, buyProducts, lastNumbers, totalPrice, addressId);
 
             var j = 51;

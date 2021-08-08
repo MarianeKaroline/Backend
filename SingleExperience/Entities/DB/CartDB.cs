@@ -110,6 +110,7 @@ namespace SingleExperience.Entities.DB
             var listItensCart = ListItens(currentCart.CartId);
             var linesCart = new List<string>();
             var linesItens = new List<string>();
+            var cartId = 1;
             var aux = 0;
             var sum = 1;            
 
@@ -118,6 +119,7 @@ namespace SingleExperience.Entities.DB
                 //Criar Carrinho
                 if (currentCart == null)
                 {
+                    cartId++;
                     currentCart = new CartEntitie();
                     currentCart.Cpf = parameters.Session;
                     currentCart.DateCreated = DateTime.Now;
@@ -171,14 +173,12 @@ namespace SingleExperience.Entities.DB
                         {
                             ReadItens().Length.ToString(),
                             cartModel.ProductId.ToString(),
-                            ReadCart().Length.ToString(),
-                            cartModel.UserId.ToString(),
+                            cartId.ToString(),
                             cartModel.Name.ToString(),
                             cartModel.CategoryId.ToString(),
                             sum.ToString(),
                             cartModel.StatusId.ToString(),
                             cartModel.Price.ToString(),
-                            cartModel.UserId.ToString()
                         };
 
                         linesItens.Add(String.Join(",", auxItens));

@@ -11,11 +11,11 @@ using System.Linq;
 
 namespace SingleExperience.Views
 {
-    class CartView
+    class ClientCartView
     {
         private CartService cart = null;
 
-        public CartView()
+        public ClientCartView()
         {
             cart = new CartService();
         }
@@ -66,12 +66,12 @@ namespace SingleExperience.Views
             var invalid = true;
             var invalidCode = true;
             var invalidCodeRemove = true;
-            var inicio = new HomeView();
-            var productCategory = new ProductCategoryView();
-            var address = new SendingAddressView();
+            var inicio = new ClientHomeView();
+            var productCategory = new ClientProductCategoryView();
+            var address = new ClientSendingAddressView();
             var client = new ClientService();
-            var signUp = new SignUpView();
-            var signIn = new SignInView();
+            var signUp = new ClientSignUpView();
+            var signIn = new ClientSignInView();
             var cartDB = new CartDB();
             var total = cart.TotalCart(parameters);
             var category = cart.ItemCart(parameters, StatusProductEnum.Ativo)

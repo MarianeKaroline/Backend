@@ -1,4 +1,5 @@
-﻿using SingleExperience.Enums;
+﻿using SingleExperience.Entities.Enums;
+using SingleExperience.Enums;
 using SingleExperience.Services.BoughtServices.Models;
 using SingleExperience.Services.CartServices.Models;
 using System;
@@ -8,7 +9,7 @@ using System.Text;
 
 namespace SingleExperience.Views
 {
-    class ProductsBoughtView
+    class ClientProductsBoughtView
     {
         public void ProductsBought(List<BoughtModel> boughtModels, ParametersModel parameters, int boughtId)
         {
@@ -25,6 +26,8 @@ namespace SingleExperience.Views
                 {
                     Console.WriteLine($"+{new string('-', j)}+");
                     Console.WriteLine($"|Pedido em {i.DateBought}{new string(' ', j - $"Pedido em {i.DateBought}".Length)}|");
+                    Console.WriteLine($"|{new string(' ', j)}|");
+                    Console.WriteLine($"|Status do pedido: {(StatusBoughtEnum)i.StatusId}{new string(' ', j - $"Status do pedido: {(StatusBoughtEnum)i.StatusId}".Length)}|");
                     Console.WriteLine($"|{new string(' ', j)}|");
                     Console.WriteLine($"|Endereço de entrega{new string(' ', j - "Endereço de entrega".Length)}|");
                     Console.WriteLine($"|{new string(' ', j)}|");
@@ -69,9 +72,9 @@ namespace SingleExperience.Views
         }
         public void Menu(List<BoughtModel> boughtModels, ParametersModel parameters)
         {
-            var homeView = new HomeView();
-            var perfilView = new PerfilClientView();
-            var productsBoughtView = new ProductsBoughtView();
+            var homeView = new ClientHomeView();
+            var perfilView = new ClientPerfilView();
+            var productsBoughtView = new ClientProductsBoughtView();
             bool validate = true;
             int opc = 0;
 

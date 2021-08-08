@@ -1,4 +1,7 @@
 ProductBoughtId,ProductId,Name,CategoryId,Amount,StatusId,Price,BoughtId
-1,1011,Mouse Gamer,1,1,4004,139,1
-2,1013,Tablet Samsung,5,1,4004,1399,2
-3,1011,Mouse Gamer,1,1,4004,139,3
+1,1011,Mouse Gamer,1,1,4003,139,1
+2,1013,Tablet Samsung,5,1,4003,1399,2
+3,1011,Mouse Gamer,1,1,4003,139,3
+4,1013,Tablet Samsung,5,1,4003,1399,4
+5,1013,Tablet Samsung,5,1,4003,1399,5
+6,1002,Celular Samsung A50,1,1,4003,2500,6

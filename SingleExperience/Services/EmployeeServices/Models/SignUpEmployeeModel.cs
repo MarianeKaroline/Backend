@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SingleExperience.Entities.EmployesEntities
+namespace SingleExperience.Services.EmployeeServices.Models
 {
-    class EmployeeEntitie
+    class SignUpEmployeeModel
     {
         public string Cpf { get; set; }
         public string FullName { get; set; }

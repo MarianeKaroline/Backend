@@ -43,7 +43,7 @@ namespace SingleExperience.Entities.DB
                 }
             }
             return session;
-        }
+        }       
 
         /* Lê Arquivo CSV */
         //Client

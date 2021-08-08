@@ -6,13 +6,15 @@ using System.Text;
 
 namespace SingleExperience.Views
 {
-    class PerfilClientView
+    class ClientPerfilView
     {       
         public void Menu(List<BoughtModel> boughtModels, ParametersModel parameters)
         {
             bool validate = true;
-            var homeView = new HomeView();
-            var boughtsView = new BoughtsView();
+            var homeView = new ClientHomeView();
+            var boughtsView = new ClientBoughtsView();
+            var address = new ClientSendingAddressView();
+            var card = new ClientPaymentMethodView();
             int opc = 0;
 
             Console.Clear();
@@ -21,8 +23,9 @@ namespace SingleExperience.Views
 
             Console.WriteLine("0. Voltar para o início");
             Console.WriteLine("1. Ver produtos comprados");
-            Console.WriteLine("2. Alterar endereços");
+            Console.WriteLine("2. Seus endereços cadastrados");
             Console.WriteLine("3. Alterar cartões de pagamento");
+            Console.WriteLine("9. Sair do Sistema");
             while (validate)
             {
                 try
@@ -45,10 +48,18 @@ namespace SingleExperience.Views
                     boughtsView.Boughts(boughtModels, parameters);
                     break;
                 case 2:
+                    address.ListAddress(parameters);
                     break;
                 case 3:
+                    card.CreditCard(parameters, 0, true);
+                    break;
+                case 9:
+                    Environment.Exit(0);
                     break;
                 default:
+                    Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
+                    Console.ReadKey();
+                    Menu(boughtModels, parameters);
                     break;
             }
         }

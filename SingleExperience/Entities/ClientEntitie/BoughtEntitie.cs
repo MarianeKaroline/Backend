@@ -12,6 +12,7 @@ namespace SingleExperience.Entities.ClientEntities
         public int PaymentId { get; set; }
         public string CodeBought { get; set; }
         public string Cpf { get; set; }
+        public int StatusId { get; set; }
         public DateTime DateBought { get; set; }
     }
 }

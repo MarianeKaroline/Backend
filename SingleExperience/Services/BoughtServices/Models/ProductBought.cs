@@ -12,5 +12,6 @@ namespace SingleExperience.Services.BoughtServices.Models
         public int Amount { get; set; }
         public int StatusId { get; set; }
         public double Price { get; set; }
+        public int BoughtId { get; set; }
     }
 }

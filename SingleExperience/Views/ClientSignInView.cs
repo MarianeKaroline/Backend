@@ -2,23 +2,25 @@
 using SingleExperience.Entities.CartEntities;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.CartServices.Models;
+using SingleExperience.Services.EmployeeServices.Models;
 using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.ClientServices.Models;
 using System;
 using System.Collections.Generic;
+using SingleExperience.Services.EmployeeServices;
 
 namespace SingleExperience.Views
 {
-    class SignInView
+    class ClientSignInView
     {
         public void Login(ParametersModel parameters, bool home)
         {
-            var inicio = new HomeView();
+            var inicio = new ClientHomeView();
             var cart = new CartService();
             var cartDB = new CartDB();
             var signIn = new SignInModel();
             var client = new ClientService();
-            var address = new SendingAddressView();
+            var address = new ClientSendingAddressView();
             Console.Clear();
 
             Console.WriteLine("Início > Login\n");
@@ -61,8 +63,8 @@ namespace SingleExperience.Views
         {
             var client = new ClientService();
             var cartService = new CartService();
-            var cart = new CartView();
-            var inicio = new HomeView();
+            var cart = new ClientCartView();
+            var inicio = new ClientHomeView();
             var invalid = true;
             var op = 0;
 
@@ -137,6 +139,39 @@ namespace SingleExperience.Views
             }
             Console.WriteLine();
             return password;
+        }
+
+        public void LoginEmployee(ParametersModel parameters)
+        {
+            var inicio = new ClientHomeView();
+            var signInEmployee = new SignInEmployeeModel();
+            var perfilEmployee = new EmployeePerfilView();
+            var employee = new EmployeeService();
+            Console.Clear();
+
+            Console.WriteLine("Início > Login\n");
+            Console.Write("Email: ");
+            signInEmployee.Email = Console.ReadLine();
+
+            Console.Write("Senha: ");
+            signInEmployee.Password = ReadPassword();
+
+            var sessionId = employee.SignIn(signInEmployee);
+
+            if (sessionId == "")
+            {
+                Console.WriteLine("\nUsuário não existe");
+                Console.WriteLine("Tecle enter para continuar");
+                Console.ReadKey();
+                inicio.ListProducts(parameters);
+            }
+            else
+            {
+                parameters.Session = sessionId;
+                parameters.CartMemory = new List<ItemEntitie>();
+            }
+
+            perfilEmployee.Menu(parameters);
         }
     }
 }

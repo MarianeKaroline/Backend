@@ -1,4 +1,5 @@
-﻿using SingleExperience.Services.BoughtServices;
+﻿using SingleExperience.Entities.Enums;
+using SingleExperience.Services.BoughtServices;
 using SingleExperience.Services.BoughtServices.Models;
 using SingleExperience.Services.CartServices.Models;
 using System;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace SingleExperience.Views
 {
-    class BoughtsView
+    class ClientBoughtsView
     {
         public void Boughts(List<BoughtModel> boughtModels, ParametersModel parameters)
         {
@@ -23,7 +24,9 @@ namespace SingleExperience.Views
                 {
                     Console.WriteLine($"+{new string('-', j)}+");
                     Console.WriteLine($"|Pedido n° : {i.BoughtId}{new string(' ', j - $"Pedido n° : {i.BoughtId}".Length)}|");
-                    Console.WriteLine($"|Pedido Realizado  Total     Enviar Para{new string(' ', j - "Pedido Realizado  Total     Enviar Para".Length)}|");
+                    Console.WriteLine($"|Status do pedido: {(StatusBoughtEnum)i.StatusId}{new string(' ', j - $"Status do pedido: {(StatusBoughtEnum)i.StatusId}".Length)}|");
+                    Console.WriteLine($"|{new string(' ', j)}|");
+                    Console.WriteLine($"|Pedido Realizado       Total       Enviar Para{new string(' ', j - "Pedido Realizado       Total       Enviar Para".Length)}|");
                     Console.WriteLine($"|{i.DateBought}  R${i.TotalPrice.ToString("F2")}   {i.ClientName}{new string(' ', j - $"{i.DateBought}  R${i.TotalPrice.ToString("F2")}   {i.ClientName}".Length)}|");
                     Console.WriteLine($"|{new string(' ', j)}|");
                     Console.WriteLine($"+{new string('-', j)}+");
@@ -49,10 +52,10 @@ namespace SingleExperience.Views
 
         public void Menu(List<BoughtModel> boughtModels, ParametersModel parameters)
         {
-            var homeView = new HomeView();
+            var homeView = new ClientHomeView();
             var boughtService = new BoughtService();
-            var perfilView = new PerfilClientView();
-            var productsBoughtView = new ProductsBoughtView();
+            var perfilView = new ClientPerfilView();
+            var productsBoughtView = new ClientProductsBoughtView();
             bool validate = true;
             int aux = 0;
             int opc = 0;

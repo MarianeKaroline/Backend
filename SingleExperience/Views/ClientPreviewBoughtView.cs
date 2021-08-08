@@ -8,11 +8,11 @@ using System.Linq;
 
 namespace SingleExperience.Views
 {
-    class PreviewBoughtView
+    class ClientPreviewBoughtView
     {
         private CartService cart;
 
-        public PreviewBoughtView()
+        public ClientPreviewBoughtView()
         {
             cart = new CartService();
         }
@@ -87,8 +87,8 @@ namespace SingleExperience.Views
         public void Menu(List<BuyProductModel> list, ParametersModel parameters, PaymentMethodEnum method, string lastNumbers, double totalPrice, int addressId)
         {
             var total = cart.TotalCart(parameters);
-            var finished = new FinishedView();
-            var cartView = new CartView();
+            var finished = new ClientFinishedView();
+            var cartView = new ClientCartView();
             var validate = true;
             var op = 0;
 

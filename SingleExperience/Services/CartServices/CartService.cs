@@ -217,7 +217,7 @@ namespace SingleExperience.Services.CartServices
             return preview;
         }
 
-        //Depois que confirma a compra, chama os métodos para alterar os status e diminuir a quantidade
+        //Depois que confirma a compra, chama os métodos para alterar os status do carrinho
         public bool Buy(List<BuyProductModel> products, string session)
         {
             var buy = false;
@@ -225,7 +225,7 @@ namespace SingleExperience.Services.CartServices
             products.ForEach(i =>
             {
                 cartDB.EditStatusProduct(i.ProductId, session, i.Status);
-                buy = productDB.EditAmount(i.ProductId, i.Amount);                
+                buy = true;
             });
             return buy;
         }
