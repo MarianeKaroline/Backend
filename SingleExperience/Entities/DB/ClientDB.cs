@@ -17,6 +17,7 @@ namespace SingleExperience.Entities.DB
         private string path = null;
         private string pathAddress = null;
         private string pathCard = null;
+        string[] addressList = null;
 
         public ClientDB()
         {
@@ -24,6 +25,7 @@ namespace SingleExperience.Entities.DB
             path = CurrentDirectory + @"..\..\..\..\\Database\Client.csv";
             pathAddress = CurrentDirectory + @"..\..\..\..\\Database\Address.csv";
             pathCard = CurrentDirectory + @"..\..\..\..\\Database\Card.csv";
+            addressList = File.ReadAllLines(pathAddress, Encoding.UTF8);
         }
 
 
@@ -119,14 +121,15 @@ namespace SingleExperience.Entities.DB
                 {
                     card = cardList
                         .Skip(1)
-                        .Where(i => i.Split(',')[4] == userId)
+                        .Where(i => i.Split(',')[5] == userId)
                         .Select(i => new CardEntitie
                         {
-                            CardNumber = long.Parse(i.Split(',')[0]),
-                            Name = i.Split(',')[1],
-                            ShelfLife = DateTime.Parse(i.Split(',')[2]),
-                            CVV = int.Parse(i.Split(',')[3]),
-                            Cpf = i.Split(',')[4],
+                            CardId = int.Parse(i.Split(',')[0]),
+                            CardNumber = long.Parse(i.Split(',')[1]),
+                            Name = i.Split(',')[2],
+                            ShelfLife = DateTime.Parse(i.Split(',')[3]),
+                            CVV = int.Parse(i.Split(',')[4]),
+                            Cpf = i.Split(',')[5],
                         })
                         .ToList();
                 }
@@ -229,6 +232,7 @@ namespace SingleExperience.Entities.DB
         //CreditCard
         public void AddCard(string session, CardModel card)
         {
+            string[] cardList = File.ReadAllLines(pathCard, Encoding.UTF8);
             var client = GetClient(card.Cpf);
             var existCard = ListCard(session);
             var lines = new List<string>();
@@ -248,6 +252,7 @@ namespace SingleExperience.Entities.DB
                 {
                     var aux = new string[]
                     {
+                        cardList.Length.ToString(),
                         card.CardNumber.ToString(),
                         card.Name,
                         card.ShelfLife.ToString(),

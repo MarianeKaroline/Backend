@@ -13,7 +13,6 @@ namespace SingleExperience.Entities.ClientEntities
         public int Amount { get; set; }
         public int StatusId { get; set; }
         public double Price { get; set; }
-        public string Cpf { get; set; }
         public int BoughtId { get; set; }
     }
 }

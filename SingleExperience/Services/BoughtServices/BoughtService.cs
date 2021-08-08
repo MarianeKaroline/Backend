@@ -1,4 +1,5 @@
-﻿using SingleExperience.Entities.DB;
+﻿using SingleExperience.Entities.ClientEntities;
+using SingleExperience.Entities.DB;
 using SingleExperience.Enums;
 using SingleExperience.Services.BoughtServices.Models;
 using System;
@@ -19,16 +20,17 @@ namespace SingleExperience.Services.BoughtServices
             clientDB = new ClientDB();
         }
 
+        //Listar as compras do cliente
         public List<BoughtModel> ClientBought(string session)
         {
             var client = clientDB.GetClient(session);
             var address = clientDB.ListAddress(session);
             var card = clientDB.ListCard(session);
-            var itens = cartDB.ListItens(session);
+            var cart = cartDB.GetCart(session);
+            var itens = cartDB.ListItens(cart.CartId);
             var listProducts = new List<BoughtModel>();
 
             var listBought = boughtDB.List(session);
-            var listProductBought = boughtDB.ListProductBought(session);
 
             listBought.ForEach(i =>
             {
@@ -69,8 +71,7 @@ namespace SingleExperience.Services.BoughtServices
                 boughtModel.TotalPrice = i.TotalPrice;
                 boughtModel.DateBought = i.DateBought;
 
-                listProductBought
-                .Where(j => j.BoughtId == i.BoughtId)
+                boughtDB.ListProductBought(i.BoughtId)
                 .ToList()
                 .ForEach(j =>
                 {

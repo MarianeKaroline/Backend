@@ -36,7 +36,7 @@ namespace SingleExperience.Entities.DB
                 string[] boughts = File.ReadAllLines(path, Encoding.UTF8);
                 using (StreamReader sr = File.OpenText(path))
                 {
-                    //Irá procurar o carrinho pelo userId
+                    //Irá procurar a compra pelo cpf do cliente
                     boughtEntitie = boughts
                         .Skip(1)
                         .Select(p => new BoughtEntitie
@@ -61,7 +61,8 @@ namespace SingleExperience.Entities.DB
             return boughtEntitie;
         }
 
-        public List<ProductBoughtEntitie> ListProductBought(string userId)
+        //Lista os produtos comprados
+        public List<ProductBoughtEntitie> ListProductBought(int boughtId)
         {
             var productBoughtEntitie = new List<ProductBoughtEntitie>();
             try
@@ -69,7 +70,7 @@ namespace SingleExperience.Entities.DB
                 string[] productBoughts = File.ReadAllLines(pathProducts, Encoding.UTF8);
                 using (StreamReader sr = File.OpenText(path))
                 {
-                    //Irá procurar o carrinho pelo userId
+                    //Irá procurar o os produtos da compra pela compra id
                     productBoughtEntitie = productBoughts
                         .Skip(1)
                         .Select(p => new ProductBoughtEntitie
@@ -80,11 +81,10 @@ namespace SingleExperience.Entities.DB
                             CategoryId = int.Parse(p.Split(',')[3]),
                             Amount = int.Parse(p.Split(',')[4]),
                             StatusId = int.Parse(p.Split(',')[5]),
-                            Price = double.Parse(p.Split(',')[6]),
-                            Cpf = p.Split(',')[7],
-                            BoughtId = int.Parse(p.Split(',')[8]),
+                            Price = double.Parse(p.Split(',')[6]),                            
+                            BoughtId = int.Parse(p.Split(',')[7]),
                         })
-                        .Where(p => p.Cpf == userId)
+                        .Where(p => p.BoughtId == boughtId)
                         .ToList();
                 }
             }
@@ -98,8 +98,10 @@ namespace SingleExperience.Entities.DB
 
         public void Add(ParametersModel parameters, PaymentMethodEnum payment, List<BuyProductModel> buyProducts, string lastNumbers, double totalPrice, int addressId)
         {
+            string[] productBoughts = File.ReadAllLines(pathProducts, Encoding.UTF8);
             var listBought = List(parameters.Session);
-            var listProductBought = ListProductBought(parameters.Session);
+            var getCart = cartDB.GetCart(parameters.Session);
+
             var listItens = new List<ItemEntitie>();
             var linesItens = new List<string>();
             var linesBought = new List<string>();
@@ -150,7 +152,7 @@ namespace SingleExperience.Entities.DB
                 //Pega os dados do último produto comprado
                 buyProducts.ForEach(j =>
                 {
-                    listItens.Add(cartDB.ListItens(parameters.Session)
+                    listItens.Add(cartDB.ListItens(getCart.CartId)
                         .Where(i =>
                             i.StatusId == Convert.ToInt32(StatusProductEnum.Comprado) &&
                             i.ProductId == j.ProductId)
@@ -162,14 +164,13 @@ namespace SingleExperience.Entities.DB
                 {
                     var aux = new string[]
                     {
-                        (listProductBought.Count() + 1).ToString(),
+                        productBoughts.Length.ToString(),
                         i.ProductId.ToString(),
                         i.Name,
                         i.CategoryId.ToString(),
                         i.Amount.ToString(),
                         i.StatusId.ToString(),
                         i.Price.ToString(),
-                        i.Cpf,
                         (listBought.Count() + 1).ToString()
                     };
 
