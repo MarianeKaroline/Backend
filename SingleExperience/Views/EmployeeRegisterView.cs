@@ -64,6 +64,7 @@ namespace SingleExperience.Views
             bool validate = true;
             var homeView = new ClientHomeView();
             var allBought = new EmployeeListAllBoughtView();
+            var employee = new EmployeeService();
             var employeeInventory = new EmployeeInventoryView();
             int opc = 0;
 
@@ -74,6 +75,7 @@ namespace SingleExperience.Views
             Console.WriteLine("0. Voltar para o início");
             Console.WriteLine("1. Ver lista de compras");
             Console.WriteLine("2. Estoque");
+            Console.WriteLine("3. Desconectar-se");
             Console.WriteLine("9. Sair do Sistema");
             while (validate)
             {
@@ -98,6 +100,10 @@ namespace SingleExperience.Views
                     break;
                 case 2:
                     employeeInventory.Inventory(parameters);
+                    break;
+                case 3:
+                    parameters.Session = employee.SignOut();
+                    homeView.ListProducts(parameters);
                     break;
                 case 9:
                     Environment.Exit(0);

@@ -305,6 +305,38 @@ namespace SingleExperience.Views
                 employee.Password = password;
             }
 
+            validate = true;
+            while (validate)
+            {
+                try
+                {
+                    Console.Write("Acesso ao estoque: ");
+                    employee.AccessInventory = bool.Parse(Console.ReadLine());
+                    validate = false;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Valor inválido.");
+                    Console.WriteLine("Por favor, tente novamente.");
+                }
+            }
+
+            validate = true;
+            while (validate)
+            {
+                try
+                {
+                    Console.Write("Acesso aos funcionários cadastrados: ");
+                    employee.RegisterEmployee = bool.Parse(Console.ReadLine());
+                    validate = false;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Valor inválido.");
+                    Console.WriteLine("Por favor, tente novamente.");
+                }
+            }
+
             var signUp = employeeDB.Register(employee);
             if (signUp)
             {

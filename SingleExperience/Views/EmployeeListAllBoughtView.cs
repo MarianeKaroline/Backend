@@ -17,6 +17,8 @@ namespace SingleExperience.Views
 
             Console.Clear();
 
+            Console.WriteLine("\nAdministrador > Lista Compras\n");
+
             employeeService.Bought().ForEach(i => 
             {
                 Console.WriteLine($"+{new string('-', j)}+");
@@ -70,7 +72,7 @@ namespace SingleExperience.Views
         {
             var homeView = new ClientHomeView();
             var productStatus = new EmployeeStatusBoughtView();
-            var productsBoughtView = new ClientProductsBoughtView();
+            var employee = new EmployeeService();
             bool validate = true;
             int opc = 0;
 
@@ -78,6 +80,7 @@ namespace SingleExperience.Views
             Console.WriteLine("1. Ver produtos com confirmação pendente");
             Console.WriteLine("2. Ver produtos com pagamento pendente");
             Console.WriteLine("3. Ver produtos cancelados");
+            Console.WriteLine("4. Desconectar-se");
             Console.WriteLine("9. Sair do programa");
             while (validate)
             {
@@ -106,10 +109,17 @@ namespace SingleExperience.Views
                 case 3:
                     productStatus.Bought(parameters, StatusBoughtEnum.Cancelado);
                     break;
+                case 4:
+                    parameters.Session = employee.SignOut();
+                    homeView.ListProducts(parameters);
+                    break;
                 case 9:
-
+                    Environment.Exit(0);
                     break;
                 default:
+                    Console.WriteLine("Opção inválida, tente novamente.");
+                    Console.WriteLine("\nTente novamente");
+                    Menu(parameters);
                     break;
             }
         }

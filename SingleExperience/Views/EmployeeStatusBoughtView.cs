@@ -19,7 +19,10 @@ namespace SingleExperience.Views
         {
             int j = 51;
             var employeeService = new EmployeeService();
+
             Console.Clear();
+
+            Console.WriteLine($"\nAdministrador > Compras > {status}\n");
 
             employeeService.BoughtPendent(status).ForEach(i =>
             {
@@ -88,6 +91,7 @@ namespace SingleExperience.Views
             Console.WriteLine("101. Desconectar-se");
             Console.WriteLine("102. Confirmar um produto");
             Console.WriteLine("103. Cancelar um produto");
+            Console.WriteLine("9. Sair do programa");
 
             if (status == StatusBoughtEnum.ConfirmacaoPendente)
             {
@@ -171,6 +175,9 @@ namespace SingleExperience.Views
 
                         Bought(parameters, status);
                     }
+                    break;
+                case 9:
+                    Environment.Exit(0);
                     break;
                 default:
                     Console.WriteLine("Opção inválida, tente novamente.");

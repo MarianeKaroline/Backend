@@ -1,5 +1,6 @@
 ﻿using SingleExperience.Entities.DB;
 using SingleExperience.Services.CartServices.Models;
+using SingleExperience.Services.EmployeeServices;
 using SingleExperience.Services.ProductServices;
 using SingleExperience.Services.ProductServices.Models;
 using System;
@@ -68,6 +69,7 @@ namespace SingleExperience.Views
             bool validate = true;
             var homeView = new ClientHomeView();
             var allBought = new EmployeeListAllBoughtView();
+            var employee = new EmployeeService();
             var productDB = new ProductDB();
             var signUp = new EmployeeRegisterView();
             int opc = 0;
@@ -76,6 +78,7 @@ namespace SingleExperience.Views
             Console.WriteLine("1. Ver lista de compras");
             Console.WriteLine("2. Ver funcionários cadastrados");
             Console.WriteLine("3. Editar disponibilidade do produto");
+            Console.WriteLine("4. Desconectar-se");
             Console.WriteLine("9. Sair do Sistema");
             while (validate)
             {
@@ -123,6 +126,10 @@ namespace SingleExperience.Views
 
 
                     Inventory(parameters);
+                    break;
+                case 4:
+                    parameters.Session = employee.SignOut();
+                    homeView.ListProducts(parameters);
                     break;
                 case 9:
                     Environment.Exit(0);

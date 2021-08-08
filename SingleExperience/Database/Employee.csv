@@ -1,2 +1,3 @@
 CPF,FullName,Email,Password,AccessInventory,RegisterEmployee
 10328698954,Mariane Karoline dos Santos,nani@email.com,123456,TRUE,TRUE
+12345678912,Maria da Silva,maria@email.com,654321,False,False
