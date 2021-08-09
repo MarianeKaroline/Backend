@@ -20,15 +20,20 @@ namespace SingleExperience.Entities.DB
             path = CurrentDirectory + @"..\..\..\..\\Database\Employee.csv";
         }
 
+        public string[] EmployeeList()
+        {
+            return File.ReadAllLines(path, Encoding.UTF8);
+        }
+
+        //Lista todos os funcionário cadastrados no sistema
         public List<EmployeeEntitie> List()
         {
             var employee = new List<EmployeeEntitie>();
             try
             {
-                string[] employeeList = File.ReadAllLines(path, Encoding.UTF8);
                 using (StreamReader sr = File.OpenText(path))
                 {
-                    employee = employeeList
+                    employee = EmployeeList()
                         .Skip(1)
                         .Select(i => new EmployeeEntitie
                         {
@@ -50,15 +55,15 @@ namespace SingleExperience.Entities.DB
             return employee;
         }
 
+        //Pega apenas um funcionário pelo cpf
         public EmployeeEntitie GetEmployee(string cpf)
         {
             var employee = new EmployeeEntitie();
             try
             {
-                string[] employeeList = File.ReadAllLines(path, Encoding.UTF8);
                 using (StreamReader sr = File.OpenText(path))
                 {
-                    employee = employeeList
+                    employee = EmployeeList()
                         .Skip(1)
                         .Select(i => new EmployeeEntitie
                         {
@@ -80,6 +85,7 @@ namespace SingleExperience.Entities.DB
             return employee;
         }
 
+        //Cadastra funcionário
         public bool Register(SignUpEmployeeModel employee)
         {
             var existClient = GetEmployee(employee.Cpf);

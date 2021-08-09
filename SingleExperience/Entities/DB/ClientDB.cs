@@ -18,6 +18,7 @@ namespace SingleExperience.Entities.DB
         private string pathAddress = null;
         private string pathCard = null;
         string[] addressList = null;
+        private ClientEntitie client = null;
 
         public ClientDB()
         {
@@ -26,6 +27,7 @@ namespace SingleExperience.Entities.DB
             pathAddress = CurrentDirectory + @"..\..\..\..\\Database\Address.csv";
             pathCard = CurrentDirectory + @"..\..\..\..\\Database\Card.csv";
             addressList = File.ReadAllLines(pathAddress, Encoding.UTF8);
+            client = new ClientEntitie();
         }
 
 
@@ -49,7 +51,6 @@ namespace SingleExperience.Entities.DB
         //Client
         public ClientEntitie GetClient(string authentication)
         {
-            var client = new ClientEntitie();
             try
             {
                 string[] clientList = File.ReadAllLines(path, Encoding.UTF8);

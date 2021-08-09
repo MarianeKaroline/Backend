@@ -1,0 +1,5 @@
+StatusBoughtId,Description
+1,Pending Confirmation
+2,Pending Payment
+3,Confirmed
+4,Canceled

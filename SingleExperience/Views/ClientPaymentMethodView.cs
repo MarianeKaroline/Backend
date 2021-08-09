@@ -6,6 +6,7 @@ using System.Globalization;
 using SingleExperience.Entities.DB;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.CartServices;
+using SingleExperience.Services.BoughtServices.Models;
 
 namespace SingleExperience.Views
 {
@@ -25,7 +26,7 @@ namespace SingleExperience.Views
             cardModel = new CardModel();
         }
 
-        public void Methods(ParametersModel parameters, int addressId)
+        public void Methods(ParametersModel parameters, AddBoughtModel addBought)
         {
             var op = 0;
             var invalid = true;
@@ -52,20 +53,20 @@ namespace SingleExperience.Views
             switch (op)
             {
                 case 1:
-                    CreditCard(parameters, addressId, false);
+                    CreditCard(parameters, addBought, false);
                     break;
                 case 2:
-                    BankSlip(parameters, addressId);
+                    BankSlip(parameters, addBought);
                     break;
                 case 3:
-                    Pix(parameters, addressId);
+                    Pix(parameters, addBought);
                     break;
                 default:
                     break;
             }
         }
 
-        public void CreditCard(ParametersModel parameters, int addressId, bool home)
+        public void CreditCard(ParametersModel parameters, AddBoughtModel addBought, bool home)
         {
             var op = "";
             char opc = '\0';
@@ -78,6 +79,7 @@ namespace SingleExperience.Views
                 Console.WriteLine("\nSua conta > Seus cartões cadastrados\n");
             }
 
+            //Se o cliente tiver cartões cadastrado, irá mostrar para ele
             if (client.HasCard(parameters.Session))
             {
                 client.ShowCards(parameters.Session)
@@ -105,7 +107,7 @@ namespace SingleExperience.Views
                     switch (opc)
                     {
                         case 's':
-                            AddNewCreditCard(parameters, addressId, home);
+                            AddNewCreditCard(parameters, addBought, home);
                             break;
                         case 'n':
                             Menu(parameters);
@@ -147,42 +149,47 @@ namespace SingleExperience.Views
                                     Console.WriteLine("Opção inválida, tente novamente.");
                                 }
                             }
-
-                            preview.Bought(parameters, PaymentMethodEnum.CreditCard, op, addressId);
+                            addBought.Payment = PaymentMethodEnum.CreditCard;
+                            preview.Bought(parameters, addBought);
                             break;
                         case 'n':
-                            AddNewCreditCard(parameters, addressId, false);
+                            AddNewCreditCard(parameters, addBought, false);
                             break;
                         default:
                             Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
                             Console.ReadKey();
-                            CreditCard(parameters, addressId, home);
+                            CreditCard(parameters, addBought, home);
                             break;
                     }
                 }
             }
             else
             {
-                AddNewCreditCard(parameters, addressId, false);
+                AddNewCreditCard(parameters, addBought, false);
             }
         }
 
-        public void BankSlip(ParametersModel parameters, int addressId)
+        public void BankSlip(ParametersModel parameters, AddBoughtModel addBought)
         {
             var numberCode = Guid.NewGuid();
+            addBought.CodeConfirmation = numberCode.ToString();
 
-            preview.Bought(parameters, PaymentMethodEnum.BankSlip, numberCode.ToString(), addressId);
+            addBought.Payment = PaymentMethodEnum.BankSlip;
+            preview.Bought(parameters, addBought);
         }
 
-        public void Pix(ParametersModel parameters, int addressId)
+        public void Pix(ParametersModel parameters, AddBoughtModel addBought)
         {           
             var numberPix = Guid.NewGuid();
+            addBought.CodeConfirmation = numberPix.ToString();
 
-            preview.Bought(parameters, PaymentMethodEnum.Pix, numberPix.ToString(), addressId);
+            addBought.Payment = PaymentMethodEnum.Pix;
+
+            preview.Bought(parameters, addBought);
         }
 
         //Caso a edição do cartão seja do perfil, o home tem que ser true
-        public void AddNewCreditCard(ParametersModel parameters, int addressId, bool home)
+        public void AddNewCreditCard(ParametersModel parameters, AddBoughtModel addBought, bool home)
         {
             Console.WriteLine($"\n+{new string('-', j)}+\n");
             Console.Write("Novo Cartão\n");
@@ -199,11 +206,14 @@ namespace SingleExperience.Views
 
             if (home)
             {
-                CreditCard(parameters, addressId, home);
+                CreditCard(parameters, addBought, home);
             }
             else
             {
-                preview.Bought(parameters, PaymentMethodEnum.CreditCard, cardModel.CardNumber.ToString(), addressId);
+                addBought.CodeConfirmation = cardModel.CardNumber.ToString();
+
+                addBought.Payment = PaymentMethodEnum.CreditCard;
+                preview.Bought(parameters, addBought);
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using SingleExperience.Entities.DB;
 using SingleExperience.Services.BoughtServices;
+using SingleExperience.Services.BoughtServices.Models;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.ClientServices;
@@ -13,6 +14,13 @@ namespace SingleExperience.Views
 {
     class ClientSendingAddressView
     {
+        private AddBoughtModel addBought = null;
+
+        public ClientSendingAddressView()
+        {
+            addBought = new AddBoughtModel();
+        }
+
         public void ListAddress(ParametersModel parameters)
         {
             var boughtService = new BoughtService();
@@ -137,8 +145,9 @@ namespace SingleExperience.Views
                                 Console.WriteLine("\nOpção inválida, tente novamente.\n");
                             }
                         }
+                        addBought.AddressId = op;
 
-                        paymentMethod.Methods(parameters, op);
+                        paymentMethod.Methods(parameters, addBought);
 
                         break;
                     case 'n':
@@ -223,6 +232,8 @@ namespace SingleExperience.Views
             addressModel.ClientId = parameters.Session;
 
             var addressId = clientDB.AddAddress(parameters.Session, addressModel);
+            addBought.AddressId = addressId;
+
 
             if (home)
             {
@@ -230,7 +241,7 @@ namespace SingleExperience.Views
             }
             else
             {
-                paymentMethod.Methods(parameters, addressId);
+                paymentMethod.Methods(parameters, addBought);
             }
         }
 

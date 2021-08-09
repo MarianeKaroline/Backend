@@ -2,6 +2,7 @@
 using SingleExperience.Entities.ClientEntities;
 using SingleExperience.Entities.Enums;
 using SingleExperience.Enums;
+using SingleExperience.Services.BoughtServices.Models;
 using SingleExperience.Services.CartServices.Models;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace SingleExperience.Entities.DB
         private string path = null;
         private string pathProducts = null;
         private CartDB cartDB = null;
-        private ClientDB clientDB = null;
+        private ClientDB cardDB = null;
         private string header = null;
 
         public BoughtDB()
@@ -27,13 +28,19 @@ namespace SingleExperience.Entities.DB
             path = CurrentDirectory + @"..\..\..\..\\Database\Bought.csv";
             pathProducts = CurrentDirectory + @"..\..\..\..\\Database\ProductBought.csv";
             cartDB = new CartDB();
-            clientDB = new ClientDB();
             header = ReadBought()[0];
+            cardDB = new ClientDB();
         }
 
+        //Tentei colocar no construtor e tudo, fiz até uma lista em memória, porém, por algum motivo, a lista não estava atualizando, então deixei assim
         public string[] ReadBought()
         {
             return File.ReadAllLines(path, Encoding.UTF8);
+        }
+
+        public string[] ReadProductBought()
+        {
+            return File.ReadAllLines(pathProducts, Encoding.UTF8);
         }
 
         //Lista todas as compras para o employee
@@ -42,10 +49,9 @@ namespace SingleExperience.Entities.DB
             var boughtEntitie = new List<BoughtEntitie>();
             try
             {
-                string[] boughts = File.ReadAllLines(path, Encoding.UTF8);
                 using (StreamReader sr = File.OpenText(path))
                 {
-                    boughtEntitie = boughts
+                    boughtEntitie = ReadBought()
                         .Skip(1)
                         .Select(p => new BoughtEntitie
                         {
@@ -69,16 +75,16 @@ namespace SingleExperience.Entities.DB
             return boughtEntitie;
         }
 
+        //Lista apenas as compras do usuário
         public List<BoughtEntitie> List(string userId)
         {
             var boughtEntitie = new List<BoughtEntitie>();
             try
             {
-                string[] boughts = File.ReadAllLines(path, Encoding.UTF8);
                 using (StreamReader sr = File.OpenText(path))
                 {
                     //Irá procurar a compra pelo cpf do cliente
-                    boughtEntitie = boughts
+                    boughtEntitie = ReadBought()
                         .Skip(1)
                         .Select(p => new BoughtEntitie
                         {
@@ -109,11 +115,10 @@ namespace SingleExperience.Entities.DB
             var productBoughtEntitie = new List<ProductBoughtEntitie>();
             try
             {
-                string[] productBoughts = File.ReadAllLines(pathProducts, Encoding.UTF8);
                 using (StreamReader sr = File.OpenText(path))
                 {
                     //Irá procurar o os produtos da compra pela compra id
-                    productBoughtEntitie = productBoughts
+                    productBoughtEntitie = ReadProductBought()
                         .Skip(1)
                         .Select(p => new ProductBoughtEntitie
                         {
@@ -138,42 +143,42 @@ namespace SingleExperience.Entities.DB
             return productBoughtEntitie;
         }
 
-        public void Add(ParametersModel parameters, PaymentMethodEnum payment, List<BuyProductModel> buyProducts, string lastNumbers, double totalPrice, int addressId)
+        //Adiciona os produtos nas tabelas de compras
+        public void AddBought(ParametersModel parameters, AddBoughtModel addBought)
         {
-            string[] productBoughts = File.ReadAllLines(pathProducts, Encoding.UTF8);
             var listBought = List(parameters.Session);
             var getCart = cartDB.GetCart(parameters.Session);
-
             var listItens = new List<ItemEntitie>();
             var linesItens = new List<string>();
             var linesBought = new List<string>();
-            string numberCard = "";
-            var card = new ClientDB();
+            string codeBought = ""; //Esse code Bought é o número do cartão, ou o gid gerado para boleto e pix
             var data = DateTime.Now.ToString("G");
             int statusBought = 0;
 
-            if (payment != PaymentMethodEnum.BankSlip)
-            {
-                statusBought = Convert.ToInt32(StatusBoughtEnum.ConfirmacaoPendente);
-            }
-            else
+            //Verifica se o pagamento foi feito com boleto, para transformar o status do produto em Pagamento Pendente
+            if (addBought.Payment == PaymentMethodEnum.BankSlip)
             {
                 statusBought = Convert.ToInt32(StatusBoughtEnum.PagamentoPendente);
             }
-
-            if (payment == PaymentMethodEnum.CreditCard)
+            else
             {
-                numberCard = card.ListCard(parameters.Session)
+                statusBought = Convert.ToInt32(StatusBoughtEnum.ConfirmacaoPendente);
+            }
+
+            
+            if (addBought.Payment == PaymentMethodEnum.CreditCard)
+            {
+                codeBought = cardDB.ListCard(parameters.Session)
                     .Where(p => p.CardNumber
                         .ToString()
-                        .Contains(lastNumbers))
+                        .Contains(addBought.CodeConfirmation))
                     .FirstOrDefault()
                     .CardNumber
                     .ToString();
             }
             else
             {
-                numberCard = lastNumbers;
+                codeBought = addBought.CodeConfirmation;
             }
 
             try
@@ -182,10 +187,10 @@ namespace SingleExperience.Entities.DB
                 var auxBought = new string[]
                 {
                     (listBought.Count() + 1).ToString(),
-                    totalPrice.ToString(),
-                    addressId.ToString(),
-                    Convert.ToInt32(payment).ToString(),
-                    numberCard,
+                    addBought.TotalPrice.ToString(),
+                    addBought.AddressId.ToString(),
+                    Convert.ToInt32(addBought.Payment).ToString(),
+                    codeBought,
                     parameters.Session,
                     statusBought.ToString(),
                     data
@@ -203,7 +208,7 @@ namespace SingleExperience.Entities.DB
 
 
                 //Pega os dados do último produto comprado
-                buyProducts.ForEach(j =>
+                addBought.BuyProducts.ForEach(j =>
                 {
                     listItens.Add(cartDB.ListItens(getCart.CartId)
                         .Where(i =>
@@ -217,7 +222,7 @@ namespace SingleExperience.Entities.DB
                 {
                     var aux = new string[]
                     {
-                        productBoughts.Length.ToString(),
+                        ReadProductBought().Length.ToString(),
                         i.ProductId.ToString(),
                         i.Name,
                         i.CategoryId.ToString(),
@@ -245,6 +250,7 @@ namespace SingleExperience.Entities.DB
             }
         }
 
+        //Atualiza o status da compra
         public void UpdateStatus(int boughtId, StatusBoughtEnum status)
         {
             var allBought = ListAll();

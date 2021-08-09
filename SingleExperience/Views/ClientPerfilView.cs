@@ -15,6 +15,7 @@ namespace SingleExperience.Views
             var boughtsView = new ClientBoughtsView();
             var address = new ClientSendingAddressView();
             var card = new ClientPaymentMethodView();
+            AddBoughtModel addBought = new AddBoughtModel();
             int opc = 0;
 
             Console.Clear();
@@ -51,7 +52,7 @@ namespace SingleExperience.Views
                     address.ListAddress(parameters);
                     break;
                 case 3:
-                    card.CreditCard(parameters, 0, true);
+                    card.CreditCard(parameters, addBought, true);
                     break;
                 case 9:
                     Environment.Exit(0);

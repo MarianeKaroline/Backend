@@ -1,4 +1,5 @@
 ﻿using SingleExperience.Enums;
+using SingleExperience.Services.BoughtServices.Models;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.CartServices.Models;
 using System;
@@ -16,18 +17,18 @@ namespace SingleExperience.Views
         {
             cart = new CartService();
         }
-        public void Bought(ParametersModel parameters, PaymentMethodEnum payment, string lastNumbers, int addressId)
+        public void Bought(ParametersModel parameters, AddBoughtModel addBought)
         {
             var ids = new List<int>();
             var bought = new BuyModel();
 
             bought.Session = parameters.Session;
-            bought.Method = payment;
-            bought.Confirmation = lastNumbers;
+            bought.Method = addBought.Payment;
+            bought.Confirmation = addBought.CodeConfirmation;
             bought.Status = StatusProductEnum.Ativo;
             bought.Ids = ids;
 
-            var data = cart.PreviewBoughts(parameters, bought, addressId);
+            var data = cart.PreviewBoughts(parameters, bought, addBought.AddressId);
             var total = cart.TotalCart(parameters);
             var listConfirmation = new List<BuyProductModel>();
             var j = 51;
@@ -47,9 +48,9 @@ namespace SingleExperience.Views
             Console.WriteLine($"+{new string('-', j)}+");
             Console.WriteLine($"|Forma de pagamento{new string(' ', j - $"Forma de pagamento".Length)}|");
 
-            if (payment == PaymentMethodEnum.CreditCard)
+            if (addBought.Payment == PaymentMethodEnum.CreditCard)
                 Console.WriteLine($"|(Crédito) com final {data.NumberCard.Substring(12)}{new string(' ', j - $"(Crédito) com final {data.NumberCard.Substring(12)}".Length)}|");
-            else if (payment == PaymentMethodEnum.BankSlip)
+            else if (addBought.Payment == PaymentMethodEnum.BankSlip)
                 Console.WriteLine($"|(Boleto) {data.Code}{new string(' ', j - $"(Boleto) {data.Code}".Length)}|");
             else
                 Console.WriteLine($"|(PIX) {data.Pix}{new string(' ', j - $"(PIX) {data.Pix}".Length)}|");
@@ -81,10 +82,12 @@ namespace SingleExperience.Views
             Console.WriteLine("Frete: R$ 0,00");
             Console.WriteLine($"\nTotal do Pedido: R$ {total.TotalPrice.ToString("F2", CultureInfo.InvariantCulture)}");
 
-            Menu(listConfirmation, parameters, payment, lastNumbers, total.TotalPrice, addressId);
+            addBought.TotalPrice = total.TotalPrice;
+            addBought.BuyProducts = listConfirmation;
+            Menu(parameters, addBought);
         }
 
-        public void Menu(List<BuyProductModel> list, ParametersModel parameters, PaymentMethodEnum method, string lastNumbers, double totalPrice, int addressId)
+        public void Menu(ParametersModel parameters, AddBoughtModel addBought)
         {
             var total = cart.TotalCart(parameters);
             var finished = new ClientFinishedView();
@@ -110,19 +113,19 @@ namespace SingleExperience.Views
             switch (op)
             {
                 case 1:
-                    list.ForEach(i =>
+                    addBought.BuyProducts.ForEach(i =>
                     {
                         i.Status = StatusProductEnum.Comprado;
                     });
 
-                    finished.ProductsBought(list, parameters, method, lastNumbers, totalPrice, addressId);
+                    finished.ProductsBought(parameters, addBought);
                     break;
                 case 2:
                     cartView.ListCart(parameters);
                     break;
                 default:
                     Console.WriteLine("Opção inválida, tente novamente");
-                    Menu(list, parameters, method, lastNumbers, totalPrice, addressId);
+                    Menu(parameters, addBought);
                     break;
             }
         }

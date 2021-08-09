@@ -1,6 +1,7 @@
 ﻿using SingleExperience.Entities.DB;
 using SingleExperience.Enums;
 using SingleExperience.Services.BoughtServices;
+using SingleExperience.Services.BoughtServices.Models;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.CartServices.Models;
 using System;
@@ -12,7 +13,7 @@ namespace SingleExperience.Views
 {
     class ClientFinishedView
     {
-        public void ProductsBought(List<BuyProductModel> buyProducts, ParametersModel parameters, PaymentMethodEnum payment, string lastNumbers, double totalPrice, int addressId)
+        public void ProductsBought(ParametersModel parameters, AddBoughtModel addBought)
         {
             var home = new ClientHomeView();
             var boughtDB = new BoughtDB();
@@ -20,7 +21,7 @@ namespace SingleExperience.Views
             var bought = new BuyProductModel();
             var ids = new List<int>();
 
-            buyProducts.ForEach(i =>
+            addBought.BuyProducts.ForEach(i =>
             {
                 ids.Add(i.ProductId);
             });
@@ -28,21 +29,21 @@ namespace SingleExperience.Views
             var boughtModel = new BuyModel();
 
             boughtModel.Session = parameters.Session;
-            boughtModel.Method = payment;
-            boughtModel.Confirmation = lastNumbers;
+            boughtModel.Method = addBought.Payment;
+            boughtModel.Confirmation = addBought.CodeConfirmation;
             boughtModel.Status = StatusProductEnum.Comprado;
             boughtModel.Ids = ids;
 
-            var buy = cart.Buy(buyProducts, parameters.Session);
+            var buy = cart.Buy(addBought.BuyProducts, parameters.Session);
 
-            boughtDB.Add(parameters, payment, buyProducts, lastNumbers, totalPrice, addressId);
+            boughtDB.AddBought(parameters, addBought);
 
             var j = 51;
 
 
             if (buy)
             {
-                var data = cart.PreviewBoughts(parameters, boughtModel, addressId);
+                var data = cart.PreviewBoughts(parameters, boughtModel, addBought.AddressId);
 
                 Console.Clear();
 
@@ -59,9 +60,9 @@ namespace SingleExperience.Views
                 Console.WriteLine($"+{new string('-', j)}+");
                 Console.WriteLine($"|Forma de pagamento{new string(' ', j - $"Forma de pagamento".Length)}|");
 
-                if (payment == PaymentMethodEnum.CreditCard)
+                if (addBought.Payment == PaymentMethodEnum.CreditCard)
                     Console.WriteLine($"|(Crédito) com final {data.NumberCard.Substring(12)}{new string(' ', j - $"(Crédito) com final {data.NumberCard.Substring(12)}".Length)}|");
-                else if (payment == PaymentMethodEnum.BankSlip)
+                else if (addBought.Payment == PaymentMethodEnum.BankSlip)
                     Console.WriteLine($"|(Boleto) {data.Code}{new string(' ', j - $"(Boleto) {data.Code}".Length)}|");
                 else
                     Console.WriteLine($"|(PIX) {data.Pix}{new string(' ', j - $"(PIX) {data.Pix}".Length)}|");
@@ -81,7 +82,7 @@ namespace SingleExperience.Views
 
                 var total = cart.TotalCart(parameters);
 
-                Console.WriteLine($"Total do Pedido: R$ {totalPrice}");
+                Console.WriteLine($"Total do Pedido: R$ {addBought.TotalPrice}");
                 Console.WriteLine("\nTecle enter para continuar");
                 Console.ReadKey();
                 parameters.CountProduct = 0;

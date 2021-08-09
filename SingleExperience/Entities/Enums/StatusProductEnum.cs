@@ -2,8 +2,8 @@
 {
     enum StatusProductEnum
     {
-        Inativo = 4001,
-        Ativo = 4002,
-        Comprado = 4003
+        Inativo = 1,
+        Ativo = 2,
+        Comprado = 3
     }
 }
