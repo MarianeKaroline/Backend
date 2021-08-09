@@ -17,7 +17,7 @@ namespace SingleExperience.Entities.DB
         private string path = null;
         private string pathAddress = null;
         private string pathCard = null;
-        string[] addressList = null;
+        private string[] addressList = null;
         private ClientEntitie client = null;
 
         public ClientDB()
