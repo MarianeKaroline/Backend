@@ -7,3 +7,4 @@ ProductBoughtId,ProductId,Name,CategoryId,Amount,StatusId,Price,BoughtId
 6,1002,Celular Samsung A50,1,1,4003,2500,6
 7,1002,Celular Samsung A50,2,1,4003,2500,7
 8,1013,Tablet Samsung,5,2,4003,1399,8
+9,1002,Celular Samsung A50,2,1,4003,2500,9

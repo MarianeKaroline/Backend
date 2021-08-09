@@ -16,6 +16,7 @@ namespace SingleExperience.Entities.DB
         private string path = null;
         private string pathItens = null;
         private string header = "";
+        private ClientDB client = null;
 
         public CartDB()
         {
@@ -23,6 +24,7 @@ namespace SingleExperience.Entities.DB
             path = CurrentDirectory + @"..\..\..\..\\Database\Cart.csv";
             pathItens = CurrentDirectory + @"..\..\..\..\\Database\ItensCart.csv";
             header = ReadItens()[0];
+            client = new ClientDB();
         }
 
         //Lê Todas as linhas quando pedir
@@ -103,10 +105,8 @@ namespace SingleExperience.Entities.DB
         //Criar carrinho e adiciona produtos
         public void AddItemCart(ParametersModel parameters, CartModel cartModel)
         {
-            var client = new ClientDB();
-            var cart = new CartDB(); //Instanciar lá em cima
             var ipComputer = client.ClientId();
-            var currentCart = cart.GetCart(parameters.Session);
+            var currentCart = GetCart(parameters.Session);
             var listItensCart = ListItens(currentCart.CartId);
             var linesCart = new List<string>();
             var linesItens = new List<string>();

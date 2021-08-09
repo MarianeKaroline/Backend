@@ -89,15 +89,14 @@ namespace SingleExperience.Views
             Console.WriteLine("\n\n0. Voltar para o início");
             Console.WriteLine("100. Ver todas as compras");
             Console.WriteLine("101. Desconectar-se");
-            Console.WriteLine("102. Confirmar um produto");
-            Console.WriteLine("103. Cancelar um produto");
-            Console.WriteLine("9. Sair do programa");
 
             if (status == StatusBoughtEnum.ConfirmacaoPendente)
             {
-                Console.WriteLine("Digite o código da compra que deseja confirmar");
+                Console.WriteLine("102. Confirmar um produto");
+                Console.WriteLine("103. Cancelar um produto");
             }
 
+            Console.WriteLine("9. Sair do programa");
 
             while (validate)
             {

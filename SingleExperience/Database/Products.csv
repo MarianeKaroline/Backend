@@ -1,7 +1,7 @@
 ProdutoId,Nome,Preco,Details,Qtde,CategoriaId,Ranking,Disponibilidade,Avaliacao
 1000,Computador Acer,3000,Marca: Acer;Processador: Intel Core I5;Velocidade do Processador: 2.9 GHz;Tamanho da Memoria: 8 GB;Tecnologia HD: SSD 250 GB;Placa de Video: Radeon RX 550,100,3,8,True,0
 1001,Notebook Gamer Samsung,5000,Marca: Samsung;Processador: Intel Core I5;Velocidade do Processador: 2.9 GHz;Tamanho da Memoria: 8 GB;Tecnologia HD: SSD 250 GB;Placa de Video: Radeon RX 550,50,4,9,True,0
-1002,Celular Samsung A50,2500,Marca: Samsung;Modelo: A50;Tamanho da Memoria: 4 GB;Armazenamento: 128 GB;Tela: 6.4 Polegadas;Câmera Traseira: 25MP;Câmera Frontal: 16MP,196,2,10,True,0
+1002,Celular Samsung A50,2500,Marca: Samsung;Modelo: A50;Tamanho da Memoria: 4 GB;Armazenamento: 128 GB;Tela: 6.4 Polegadas;Câmera Traseira: 25MP;Câmera Frontal: 16MP,195,2,10,True,0
 1003,Celular Redmi Note 10,2500,Marca: Redmi;Modelo: Note 10;Tamanho da Memoria: 4 GB;Armazenamento: 128 GB;Tela: 6.4 Polegadas;Câmera Traseira: 25MP;Câmera Frontal: 16MP,27,2,20,True,0
 1004,Computador Gamer,7000,Processador: AMD Ryzen 5 5600X;Velocidade do Processador: 3.7GHz (4.6GHz Turbo);Tamanho da Memoria: 8 GB;Tecnologia HD: SSD 256 GB;Placa de Video: RTX 2060 6GB,150,3,6,True,0
 1005,Computador IBM,3893,Processador:  Intel Pentium G4560;Velocidade do Processador: 3.5GHz;Tamanho da Memoria: 8 GB;Tecnologia HD: 1TB;Placa de Video: GTX 1050 4GB,50,3,10,True,0
