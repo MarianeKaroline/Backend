@@ -152,8 +152,7 @@ namespace SingleExperience.Views
 
                             if (parameters.Session.Length < 11)
                             {
-
-                                cartDB.AddItensMemory(cartModel, parameters.CartMemory);
+                                parameters.CartMemory = cartDB.AddItensMemory(cartModel, parameters.CartMemory);
                             }
                             else
                             {

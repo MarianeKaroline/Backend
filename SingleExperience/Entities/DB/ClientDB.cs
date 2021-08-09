@@ -194,6 +194,7 @@ namespace SingleExperience.Entities.DB
             return signUp;
         }
 
+        //Address
         public int AddAddress(string session, AddressModel addressModel)
         {
             var address = File.ReadAllLines(pathAddress, Encoding.UTF8);

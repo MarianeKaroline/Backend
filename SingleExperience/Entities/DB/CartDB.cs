@@ -17,6 +17,7 @@ namespace SingleExperience.Entities.DB
         private string pathItens = null;
         private string header = "";
         private ClientDB client = null;
+        private CartEntitie currentCart = null;
 
         public CartDB()
         {
@@ -25,6 +26,7 @@ namespace SingleExperience.Entities.DB
             pathItens = CurrentDirectory + @"..\..\..\..\\Database\ItensCart.csv";
             header = ReadItens()[0];
             client = new ClientDB();
+            currentCart = new CartEntitie();
         }
 
         //Lê Todas as linhas quando pedir
@@ -34,10 +36,12 @@ namespace SingleExperience.Entities.DB
             return File.ReadAllLines(pathItens, Encoding.UTF8);
         }
 
+
         public string[] ReadCart()
         {
             return File.ReadAllLines(path, Encoding.UTF8);
         }
+
 
         /* Lê Arquivo CSV */
         //Cart
@@ -67,6 +71,7 @@ namespace SingleExperience.Entities.DB
             }
             return cart;
         }
+
 
         //Itens Cart
         public List<ItemEntitie> ListItens(int cartId)
@@ -101,50 +106,63 @@ namespace SingleExperience.Entities.DB
             return itens;
         }
 
+
         /* Editar Arquivo CSV */
-        //Criar carrinho e adiciona produtos
+        //Criar carrinho 
+        public int AddCart(ParametersModel parameters)
+        {
+            currentCart = GetCart(parameters.Session);
+            var linesCart = new List<string>();
+            var cartId = 0;
+
+            //Criar Carrinho
+            if (currentCart == null)
+            {
+                currentCart.Cpf = parameters.Session;
+                currentCart.DateCreated = DateTime.Now;
+
+                var auxCart = new string[]
+                {
+                        ReadCart().Length.ToString(),
+                        currentCart.Cpf,
+                        currentCart.DateCreated.ToString()
+                };
+
+                linesCart.Add(String.Join(",", auxCart));
+
+                using (StreamWriter writer = File.AppendText(path))
+                {
+                    linesCart.ForEach(i =>
+                    {
+                        writer.WriteLine(i);
+                    });
+                }
+                cartId = ReadCart().Length;
+            }
+            else
+            {
+                cartId = currentCart.CartId;
+            }
+
+            return cartId;
+        }
+
+
+        //Adiciona produtos
         public void AddItemCart(ParametersModel parameters, CartModel cartModel)
         {
             var ipComputer = client.ClientId();
-            var currentCart = GetCart(parameters.Session);
-            var listItensCart = ListItens(currentCart.CartId);
-            var linesCart = new List<string>();
+            var cartId = AddCart(parameters);
+            var listItensCart = ListItens(cartId);
             var linesItens = new List<string>();
-            var cartId = 1;
-            var aux = 0;
+            var exist = true;
             var sum = 1;            
 
             try
             {
-                //Criar Carrinho
-                if (currentCart == null)
-                {
-                    cartId++;
-                    currentCart = new CartEntitie();
-                    currentCart.Cpf = parameters.Session;
-                    currentCart.DateCreated = DateTime.Now;
-
-                    var auxCart = new string[]
-                    {
-                        ReadCart().Length.ToString(),
-                        currentCart.Cpf,
-                        currentCart.DateCreated.ToString()
-                    };
-
-                    linesCart.Add(String.Join(",", auxCart));
-
-                    using (StreamWriter writer = File.AppendText(path))
-                    {
-                        linesCart.ForEach(i =>
-                        {
-                            writer.WriteLine(i);
-                        });
-                    }
-                }
-
                 if (parameters.CartMemory.Count > 0)
                 {
-                    if (aux == 0)
+                    if (exist)
                     {
                         PassItens(parameters);
                     }
@@ -156,18 +174,18 @@ namespace SingleExperience.Entities.DB
                         if (j.ProductId == cartModel.ProductId && j.StatusId != Convert.ToInt32(StatusProductEnum.Ativo))
                         {
                             EditStatusProduct(cartModel.ProductId, cartModel.UserId, StatusProductEnum.Ativo);
-                            aux++;
+                            exist = true;
                         }
                         else if (j.ProductId == cartModel.ProductId)
                         {
                             sum += j.Amount;
                             EditAmount(cartModel.ProductId, cartModel.UserId, sum);
-                            aux++;
+                            exist = true;
                         }
                     });
 
                     //Criar item na tabela
-                    if (aux == 0)
+                    if (exist == false)
                     {
                         var auxItens = new String[]
                         {
@@ -199,6 +217,7 @@ namespace SingleExperience.Entities.DB
                 Console.WriteLine(e.Message);
             }
         }        
+
 
         //Edita a quantidade do item, caso o usuário adiciona o produto mais uma vez no carrinho
         public void EditAmount(int productId, string session, int sub)
@@ -247,6 +266,7 @@ namespace SingleExperience.Entities.DB
                 File.WriteAllLines(pathItens, lines);
             }
         }
+
 
         //Edita o status do produto
         public void EditStatusProduct(int productId, string session, StatusProductEnum status)
@@ -304,6 +324,7 @@ namespace SingleExperience.Entities.DB
                 File.WriteAllLines(pathItens, lines);
             }
         }        
+
 
         //Passa os itens da memória para o banco
         public void PassItens(ParametersModel parameters)
@@ -395,19 +416,21 @@ namespace SingleExperience.Entities.DB
             }
         }
 
+
         /*Memória*/
         //Coloca produtos na memória quando usuário não estiver logado
         public List<ItemEntitie> AddItensMemory(CartModel cart, List<ItemEntitie> cartMemory)
         {
+            //Verifica se o cartMemory está vazio
             if (cartMemory == null)
             {
                 cartMemory = new List<ItemEntitie>();
             }
             var sum = 1;
 
+            //Verifica se cart ProductId é diferente de zero, pois no inicio do programa, essa função é instanciada zerada.
             if (cart.ProductId != 0)
             {
-
                 var aux = cartMemory
                         .Where(i => i.ProductId == cart.ProductId)
                         .FirstOrDefault();
