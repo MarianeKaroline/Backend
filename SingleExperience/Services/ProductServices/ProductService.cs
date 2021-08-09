@@ -3,16 +3,20 @@ using SingleExperience.Entities.DB;
 using SingleExperience.Entities.ProductEntities;
 using System.Collections.Generic;
 using System.Linq;
+using SingleExperience.Services.BoughtServices.Models;
+using SingleExperience.Services.ProductServices.Models;
 
 namespace SingleExperience.Services.ProductServices
 {
     class ProductService
     {
+        private ProductDB productDB;
         private ProductDB product;
         private List<ProductEntitie> list;
 
         public ProductService()
         {
+            productDB = new ProductDB();
             product = new ProductDB();
             list = product.ListProducts();
         }
@@ -87,13 +91,43 @@ namespace SingleExperience.Services.ProductServices
         //Se existe o produto com o id que o usuário digitou
         public bool HasProduct(int code)
         {
-            var has = false;
+            return list.Single(i => i.ProductId == code) != null;
+        }
 
-            if (list.Single(i => i.ProductId == code) != null)
+        //Diminui a quantidade do estoque quando a compra é confirmada pelo funcionário
+        public bool Confirm(List<ProductBought> list)
+        {
+            var confirmed = false;
+
+            list.ForEach(i =>
             {
-                has = true;
-            }
-            return has;
+                confirmed = productDB.EditAmount(i.ProductId, i.Amount);
+            });
+
+            return confirmed;
+        }
+
+        public List<ListProductsModel> ListAllProducts()
+        {
+            var productsModel = new List<ListProductsModel>();
+
+            list
+                .ToList()
+                .ForEach(p =>
+                {
+                    var products = new ListProductsModel();
+                    products.ProductId = p.ProductId;
+                    products.Name = p.Name;
+                    products.Price = p.Price;
+                    products.Amount = p.Amount;
+                    products.CategoryId = p.CategoryId;
+                    products.Ranking = p.Ranking;
+                    products.Available = p.Available;
+
+                    productsModel.Add(products);
+                });
+
+            return productsModel;
         }
     }
 }

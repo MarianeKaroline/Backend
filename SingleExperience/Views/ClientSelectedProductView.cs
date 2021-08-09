@@ -12,10 +12,10 @@ using SingleExperience.Entities.CartEntities;
 
 namespace SingleExperience.Views
 {
-    class SelectedProductView
+    class ClientSelectedProductView
     {
         private ProductService productService = null;
-        public SelectedProductView()
+        public ClientSelectedProductView()
         {
             productService = new ProductService();
         }
@@ -56,12 +56,12 @@ namespace SingleExperience.Views
         //Mostra Menu
         public void Menu(ProductSelectedModel list, ParametersModel parameters, int productId)
         {
-            var signIn = new SignInView();
-            var signUp = new SignUpView();
+            var signIn = new ClientSignInView();
+            var signUp = new ClientSignUpView();
             var client = new ClientService();
-            var categoryProduct = new ProductCategoryView();
-            var inicio = new HomeView();
-            var cartList = new CartView();
+            var categoryProduct = new ClientProductCategoryView();
+            var inicio = new ClientHomeView();
+            var cartList = new ClientCartView();
             var category = (CategoryProductEnum)list.CategoryId;
             var cart = new CartService();
             var cartDB = new CartDB();

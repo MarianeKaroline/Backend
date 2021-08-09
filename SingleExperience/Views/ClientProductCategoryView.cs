@@ -9,7 +9,7 @@ using SingleExperience.Services.CartServices;
 
 namespace SingleExperience.Views
 {
-    class ProductCategoryView
+    class ClientProductCategoryView
     {
         ProductService product = new ProductService();
         //Chama ListaProdutos pela Categoria
@@ -27,12 +27,12 @@ namespace SingleExperience.Views
         public void Menu(ParametersModel parameters, int id)
         {
             var client = new ClientService();
-            var selectedProduct = new SelectedProductView();
+            var selectedProduct = new ClientSelectedProductView();
             var cartService = new CartService();
-            var signIn = new SignInView();
-            var signUp = new SignUpView();
-            var cart = new CartView();
-            var inicio = new HomeView();
+            var signIn = new ClientSignInView();
+            var signUp = new ClientSignUpView();
+            var cart = new ClientCartView();
+            var inicio = new ClientHomeView();
             var op = 0;
             var invalid = true;
 

@@ -61,13 +61,13 @@ namespace SingleExperience.Services.ClientServices
         }
 
         //Traz todos os cartões cadastrados do usuário
-        public List<ShowCard> ShowCards(string session)
+        public List<ShowCardModel> ShowCards(string session)
         {
             var card = clientDB.ListCard(session);
-            var cards = new List<ShowCard>();
+            var cards = new List<ShowCardModel>();
 
             cards = card
-                .Select(i => new ShowCard
+                .Select(i => new ShowCardModel
                 {
                     CardNumber = i.CardNumber.ToString(),
                     Name = i.Name,
@@ -75,6 +75,30 @@ namespace SingleExperience.Services.ClientServices
                 })
                 .ToList();
             return cards;
-        }        
+        }
+
+        //Traz todos os endereços do usuário
+        public List<ShowAddressModel> ShowAddress(string session)
+        {
+            var client = clientDB.GetClient(session);
+            var listAddress = clientDB.ListAddress(session);
+            var showAddress = new List<ShowAddressModel>();
+
+            showAddress = listAddress
+                .Select(i => new ShowAddressModel
+                {
+                    ClientName = client.FullName,
+                    ClientPhone = client.Phone,
+                    AddressId = i.AddressId,
+                    Cep = i.Cep,
+                    Street = i.Street,
+                    Number = i.Number,
+                    City = i.City,
+                    State = i.State
+                })
+                .ToList();
+
+            return showAddress;
+        }
     }
 }

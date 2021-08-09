@@ -5,22 +5,28 @@ using SingleExperience.Services.ClientServices;
 using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Enums;
 using SingleExperience.Services.CartServices;
+using SingleExperience.Services.BoughtServices;
+using SingleExperience.Services.EmployeeServices;
 
 namespace SingleExperience.Views
 {
-    class HomeView
+    class ClientHomeView
     {
-        public ProductCategoryView products = new ProductCategoryView();
+        public ClientProductCategoryView products = new ClientProductCategoryView();
         public ProductService product = new ProductService();
         //Tela inicial
         public void Menu(ParametersModel parameters)
         {
             var cartService = new CartService();
-            var selectedProduct = new SelectedProductView();
-            var signIn = new SignInView();
-            var signUp = new SignUpView();
+            var selectedProduct = new ClientSelectedProductView();
+            var signIn = new ClientSignInView();
+            var signUp = new ClientSignUpView();
+            var perfilClientView = new ClientPerfilView();
+            var employee = new EmployeeService();
             var client = new ClientService();
-            var cart = new CartView();
+            var boughtService = new BoughtService();
+            var pefilEmployee = new EmployeePerfilView();
+            var cart = new ClientCartView();
             var opc = 0;
             var invalid = true;
             var invalidCode = true;
@@ -28,17 +34,19 @@ namespace SingleExperience.Views
             Console.WriteLine("\n0. Precisa de ajuda?");
             Console.WriteLine("1. Buscar por categoria");
             Console.WriteLine($"2. Ver Carrinho (Quantidade: {parameters.CountProduct})");
-            if (parameters.Session.Length < 11)
+            if (parameters.Session.Length != 11)
             {
                 Console.WriteLine("3. Fazer Login");
                 Console.WriteLine("4. Cadastrar-se");
             }
             else
             {
-                Console.WriteLine("3. Desconectar-se");
+                Console.WriteLine("3. Ver perfil");
+                Console.WriteLine("4. Desconectar-se");
             }
+            Console.WriteLine("5. Selecionar um produto");
+            Console.WriteLine("6. Área funcionário");
             Console.WriteLine("9. Sair do Sistema");
-            Console.WriteLine("\n5. Selecionar um produto");
             while (invalid)
             {
                 try
@@ -75,9 +83,8 @@ namespace SingleExperience.Views
                 case 3:
                     if (parameters.Session.Length == 11)
                     {
-                        parameters.Session = client.SignOut();
-                        parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
-                        ListProducts(parameters);
+                        var listBought = boughtService.ClientBought(parameters.Session);
+                        perfilClientView.Menu(listBought, parameters);
                     }
                     else
                     {
@@ -85,7 +92,21 @@ namespace SingleExperience.Views
                     }
                     break;
                 case 4:
-                    signUp.SignUp(parameters, true);
+                    if (parameters.Session.Length == 11)
+                    {
+                        parameters.Session = client.SignOut();
+                        parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
+                        ListProducts(parameters);
+                    }
+                    else if (parameters.Session.Length > 11)
+                    {
+                        parameters.Session = employee.SignOut();
+                        ListProducts(parameters);
+                    }
+                    else
+                    {
+                        signUp.SignUp(parameters, true);
+                    }
                     break;
                 case 5:
                     Console.Write("\nDigite o código # do produto: "); 
@@ -111,7 +132,16 @@ namespace SingleExperience.Views
                             Console.WriteLine("Opção inválida, tente novamente.");
                         }
                     }
-                    
+                    break;
+                case 6:
+                    if (parameters.Session.Length < 12)
+                    {
+                        signIn.LoginEmployee(parameters);
+                    }
+                    else
+                    {
+                        pefilEmployee.Menu(parameters);
+                    }
                     break;
                 case 9:
                     Environment.Exit(0);
@@ -139,6 +169,8 @@ namespace SingleExperience.Views
             Console.WriteLine("5. Tablets");
             Console.WriteLine("6. Precisa de ajuda?");
             Console.WriteLine("9. Sair do Sistema");
+
+            //Colocar try catch
             int opc = int.Parse(Console.ReadLine());
 
             switch (opc)

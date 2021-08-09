@@ -1,7 +1,5 @@
-ProductCartId,ProductId,UserId,Name,CategoryId,Amount,StatusId,Price,SessionId
-1,1011,12345678912,Mouse Gamer,1,2,4004,139,1921680172
-2,1013,12345678912,Tablet Samsung,5,1,4004,1399,1921680172
-3,1014,12345678912,Tablet Multilaser,5,1,4001,399,1921680172
-4,1008,12345678912,Notebook Asus,4,1,4001,3499,1921680172
-5,1003,12345678912,Celular Redmi Note 10,2,1,4001,2500,12345678912
-6,1012,12345678912,iPad,5,3,4004,2549,1921680172
+ProductCartId,ProductId,CartId,Name,CategoryId,Amount,StatusId,Price
+1,1013,1,Tablet Samsung,5,2,4003,1399
+2,1011,1,Mouse Gamer,1,1,4004,139
+3,1014,1,Tablet Multilaser,5,1,4004,399
+4,1002,1,Celular Samsung A50,2,1,4003,2500

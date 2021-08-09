@@ -25,7 +25,7 @@ namespace SingleExperience
             parameters.CountProduct = countProducts.TotalAmount;
 
             //Chama a home para ser exibida inicialmente
-            HomeView inicio = new HomeView();
+            ClientHomeView inicio = new ClientHomeView();
             inicio.ListProducts(parameters);
         }
     }

@@ -8,30 +8,36 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using SingleExperience.Services.EmployeeServices.Models;
 
 namespace SingleExperience.Views
 {
-    class SignUpView
+    class ClientSignUpView
     {
         public string password = null;
         public void SignUp(ParametersModel parameters, bool home)
         {
-            var payment = new PaymentMethodView();
-            var cartView = new CartView();
+            var sendingAddress = new ClientSendingAddressView();
+            var cartView = new ClientCartView();
             var cart = new CartService();
             var client = new SignUpModel();
             var cartDB = new CartDB();
             var clientDB = new ClientDB();
             var validate = true;
-            var validateNumber = true;
-            var validateCep = true;
             var validatePhone = true;
             var validateBirth = true;
-            var j = 41;
 
             Console.Clear();
 
-            Console.WriteLine("Inicio > Cadastrar-se\n");
+            if (home)
+            {
+                Console.WriteLine("Inicio > Cadastrar-se\n");
+            }
+            else
+            {
+                Console.WriteLine("\nCarrinho > Informações pessoais\n");
+            }
+
             Console.WriteLine("Informações pessoais\n");
             Console.Write("Nome Completo: ");
             client.FullName = Console.ReadLine();
@@ -114,67 +120,7 @@ namespace SingleExperience.Views
             if (equal)
             {
                 client.Password = password;
-            }
-
-            Console.WriteLine($"\n+{new string('-', j)}+\n");
-
-            Console.WriteLine("Endereço\n");
-
-            while (validateCep)
-            {
-                try
-                {
-                    Console.Write("CEP: ");
-                    string cep = Console.ReadLine();
-                    if (cep.All(char.IsDigit))
-                    {
-                        client.Cep = cep;
-                        validateCep = false;
-                    }
-                    else
-                    {
-                        Console.WriteLine("O cep deve conter apenas números.");
-                        Console.WriteLine("Por favor, tente novamente.\n");
-                    }
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("O cep deve conter apenas números.");
-                    Console.WriteLine("Por favor, tente novamente.\n");
-                }
-            }
-
-            Console.Write("Rua: ");
-            client.Street = Console.ReadLine();
-
-            while (validateNumber)
-            {
-                try
-                {
-                    Console.Write("Número: ");
-                    string number = Console.ReadLine();
-                    if (number.All(char.IsDigit))
-                    {
-                        client.Number = number;
-                        validateNumber = false;
-                    }
-                    else
-                    {
-                        Console.WriteLine("O número de residência deve conter apenas números.");
-                        Console.WriteLine("Por favor, tente novamente.\n");
-                    }
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("O número de residência deve conter apenas números.");
-                    Console.WriteLine("Por favor, tente novamente.\n");
-                }
-            }
-
-            Console.Write("Cidade: ");
-            client.City = Console.ReadLine();
-            Console.Write("Estado: ");
-            client.State = Console.ReadLine();
+            }                       
 
             var signUp = clientDB.SignUp(client);
 
@@ -190,7 +136,7 @@ namespace SingleExperience.Views
                 }
                 else
                 {
-                    payment.Methods(parameters);
+                    sendingAddress.Address(parameters);
                 }
             }
             else
@@ -224,8 +170,8 @@ namespace SingleExperience.Views
         {
             var cartService = new CartService();
             var client = new ClientService();
-            var cart = new CartView();
-            var inicio = new HomeView();
+            var cart = new ClientCartView();
+            var inicio = new ClientHomeView();
             var op = 0;
             var invalid = true;
 
@@ -297,6 +243,114 @@ namespace SingleExperience.Views
             }
             Console.WriteLine();
             return password;
+        }
+
+        public void SignUpEmployee(ParametersModel parameters)
+        {
+            var sendingAddress = new ClientSendingAddressView();
+            var employeePerfil = new EmployeePerfilView();
+            var employeeRegister = new EmployeeRegisterView();
+            var cartView = new ClientCartView();
+            var cart = new CartService();
+            var employee = new SignUpEmployeeModel();
+            var cartDB = new CartDB();
+            var clientDB = new ClientDB();
+            var employeeDB = new EmployeeDB();
+            var validate = true;
+
+            Console.Clear();
+            
+            Console.WriteLine("\nAdministrador > Cadastrar funcionário\n");
+
+            Console.Write("Nome Completo: ");
+            employee.FullName = Console.ReadLine();            
+
+            Console.Write("E-mail: ");
+            employee.Email = Console.ReadLine();
+
+            while (validate)
+            {
+                try
+                {
+                    Console.Write("CPF: ");
+                    string cpf = Console.ReadLine();
+                    if (cpf.All(char.IsDigit) && cpf.Length == 11)
+                    {
+                        employee.Cpf = cpf;
+                        validate = false;
+                    }
+                    else
+                    {
+                        Console.WriteLine("O cpf deve conter apenas números e deve conter 11 digitos.");
+                        Console.WriteLine("Por favor, tente novamente.");
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("O cpf deve conter apenas números e deve conter 11 digitos.");
+                    Console.WriteLine("Por favor, tente novamente.");
+                }
+            }
+
+            var equal = passwords();
+
+            if (!equal)
+            {
+                Console.WriteLine("As senhas são diferentes, tente novamente. (Tecle enter para continuar)");
+                Console.ReadKey();
+                equal = passwords();
+            }
+            if (equal)
+            {
+                employee.Password = password;
+            }
+
+            validate = true;
+            while (validate)
+            {
+                try
+                {
+                    Console.Write("Acesso ao estoque: ");
+                    employee.AccessInventory = bool.Parse(Console.ReadLine());
+                    validate = false;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Valor inválido.");
+                    Console.WriteLine("Por favor, tente novamente.");
+                }
+            }
+
+            validate = true;
+            while (validate)
+            {
+                try
+                {
+                    Console.Write("Acesso aos funcionários cadastrados: ");
+                    employee.RegisterEmployee = bool.Parse(Console.ReadLine());
+                    validate = false;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Valor inválido.");
+                    Console.WriteLine("Por favor, tente novamente.");
+                }
+            }
+
+            var signUp = employeeDB.Register(employee);
+            if (signUp)
+            {
+                Console.WriteLine("\nFuncionário cadastrado com sucesso\n");
+            }
+            else
+            {
+                Console.WriteLine("\nErro inesperado!\n");
+            }
+
+            Console.WriteLine("Tecle enter para continuar");
+            Console.ReadKey();
+            employeeRegister.ListEmployee(parameters);
+
         }
     }
 }

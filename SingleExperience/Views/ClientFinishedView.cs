@@ -1,5 +1,6 @@
 ﻿using SingleExperience.Entities.DB;
 using SingleExperience.Enums;
+using SingleExperience.Services.BoughtServices;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.CartServices.Models;
 using System;
@@ -9,11 +10,11 @@ using System.Linq;
 
 namespace SingleExperience.Views
 {
-    class FinishedView
+    class ClientFinishedView
     {
-        public void ProductsBought(List<BuyProductModel> buyProducts, ParametersModel parameters, PaymentMethodEnum payment, string lastNumbers, double totalPrice)
+        public void ProductsBought(List<BuyProductModel> buyProducts, ParametersModel parameters, PaymentMethodEnum payment, string lastNumbers, double totalPrice, int addressId)
         {
-            var home = new HomeView();
+            var home = new ClientHomeView();
             var boughtDB = new BoughtDB();
             var cart = new CartService();
             var bought = new BuyProductModel();
@@ -24,7 +25,7 @@ namespace SingleExperience.Views
                 ids.Add(i.ProductId);
             });
 
-            var boughtModel = new BoughtModel();
+            var boughtModel = new BuyModel();
 
             boughtModel.Session = parameters.Session;
             boughtModel.Method = payment;
@@ -33,14 +34,15 @@ namespace SingleExperience.Views
             boughtModel.Ids = ids;
 
             var buy = cart.Buy(buyProducts, parameters.Session);
-            boughtDB.Add(parameters, payment, buyProducts);
+
+            boughtDB.Add(parameters, payment, buyProducts, lastNumbers, totalPrice, addressId);
 
             var j = 51;
 
 
             if (buy)
             {
-                var data = cart.PreviewBoughts(parameters, boughtModel);
+                var data = cart.PreviewBoughts(parameters, boughtModel, addressId);
 
                 Console.Clear();
 

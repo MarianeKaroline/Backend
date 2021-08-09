@@ -23,15 +23,17 @@ namespace SingleExperience.Services.CartServices
         //Listar produtos no carrinho
         public List<ProductCartModel> ItemCart(ParametersModel parameters, StatusProductEnum status)
         {
-            var itensCart = cartDB.ListItens(parameters.Session);
             var prod = new List<ProductCartModel>();
 
             if (parameters.Session.Length == 11)
             {
+                var getCart = cartDB.GetCart(parameters.Session);
+                var itensCart = cartDB.ListItens(getCart.CartId);
+
                 try
                 {
                     prod = itensCart
-                        .Where(i => i.Cpf == parameters.Session && i.StatusId == Convert.ToInt32(status))
+                        .Where(i => i.StatusId == Convert.ToInt32(status))
                         .Select(j => new ProductCartModel()
                         {
                             ProductId = j.ProductId,
@@ -39,8 +41,7 @@ namespace SingleExperience.Services.CartServices
                             StatusId = j.StatusId,
                             CategoryId = j.CategoryId,
                             Price = j.Price,
-                            Amount = j.Amount,
-                            UserId = j.Cpf
+                            Amount = j.Amount                            
                         })
                         .ToList();
                 }
@@ -53,7 +54,7 @@ namespace SingleExperience.Services.CartServices
             else
             {
                 prod = parameters.CartMemory
-                        .Where(i => i.Cpf == parameters.Session && i.StatusId == Convert.ToInt32(status))
+                        .Where(i => i.StatusId == Convert.ToInt32(status))
                         .Select(j => new ProductCartModel()
                         {
                             ProductId = j.ProductId,
@@ -61,8 +62,7 @@ namespace SingleExperience.Services.CartServices
                             StatusId = j.StatusId,
                             CategoryId = j.CategoryId,
                             Price = j.Price,
-                            Amount = j.Amount,
-                            UserId = j.Cpf
+                            Amount = j.Amount
                         })
                         .ToList();
             }
@@ -78,10 +78,10 @@ namespace SingleExperience.Services.CartServices
             if (parameters.Session.Length == 11)
             {
                 total.TotalAmount = itens
-                    .Where(item => item.UserId == parameters.Session && item.StatusId == Convert.ToInt32(StatusProductEnum.Ativo))
+                    .Where(item => item.StatusId == Convert.ToInt32(StatusProductEnum.Ativo))
                     .Sum(item => item.Amount);
                 total.TotalPrice = itens
-                    .Where(item => item.UserId == parameters.Session && item.StatusId == Convert.ToInt32(StatusProductEnum.Ativo))
+                    .Where(item => item.StatusId == Convert.ToInt32(StatusProductEnum.Ativo))
                     .Sum(item => item.Price * item.Amount);
             }
             else
@@ -98,14 +98,14 @@ namespace SingleExperience.Services.CartServices
                 }
             }
 
-
             return total;
         }
 
         //Remove um item do carrinho
         public void RemoveItem(int productId, string session, ParametersModel parameters)
         {
-            var listItens = cartDB.ListItens(session);
+            var getCart = cartDB.GetCart(session);
+            var listItens = cartDB.ListItens(getCart.CartId);
             var sum = 0;
             var count = 0;
 
@@ -153,13 +153,14 @@ namespace SingleExperience.Services.CartServices
         }
 
         //Ver produtos antes da compra e depois
-        public PreviewBoughtModel PreviewBoughts(ParametersModel parameters, BoughtModel bought)
+        public PreviewBoughtModel PreviewBoughts(ParametersModel parameters, BuyModel bought, int addressId)
         {
             var preview = new PreviewBoughtModel();
             var client = clientDB.GetClient(bought.Session);
-            var address = clientDB.ListAddress(client.AddressId);
+            var address = clientDB.ListAddress(parameters.Session);
             var card = clientDB.ListCard(bought.Session);
-            var itens = cartDB.ListItens(bought.Session);
+            var cart = cartDB.GetCart(bought.Session);
+            var itens = cartDB.ListItens(cart.CartId);
             var listProducts = new List<ProductCartModel>();
 
             //Pega alguns atributos do cliente
@@ -167,15 +168,14 @@ namespace SingleExperience.Services.CartServices
             preview.Phone = client.Phone;
 
             //Pega alguns atributos do endereço
-            address
-                .ForEach(i =>
-                {
-                    preview.Cep = i.Cep;
-                    preview.Street = i.Street;
-                    preview.Number = i.Number;
-                    preview.City = i.City;
-                    preview.State = i.State;
-                });
+            var aux = address
+                .FirstOrDefault(i => i.AddressId == addressId);
+
+            preview.Cep = aux.Cep;
+            preview.Street = aux.Street;
+            preview.Number = aux.Number;
+            preview.City = aux.City;
+            preview.State = aux.State;
 
             preview.Method = bought.Method;
 
@@ -217,7 +217,7 @@ namespace SingleExperience.Services.CartServices
             return preview;
         }
 
-        //Depois que confirma a compra, chama os métodos para alterar os status e diminuir a quantidade
+        //Depois que confirma a compra, chama os métodos para alterar os status do carrinho
         public bool Buy(List<BuyProductModel> products, string session)
         {
             var buy = false;
@@ -225,7 +225,7 @@ namespace SingleExperience.Services.CartServices
             products.ForEach(i =>
             {
                 cartDB.EditStatusProduct(i.ProductId, session, i.Status);
-                buy = productDB.EditAmount(i.ProductId, i.Amount);                
+                buy = true;
             });
             return buy;
         }

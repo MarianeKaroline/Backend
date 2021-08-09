@@ -1,16 +1,17 @@
 ProdutoId,Nome,Preco,Details,Qtde,CategoriaId,Ranking,Disponibilidade,Avaliacao
 1000,Computador Acer,3000,Marca: Acer;Processador: Intel Core I5;Velocidade do Processador: 2.9 GHz;Tamanho da Memoria: 8 GB;Tecnologia HD: SSD 250 GB;Placa de Video: Radeon RX 550,100,3,8,True,0
 1001,Notebook Gamer Samsung,5000,Marca: Samsung;Processador: Intel Core I5;Velocidade do Processador: 2.9 GHz;Tamanho da Memoria: 8 GB;Tecnologia HD: SSD 250 GB;Placa de Video: Radeon RX 550,50,4,9,True,0
-1002,Celular Samsung A50,2500,Marca: Samsung;Modelo: A50;Tamanho da Memoria: 4 GB;Armazenamento: 128 GB;Tela: 6.4 Polegadas;Câmera Traseira: 25MP;Câmera Frontal: 16MP,197,2,10,True,0
-1003,Celular Redmi Note 10,2500,Marca: Redmi;Modelo: Note 10;Tamanho da Memoria: 4 GB;Armazenamento: 128 GB;Tela: 6.4 Polegadas;Câmera Traseira: 25MP;Câmera Frontal: 16MP,28,2,20,True,0
+1002,Celular Samsung A50,2500,Marca: Samsung;Modelo: A50;Tamanho da Memoria: 4 GB;Armazenamento: 128 GB;Tela: 6.4 Polegadas;Câmera Traseira: 25MP;Câmera Frontal: 16MP,196,2,10,True,0
+1003,Celular Redmi Note 10,2500,Marca: Redmi;Modelo: Note 10;Tamanho da Memoria: 4 GB;Armazenamento: 128 GB;Tela: 6.4 Polegadas;Câmera Traseira: 25MP;Câmera Frontal: 16MP,27,2,20,True,0
 1004,Computador Gamer,7000,Processador: AMD Ryzen 5 5600X;Velocidade do Processador: 3.7GHz (4.6GHz Turbo);Tamanho da Memoria: 8 GB;Tecnologia HD: SSD 256 GB;Placa de Video: RTX 2060 6GB,150,3,6,True,0
 1005,Computador IBM,3893,Processador:  Intel Pentium G4560;Velocidade do Processador: 3.5GHz;Tamanho da Memoria: 8 GB;Tecnologia HD: 1TB;Placa de Video: GTX 1050 4GB,50,3,10,True,0
-1006,Celular Iphone 12,4999,Marca: Apple;Modelo: 12;Armazenamento: 64 GB;Tela: 6.1 Polegadas;Câmera Traseira: 12MP;Câmera Frontal: 12MP,99,2,5,True,0
-1007,Notebook Dell,2800,Marca: Dell;Processador: Intel® Pentium;Velocidade do Processador: 2GHz;Tamanho da Memoria: 4 GB;Tecnologia HD: SSD 128 GB;Placa de Video: Placa de vídeo integrada,200,4,9,True,0
-1008,Notebook Asus,3499,Marca: ASUS;Processador: AMD RYZEN 5;Velocidade do Processador: 2.1 GHz;Tamanho da Memoria: 8 GB;Tecnologia HD: SSD 256 GB;Placa de Video: Placa de vídeo integrada,141,4,20,True,0
-1009,Teclado Gamer,129,Marca: Trust;Tipo de teclado: Membrana;Comprimento do cabo: 180 cm;Fonte de Alimentação: USB;Iluminação: LED Rainbow,99,1,10,True,0
-1010,Headset Gamer,1149,Marca: Audio Technica;Resposta em frequência: 20 - 20.000 HZ;Sensibilidade: 96 dB/mW,90,1,5,True,0
-1011,Mouse Gamer,139,Marca: Corsair;Botões: 8;DPI: 12.400;Tipo de Sensor: Ótico;Conectividade: com fio,86,1,15,True,0
-1012,iPad,2549,Marca: Apple;Memória RAM: 6GB;Armazenamento: 32 GB,47,5,10,True,0
-1013,Tablet Samsung,1399,Marca: Samsung;Câmera Traseira: 8MP;Câmera Frontal: 5MP;Memória RAM: 3GB;Armazenamento: 64GB,97,5,13,True,0
-1014,Tablet Multilaser,399,Marca: Multilaser;Sistema operacional: Android 8.1; Armazenamento: 16 GB;Memória: 1GB,291,5,20,True,0
+1006,Celular Iphone 12,4999,Marca: Apple;Modelo: 12;Armazenamento: 64 GB;Tela: 6.1 Polegadas;Câmera Traseira: 12MP;Câmera Frontal: 12MP,98,2,5,True,0
+1007,Notebook Dell,2800,Marca: Dell;Processador: Intel® Pentium;Velocidade do Processador: 2GHz;Tamanho da Memoria: 4 GB;Tecnologia HD: SSD 128 GB;Placa de Video: Placa de vídeo integrada,199,4,9,True,0
+1008,Notebook Asus,3499,Marca: ASUS;Processador: AMD RYZEN 5;Velocidade do Processador: 2.1 GHz;Tamanho da Memoria: 8 GB;Tecnologia HD: SSD 256 GB;Placa de Video: Placa de vídeo integrada,138,4,20,True,0
+1009,Teclado Gamer,129,Marca: Trust;Tipo de teclado: Membrana;Comprimento do cabo: 180 cm;Fonte de Alimentação: USB;Iluminação: LED Rainbow,98,1,10,True,0
+1010,Headset Gamer,1149,Marca: Audio Technica;Resposta em frequência: 20 - 20.000 HZ;Sensibilidade: 96 dB/mW,89,1,5,True,0
+1011,Mouse Gamer,139,Marca: Corsair;Botões: 8;DPI: 12.400;Tipo de Sensor: Ótico;Conectividade: com fio,78,1,15,True,0
+1012,iPad,2549,Marca: Apple;Memória RAM: 6GB;Armazenamento: 32 GB,46,5,10,True,0
+1013,Tablet Samsung,1399,Marca: Samsung;Câmera Traseira: 8MP;Câmera Frontal: 5MP;Memória RAM: 3GB;Armazenamento: 64GB,88,5,13,False,0
+1014,Tablet Multilaser,399,Marca: Multilaser;Sistema operacional: Android 8.1; Armazenamento: 16 GB;Memória: 1GB,285,5,20,True,0
+16,Fone de ouvido,2000,Marca: Xiaomi;Qualidade do audio: boa,100,1,1,True,0

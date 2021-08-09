@@ -1,39 +1,43 @@
-﻿using SingleExperience.Entities.ClientEntities;
-using SingleExperience.Entities.DB;
+﻿using SingleExperience.Entities.DB;
+using SingleExperience.Entities.EmployesEntities;
+using SingleExperience.Entities.Enums;
 using SingleExperience.Enums;
 using SingleExperience.Services.BoughtServices.Models;
+using SingleExperience.Services.EmployeeServices.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
-namespace SingleExperience.Services.BoughtServices
+namespace SingleExperience.Services.EmployeeServices
 {
-    class BoughtService
+    class EmployeeService
     {
         private BoughtDB boughtDB;
         private CartDB cartDB;
         private ClientDB clientDB;
-        public BoughtService()
+        private EmployeeDB employeeDB;
+
+        public EmployeeService()
         {
             boughtDB = new BoughtDB();
             cartDB = new CartDB();
             clientDB = new ClientDB();
+            employeeDB = new EmployeeDB();
         }
 
-        //Listar as compras do cliente
-        public List<BoughtModel> ClientBought(string session)
+        public List<BoughtModel> Bought()
         {
-            var client = clientDB.GetClient(session);
-            var address = clientDB.ListAddress(session);
-            var card = clientDB.ListCard(session);
-            var cart = cartDB.GetCart(session);
-            var itens = cartDB.ListItens(cart.CartId);
             var listProducts = new List<BoughtModel>();
-
-            var listBought = boughtDB.List(session);
+            var listBought = boughtDB.ListAll();
 
             listBought.ForEach(i =>
             {
+                var client = clientDB.GetClient(i.Cpf);
+                var address = clientDB.ListAddress(i.Cpf);
+                var card = clientDB.ListCard(i.Cpf);
+                var cart = cartDB.GetCart(i.Cpf);
+                var itens = cartDB.ListItens(cart.CartId);
                 var boughtModel = new BoughtModel();
                 boughtModel.Itens = new List<ProductBought>();
 
@@ -84,6 +88,7 @@ namespace SingleExperience.Services.BoughtServices
                     product.Amount = j.Amount;
                     product.StatusId = j.StatusId;
                     product.Price = j.Price;
+                    product.BoughtId = j.BoughtId;
 
                     boughtModel.Itens.Add(product);
                 });
@@ -91,26 +96,49 @@ namespace SingleExperience.Services.BoughtServices
                 listProducts.Add(boughtModel);
             });
 
-
             return listProducts;
         }
 
-        //Verifica se o número que o cliente digitou está correto
-        public bool HasBought(string session, int boughtId)
+        //Login
+        public string SignIn(SignInEmployeeModel signIn)
         {
-            return boughtDB.List(session).FirstOrDefault(i => i.BoughtId == boughtId) != null;
+            var numberSession = Guid.NewGuid();
+            var employee = employeeDB.GetEmployee(signIn.Email);
+            string session = "";
+
+            if (employee != null)
+            {
+                if (employee.Password == signIn.Password)
+                {
+                    session = numberSession + employee.Cpf;
+                }
+            }
+
+            return session;
         }
 
-        //Verifica se cliente já cadastrou algum endereço
-        public bool HasAddress(string session)
+        public string SignOut()
         {
-            return clientDB.ListAddress(session).FirstOrDefault() != null;
+            return clientDB.ClientId();
         }
 
-        //Verifica se o funcionário digitou o código correto da compra
-        public bool HasBoughts(int boughtId)
+        public List<BoughtModel> BoughtPendent(StatusBoughtEnum status)
         {
-            return boughtDB.ListAll().FirstOrDefault(i => i.BoughtId == boughtId) != null;
+            return Bought().Where(i => i.StatusId == Convert.ToInt32(status)).ToList();
+        }
+
+        public List<RegiteredModel> listEmployee()
+        {
+           return employeeDB.List()
+                    .Select(i => new RegiteredModel()
+                    {
+                        Cpf = i.Cpf,
+                        FullName = i.FullName,
+                        Email = i.Email,
+                        AccessInventory = i.AccessInventory,
+                        RegisterEmployee = i.RegisterEmployee
+                    })
+                    .ToList();
         }
     }
 }
