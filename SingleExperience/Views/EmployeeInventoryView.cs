@@ -72,11 +72,17 @@ namespace SingleExperience.Views
             var employee = new EmployeeService();
             var productDB = new ProductDB();
             var signUp = new EmployeeRegisterView();
+            var employeeDB = new EmployeeDB();
             int opc = 0;
+
+            var aux = employeeDB.GetEmployee(parameters.Session);
 
             Console.WriteLine("0. Voltar para o início");
             Console.WriteLine("1. Ver lista de compras");
-            Console.WriteLine("2. Ver funcionários cadastrados");
+            if (aux.RegisterEmployee)
+            {
+                Console.WriteLine("2. Ver funcionários cadastrados");
+            }
             Console.WriteLine("3. Editar disponibilidade do produto");
             Console.WriteLine("4. Desconectar-se");
             Console.WriteLine("9. Sair do Sistema");
@@ -102,6 +108,16 @@ namespace SingleExperience.Views
                     allBought.Bought(parameters);
                     break;
                 case 2:
+                    if (aux.RegisterEmployee)
+                    {
+                        signUp.ListEmployee(parameters);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
+                        Console.ReadKey();
+                        Menu(parameters);
+                    }
                     signUp.ListEmployee(parameters);
                     break;
                 case 3:

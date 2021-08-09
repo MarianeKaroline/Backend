@@ -150,6 +150,7 @@ namespace SingleExperience.Views
                                 }
                             }
                             addBought.Payment = PaymentMethodEnum.CreditCard;
+                            addBought.CodeConfirmation = op;
                             preview.Bought(parameters, addBought);
                             break;
                         case 'n':

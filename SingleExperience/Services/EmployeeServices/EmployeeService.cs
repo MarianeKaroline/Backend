@@ -110,7 +110,7 @@ namespace SingleExperience.Services.EmployeeServices
             {
                 if (employee.Password == signIn.Password)
                 {
-                    session = numberSession + employee.Cpf;
+                    session = $"{numberSession}_{employee.Cpf}";
                 }
             }
 

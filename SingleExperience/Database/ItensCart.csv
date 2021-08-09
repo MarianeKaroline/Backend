@@ -1,5 +1,2 @@
 ProductCartId,ProductId,CartId,Name,CategoryId,Amount,StatusId,Price
-1,1013,1,Tablet Samsung,5,2,4003,1399
-2,1011,1,Mouse Gamer,1,1,4004,139
-3,1014,1,Tablet Multilaser,5,1,4004,399
-4,1002,1,Celular Samsung A50,2,1,4003,2500
+1,12,1,Mouse Gamer,1,1,3,139

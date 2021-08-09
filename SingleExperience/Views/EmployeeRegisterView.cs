@@ -1,4 +1,5 @@
-﻿using SingleExperience.Services.CartServices.Models;
+﻿using SingleExperience.Entities.DB;
+using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.EmployeeServices;
 using System;
 using System.Collections.Generic;
@@ -66,7 +67,10 @@ namespace SingleExperience.Views
             var allBought = new EmployeeListAllBoughtView();
             var employee = new EmployeeService();
             var employeeInventory = new EmployeeInventoryView();
+            var employeeDB = new EmployeeDB();
             int opc = 0;
+
+            var aux = employeeDB.GetEmployee(parameters.Session);
 
             Console.Clear();
 
@@ -74,7 +78,12 @@ namespace SingleExperience.Views
 
             Console.WriteLine("0. Voltar para o início");
             Console.WriteLine("1. Ver lista de compras");
-            Console.WriteLine("2. Estoque");
+
+            if (aux.AccessInventory)
+            {
+                Console.WriteLine("2. Estoque");
+            }
+
             Console.WriteLine("3. Desconectar-se");
             Console.WriteLine("9. Sair do Sistema");
             while (validate)
@@ -99,7 +108,16 @@ namespace SingleExperience.Views
                     allBought.Bought(parameters);
                     break;
                 case 2:
-                    employeeInventory.Inventory(parameters);
+                    if (aux.AccessInventory)
+                    {
+                        employeeInventory.Inventory(parameters);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
+                        Console.ReadKey();
+                        Menu(parameters);
+                    }
                     break;
                 case 3:
                     parameters.Session = employee.SignOut();

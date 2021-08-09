@@ -10,7 +10,7 @@ ProdutoId,Nome,Preco,Details,Qtde,CategoriaId,Ranking,Disponibilidade,Avaliacao
 9,Notebook Asus,3499,Marca: ASUS;Processador: AMD RYZEN 5;Velocidade do Processador: 2.1 GHz;Tamanho da Memoria: 8 GB;Tecnologia HD: SSD 256 GB;Placa de Video: Placa de vídeo integrada,138,4,20,True,0
 10,Teclado Gamer,129,Marca: Trust;Tipo de teclado: Membrana;Comprimento do cabo: 180 cm;Fonte de Alimentação: USB;Iluminação: LED Rainbow,98,1,10,True,0
 11,Headset Gamer,1149,Marca: Audio Technica;Resposta em frequência: 20 - 20.000 HZ;Sensibilidade: 96 dB/mW,89,1,5,True,0
-12,Mouse Gamer,139,Marca: Corsair;Botões: 8;DPI: 12.400;Tipo de Sensor: Ótico;Conectividade: com fio,78,1,15,True,0
+12,Mouse Gamer,139,Marca: Corsair;Botões: 8;DPI: 12.400;Tipo de Sensor: Ótico;Conectividade: com fio,77,1,15,True,0
 13,iPad,2549,Marca: Apple;Memória RAM: 6GB;Armazenamento: 32 GB,46,5,10,True,0
 14,Tablet Samsung,1399,Marca: Samsung;Câmera Traseira: 8MP;Câmera Frontal: 5MP;Memória RAM: 3GB;Armazenamento: 64GB,88,5,13,False,0
 15,Tablet Multilaser,399,Marca: Multilaser;Sistema operacional: Android 8.1; Armazenamento: 16 GB;Memória: 1GB,285,5,20,True,0

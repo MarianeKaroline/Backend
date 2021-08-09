@@ -1,4 +1,5 @@
-﻿using SingleExperience.Services.CartServices.Models;
+﻿using SingleExperience.Entities.DB;
+using SingleExperience.Services.CartServices.Models;
 using SingleExperience.Services.EmployeeServices;
 using System;
 using System.Collections.Generic;
@@ -14,9 +15,14 @@ namespace SingleExperience.Views
             var homeView = new ClientHomeView();
             var signUp = new EmployeeRegisterView();
             var employee = new EmployeeService();
+            var employeeDB = new EmployeeDB();
             var employeeInventory = new EmployeeInventoryView();
             var allBought = new EmployeeListAllBoughtView();
             int opc = 0;
+
+            var split = parameters.Session.Split('_');
+
+            var aux = employeeDB.GetEmployee(split[1]);
 
             Console.Clear();
 
@@ -24,8 +30,14 @@ namespace SingleExperience.Views
 
             Console.WriteLine("0. Voltar para o início");
             Console.WriteLine("1. Ver lista de compras");
-            Console.WriteLine("2. Ver funcionários cadastrados");
-            Console.WriteLine("3. Estoque");
+            if (aux.RegisterEmployee)
+            {
+                Console.WriteLine("2. Ver funcionários cadastrados");
+            }
+            if (aux.AccessInventory)
+            {
+                Console.WriteLine("3. Estoque");
+            }
             Console.WriteLine("4. Desconectar-se");
             Console.WriteLine("9. Sair do Sistema");
             while (validate)
@@ -50,11 +62,31 @@ namespace SingleExperience.Views
                     allBought.Bought(parameters);
                     break;
                 case 2:
-                    signUp.ListEmployee(parameters);
+                    if (aux.RegisterEmployee)
+                    {
+                        signUp.ListEmployee(parameters);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
+                        Console.ReadKey();
+                        Menu(parameters);
+                    }
                     break;
+
                 case 3:
-                    employeeInventory.Inventory(parameters);
+                    if (aux.AccessInventory)
+                    {
+                        employeeInventory.Inventory(parameters);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Essa opção não existe. Tente novamente. (Tecle enter para continuar)");
+                        Console.ReadKey();
+                        Menu(parameters);
+                    }
                     break;
+
                 case 4:
                     parameters.Session = employee.SignOut();
                     homeView.ListProducts(parameters);
