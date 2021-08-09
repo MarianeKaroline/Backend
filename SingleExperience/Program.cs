@@ -17,7 +17,7 @@ namespace SingleExperience
 
             //Chama a função para pegar o IP do PC
             ClientDB client = new ClientDB();
-            parameters.Session = client.ClientId();
+            parameters.Session = client.GetIP();
 
             //Chama a função para pegar a quantidade que está no carrinho
             CartService cartService = new CartService();

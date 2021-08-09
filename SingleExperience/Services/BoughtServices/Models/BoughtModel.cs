@@ -19,7 +19,7 @@ namespace SingleExperience.Services.BoughtServices.Models
         public string NumberCard { get; set; }
         public string Code { get; set; }
         public string Pix { get; set; }
-        public List<ProductBought> Itens { get; set; }
+        public List<ProductBoughtModel> Itens { get; set; }
         public double TotalPrice { get; set; }
         public int StatusId { get; set; }
         public DateTime DateBought { get; set; }

@@ -26,43 +26,21 @@ namespace SingleExperience.Entities.DB
         //Lê o arquivo CSV Produtos
         public List<ProductEntitie> ListProducts()
         {
-            var prod = new List<ProductEntitie>();
-
-            try
-            {
-                header = products[0];
-                using (StreamReader sr = File.OpenText(path))
+            return products
+                .Skip(1)
+                .Select(i => new ProductEntitie()
                 {
-                    products
-                        .Skip(1)
-                        .ToList()
-                        .ForEach(item =>
-                        {
-                            string[] fields = item.Split(',');
-
-                            var produto = new ProductEntitie();
-
-                            produto.ProductId = int.Parse(fields[0]);
-                            produto.Name = fields[1];
-                            produto.Price = double.Parse(fields[2]);
-                            produto.Detail = fields[3];
-                            produto.Amount = int.Parse(fields[4]);
-                            produto.CategoryId = int.Parse(fields[5]);
-                            produto.Ranking = int.Parse(fields[6]);
-                            produto.Available = bool.Parse(fields[7]);
-                            produto.Rating = float.Parse(fields[8]);
-
-
-                            prod.Add(produto);
-                        });
-                }
-            }
-            catch (IOException e)
-            {
-                Console.WriteLine("Ocorreu um erro");
-                Console.WriteLine(e.Message);
-            }
-            return prod;
+                    ProductId = int.Parse(i.Split(',')[0]),
+                    Name = i.Split(',')[1],
+                    Price = double.Parse(i.Split(',')[2]),
+                    Detail = i.Split(',')[3],
+                    Amount = int.Parse(i.Split(',')[4]),
+                    CategoryId = int.Parse(i.Split(',')[5]),
+                    Ranking = int.Parse(i.Split(',')[6]),
+                    Available = bool.Parse(i.Split(',')[7]),
+                    Rating = float.Parse(i.Split(',')[8])
+                })
+                .ToList();
         }
 
         //Quando o usuario compra um item, a quantidade do produto diminui
@@ -124,6 +102,7 @@ namespace SingleExperience.Entities.DB
             return buy;
         }
 
+        //Deixando o produto disponivel ou indisponivel
         public bool EditAvailable(int productId, bool available)
         {
             var listItens = ListProducts();

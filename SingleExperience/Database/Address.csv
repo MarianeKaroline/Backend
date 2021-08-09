@@ -2,3 +2,6 @@ EnderecoId,CEP,Rua,Numero,Cidade,Estado,ClientId
 1,82100660,Maria Correa Godoy,20,Curitiba,Paraná,10328698954
 2,1234567,Rua Teste,1000,Curitiba,Paraná,10328698954
 3,7654321,Rua Maria Teste,230,Curitiba,Paraná,10328698954
+4,9856423,Teste,20,Curitiba,Paraná,10328698954
+5,6547821,Teste dois,236,Curitiba,Paraná,10328698954
+6,2365478,Teste,6598,Curitiba,Paraná,10328698954

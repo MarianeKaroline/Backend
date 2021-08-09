@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using SingleExperience.Enums;
+using SingleExperience.Entities.ProductEntities;
 
 namespace SingleExperience.Services.CartServices
 {
@@ -12,12 +13,10 @@ namespace SingleExperience.Services.CartServices
     {
         private ProductDB productDB;
         private CartDB cartDB;
-        private ClientDB clientDB;
         public CartService()
         {
             productDB = new ProductDB();
             cartDB = new CartDB();
-            clientDB = new ClientDB();
         }
 
         //Listar produtos no carrinho
@@ -37,11 +36,11 @@ namespace SingleExperience.Services.CartServices
                         .Select(j => new ProductCartModel()
                         {
                             ProductId = j.ProductId,
-                            Name = j.Name,
+                            Name = productDB.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Name,
+                            CategoryId = productDB.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).CategoryId,
                             StatusId = j.StatusId,
-                            CategoryId = j.CategoryId,
-                            Price = j.Price,
-                            Amount = j.Amount                            
+                            Amount = j.Amount,
+                            Price = productDB.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Price
                         })
                         .ToList();
                 }
@@ -58,10 +57,7 @@ namespace SingleExperience.Services.CartServices
                         .Select(j => new ProductCartModel()
                         {
                             ProductId = j.ProductId,
-                            Name = j.Name,
                             StatusId = j.StatusId,
-                            CategoryId = j.CategoryId,
-                            Price = j.Price,
                             Amount = j.Amount
                         })
                         .ToList();
@@ -94,7 +90,7 @@ namespace SingleExperience.Services.CartServices
                 else
                 {
                     total.TotalAmount = parameters.CartMemory.Sum(item => item.Amount);
-                    total.TotalPrice = parameters.CartMemory.Sum(item => item.Price * item.Amount);
+                    //total.TotalPrice = parameters.CartMemory.Sum(item => item.Price * item.Amount);
                 }
             }
 
@@ -114,7 +110,7 @@ namespace SingleExperience.Services.CartServices
                 listItens
                     .Where(i => i.ProductId == productId)
                     .ToList()
-                    .ForEach(p => 
+                    .ForEach(p =>
                     {
                         if (p.Amount > 1 && count == 0)
                         {
@@ -126,7 +122,7 @@ namespace SingleExperience.Services.CartServices
                         {
                             cartDB.EditStatusProduct(productId, session, StatusProductEnum.Inativo);
                         }
-                    });          
+                    });
             }
             else
             {
@@ -156,6 +152,7 @@ namespace SingleExperience.Services.CartServices
         public PreviewBoughtModel PreviewBoughts(ParametersModel parameters, BuyModel bought, int addressId)
         {
             var preview = new PreviewBoughtModel();
+            ClientDB clientDB = new ClientDB();
             var client = clientDB.GetClient(bought.Session);
             var address = clientDB.ListAddress(parameters.Session);
             var card = clientDB.ListCard(bought.Session);

@@ -12,12 +12,11 @@ namespace SingleExperience.Services.BoughtServices
     {
         private BoughtDB boughtDB;
         private CartDB cartDB;
-        private ClientDB clientDB;
+        private ClientDB clientDB = new ClientDB();
         public BoughtService()
         {
             boughtDB = new BoughtDB();
             cartDB = new CartDB();
-            clientDB = new ClientDB();
         }
 
         //Listar as compras do cliente
@@ -27,6 +26,7 @@ namespace SingleExperience.Services.BoughtServices
             var address = clientDB.ListAddress(session);
             var card = clientDB.ListCard(session);
             var cart = cartDB.GetCart(session);
+            var productDB = new ProductDB();
             var itens = cartDB.ListItens(cart.CartId);
             var listProducts = new List<BoughtModel>();
 
@@ -35,7 +35,7 @@ namespace SingleExperience.Services.BoughtServices
             listBought.ForEach(i =>
             {
                 var boughtModel = new BoughtModel();
-                boughtModel.Itens = new List<ProductBought>();
+                boughtModel.Itens = new List<ProductBoughtModel>();
 
                 boughtModel.ClientName = client.FullName;
                 var aux = address
@@ -72,18 +72,17 @@ namespace SingleExperience.Services.BoughtServices
                 boughtModel.DateBought = i.DateBought;
                 boughtModel.StatusId = i.StatusId;
 
+
                 boughtDB.ListProductBought(i.BoughtId)
                 .ToList()
                 .ForEach(j =>
                 {
-                    var product = new ProductBought();
+                    var product = new ProductBoughtModel();
 
                     product.ProductId = j.ProductId;
-                    product.ProductName = j.Name;
-                    product.CategoryId = j.CategoryId;
+                    product.ProductName = productDB.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Name;
                     product.Amount = j.Amount;
-                    product.StatusId = j.StatusId;
-                    product.Price = j.Price;
+                    product.Price = productDB.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Price;
 
                     boughtModel.Itens.Add(product);
                 });

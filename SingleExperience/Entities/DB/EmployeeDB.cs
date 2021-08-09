@@ -28,74 +28,47 @@ namespace SingleExperience.Entities.DB
         //Lista todos os funcionário cadastrados no sistema
         public List<EmployeeEntitie> List()
         {
-            var employee = new List<EmployeeEntitie>();
-            try
-            {
-                using (StreamReader sr = File.OpenText(path))
+            return EmployeeList()
+                .Skip(1)
+                .Select(i => new EmployeeEntitie
                 {
-                    employee = EmployeeList()
-                        .Skip(1)
-                        .Select(i => new EmployeeEntitie
-                        {
-                            Cpf = i.Split(',')[0],
-                            FullName = i.Split(',')[1],
-                            Email = i.Split(',')[2],
-                            Password = i.Split(',')[3],
-                            AccessInventory = bool.Parse(i.Split(',')[4]),
-                            RegisterEmployee = bool.Parse(i.Split(',')[5]),
-                        })
-                        .ToList();
-                }
-            }
-            catch (IOException e)
-            {
-                Console.WriteLine("Ocorreu um erro");
-                Console.WriteLine(e.Message);
-            }
-            return employee;
+                    Cpf = i.Split(',')[0],
+                    FullName = i.Split(',')[1],
+                    Email = i.Split(',')[2],
+                    Password = i.Split(',')[3],
+                    AccessInventory = bool.Parse(i.Split(',')[4]),
+                    RegisterEmployee = bool.Parse(i.Split(',')[5]),
+                })
+                .ToList();
         }
 
         //Pega apenas um funcionário pelo cpf
         public EmployeeEntitie GetEmployee(string cpf)
         {
-            var employee = new EmployeeEntitie();
-            try
-            {
-                using (StreamReader sr = File.OpenText(path))
+            return EmployeeList()
+                .Skip(1)
+                .Select(i => new EmployeeEntitie
                 {
-                    employee = EmployeeList()
-                        .Skip(1)
-                        .Select(i => new EmployeeEntitie
-                        {
-                            Cpf = i.Split(',')[0],
-                            FullName = i.Split(',')[1],
-                            Email = i.Split(',')[2],
-                            Password = i.Split(',')[3],
-                            AccessInventory = bool.Parse(i.Split(',')[4]),
-                            RegisterEmployee = bool.Parse(i.Split(',')[5]),
-                        })
-                        .FirstOrDefault(i => i.Cpf == cpf || i.Email == cpf);
-                }
-            }
-            catch (IOException e)
-            {
-                Console.WriteLine("Ocorreu um erro");
-                Console.WriteLine(e.Message);
-            }
-            return employee;
+                    Cpf = i.Split(',')[0],
+                    FullName = i.Split(',')[1],
+                    Email = i.Split(',')[2],
+                    Password = i.Split(',')[3],
+                    AccessInventory = bool.Parse(i.Split(',')[4]),
+                    RegisterEmployee = bool.Parse(i.Split(',')[5]),
+                })
+                .FirstOrDefault(i => i.Cpf == cpf || i.Email == cpf);
         }
 
         //Cadastra funcionário
         public bool Register(SignUpEmployeeModel employee)
         {
-            var existClient = GetEmployee(employee.Cpf);
-            var signUp = false;
+            var existEmployee = GetEmployee(employee.Cpf);
 
             try
             {
                 var lines = new List<string>();
 
-                if (existClient == null)
+                if (existEmployee == null)
                 {
                     var aux = new string[]
                     {
@@ -117,12 +90,6 @@ namespace SingleExperience.Entities.DB
                             sw.WriteLine(p);
                         });
                     }
-
-                    signUp = true;
-                }
-                else
-                {
-                    signUp = false;
                 }
             }
             catch (IOException e)
@@ -131,7 +98,7 @@ namespace SingleExperience.Entities.DB
                 Console.WriteLine(e.Message);
             }
 
-            return signUp;
+            return existEmployee == null;
         }
     }
 }

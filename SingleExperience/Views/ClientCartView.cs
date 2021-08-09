@@ -14,10 +14,12 @@ namespace SingleExperience.Views
     class ClientCartView
     {
         private CartService cart = null;
+        private ProductDB productDB = null;
 
         public ClientCartView()
         {
             cart = new CartService();
+            productDB = new ProductDB();
         }
 
         public void ListCart(ParametersModel parameters)
@@ -28,34 +30,25 @@ namespace SingleExperience.Views
 
             Console.WriteLine($"\nInício > Carrinho\n");
 
-            var itens = cart.ItemCart(parameters, StatusProductEnum.Ativo)
-                .GroupBy(p => p.Name)
-                .Select(p => new ProductCartModel()
-                { 
-                    ProductId = p.First().ProductId,
-                    Name = p.First().Name,
-                    Price = p.First().Price,
-                    StatusId = p.First().StatusId,
-                    CategoryId = p.First().CategoryId,
-                    Amount = p.Sum(j => j.Amount)
-                })
-                .ToList();
+            var itens = cart.ItemCart(parameters, StatusProductEnum.Ativo);
 
 
             itens.ForEach(p =>
             {
+                var product = productDB.ListProducts().FirstOrDefault(i => i.ProductId == p.ProductId);
+
                 if (p.StatusId == Convert.ToInt32(StatusProductEnum.Ativo))
                 {
                     Console.WriteLine($"+{new string('-', j)}+");
                     Console.WriteLine($"|#{p.ProductId}{new string(' ', j - 1 - p.ProductId.ToString().Length)}|");
-                    Console.WriteLine($"|{p.Name}{new string(' ', j - p.Name.Length)}|");
+                    Console.WriteLine($"|{product.Name}{new string(' ', j - product.Name.Length)}|");
                     Console.WriteLine($"|Qtd: {p.Amount}{new string(' ', j - 5 - p.Amount.ToString().Length)}|");
-                    Console.WriteLine($"|R${p.Price.ToString("F2", CultureInfo.CurrentCulture)}{new string(' ', j - 5 - p.Price.ToString().Length)}|");
+                    Console.WriteLine($"|R${product.Price.ToString("F2", CultureInfo.CurrentCulture)}{new string(' ', j - 5 - product.Price.ToString().Length)}|");
                     Console.WriteLine($"+{new string('-', j)}+");
                 }
             });
 
-            Console.WriteLine($"\nSubtotal ({total.TotalAmount} itens): R${total.TotalPrice.ToString("F2", CultureInfo.InvariantCulture)}");
+            Console.WriteLine($"\nSubtotal ({total.TotalAmount} itens): R${total.TotalPrice.ToString("F2")}");
             Menu(itens, parameters);
         }
 

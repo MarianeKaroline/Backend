@@ -15,14 +15,13 @@ namespace SingleExperience.Services.EmployeeServices
     {
         private BoughtDB boughtDB;
         private CartDB cartDB;
-        private ClientDB clientDB;
+        private ClientDB clientDB = new ClientDB();
         private EmployeeDB employeeDB;
 
         public EmployeeService()
         {
             boughtDB = new BoughtDB();
             cartDB = new CartDB();
-            clientDB = new ClientDB();
             employeeDB = new EmployeeDB();
         }
 
@@ -39,7 +38,7 @@ namespace SingleExperience.Services.EmployeeServices
                 var cart = cartDB.GetCart(i.Cpf);
                 var itens = cartDB.ListItens(cart.CartId);
                 var boughtModel = new BoughtModel();
-                boughtModel.Itens = new List<ProductBought>();
+                boughtModel.Itens = new List<ProductBoughtModel>();
 
                 boughtModel.ClientName = client.FullName;
                 var aux = address
@@ -80,14 +79,10 @@ namespace SingleExperience.Services.EmployeeServices
                 .ToList()
                 .ForEach(j =>
                 {
-                    var product = new ProductBought();
+                    var product = new ProductBoughtModel();
 
                     product.ProductId = j.ProductId;
-                    product.ProductName = j.Name;
-                    product.CategoryId = j.CategoryId;
                     product.Amount = j.Amount;
-                    product.StatusId = j.StatusId;
-                    product.Price = j.Price;
                     product.BoughtId = j.BoughtId;
 
                     boughtModel.Itens.Add(product);
@@ -119,7 +114,7 @@ namespace SingleExperience.Services.EmployeeServices
 
         public string SignOut()
         {
-            return clientDB.ClientId();
+            return clientDB.GetIP();
         }
 
         public List<BoughtModel> BoughtPendent(StatusBoughtEnum status)

@@ -19,7 +19,7 @@ namespace SingleExperience.Entities.DB
         private string path = null;
         private string pathProducts = null;
         private CartDB cartDB = null;
-        private ClientDB cardDB = null;
+        private ClientDB clientDB = new ClientDB();
         private string header = null;
 
         public BoughtDB()
@@ -29,7 +29,6 @@ namespace SingleExperience.Entities.DB
             pathProducts = CurrentDirectory + @"..\..\..\..\\Database\ProductBought.csv";
             cartDB = new CartDB();
             header = ReadBought()[0];
-            cardDB = new ClientDB();
         }
 
         //Tentei colocar no construtor e tudo, fiz até uma lista em memória, porém, por algum motivo, a lista não estava atualizando, então deixei assim
@@ -46,101 +45,58 @@ namespace SingleExperience.Entities.DB
         //Lista todas as compras para o employee
         public List<BoughtEntitie> ListAll()
         {
-            var boughtEntitie = new List<BoughtEntitie>();
-            try
-            {
-                using (StreamReader sr = File.OpenText(path))
+            return ReadBought()
+                .Skip(1)
+                .Select(p => new BoughtEntitie
                 {
-                    boughtEntitie = ReadBought()
-                        .Skip(1)
-                        .Select(p => new BoughtEntitie
-                        {
-                            BoughtId = int.Parse(p.Split(',')[0]),
-                            TotalPrice = double.Parse(p.Split(',')[1]),
-                            AddressId = int.Parse(p.Split(',')[2]),
-                            PaymentId = int.Parse(p.Split(',')[3]),
-                            CodeBought = p.Split(',')[4],
-                            Cpf = p.Split(',')[5],
-                            StatusId = int.Parse(p.Split(',')[6]),
-                            DateBought = DateTime.Parse(p.Split(',')[7])
-                        })
-                        .ToList();
-                }
-            }
-            catch (IOException e)
-            {
-                Console.WriteLine("Ocorreu um erro");
-                Console.WriteLine(e.Message);
-            }
-            return boughtEntitie;
+                    BoughtId = int.Parse(p.Split(',')[0]),
+                    TotalPrice = double.Parse(p.Split(',')[1]),
+                    AddressId = int.Parse(p.Split(',')[2]),
+                    PaymentId = int.Parse(p.Split(',')[3]),
+                    CodeBought = p.Split(',')[4],
+                    Cpf = p.Split(',')[5],
+                    StatusId = int.Parse(p.Split(',')[6]),
+                    DateBought = DateTime.Parse(p.Split(',')[7])
+                })
+                .ToList();
         }
 
         //Lista apenas as compras do usuário
         public List<BoughtEntitie> List(string userId)
         {
-            var boughtEntitie = new List<BoughtEntitie>();
-            try
-            {
-                using (StreamReader sr = File.OpenText(path))
+            //Irá procurar a compra pelo cpf do cliente
+            return ReadBought()
+                .Skip(1)
+                .Select(p => new BoughtEntitie
                 {
-                    //Irá procurar a compra pelo cpf do cliente
-                    boughtEntitie = ReadBought()
-                        .Skip(1)
-                        .Select(p => new BoughtEntitie
-                        {
-                            BoughtId = int.Parse(p.Split(',')[0]),
-                            TotalPrice = double.Parse(p.Split(',')[1]),
-                            AddressId = int.Parse(p.Split(',')[2]),
-                            PaymentId = int.Parse(p.Split(',')[3]),
-                            CodeBought = p.Split(',')[4],
-                            Cpf = p.Split(',')[5],
-                            StatusId = int.Parse(p.Split(',')[6]),
-                            DateBought = DateTime.Parse(p.Split(',')[7])
-                        })
-                        .Where(p => p.Cpf == userId)
-                        .ToList();
-                }
-            }
-            catch (IOException e)
-            {
-                Console.WriteLine("Ocorreu um erro");
-                Console.WriteLine(e.Message);
-            }
-            return boughtEntitie;
+                    BoughtId = int.Parse(p.Split(',')[0]),
+                    TotalPrice = double.Parse(p.Split(',')[1]),
+                    AddressId = int.Parse(p.Split(',')[2]),
+                    PaymentId = int.Parse(p.Split(',')[3]),
+                    CodeBought = p.Split(',')[4],
+                    Cpf = p.Split(',')[5],
+                    StatusId = int.Parse(p.Split(',')[6]),
+                    DateBought = DateTime.Parse(p.Split(',')[7])
+                })
+                .Where(p => p.Cpf == userId)
+                .ToList();
         }
 
         //Lista os produtos comprados
         public List<ProductBoughtEntitie> ListProductBought(int boughtId)
         {
-            var productBoughtEntitie = new List<ProductBoughtEntitie>();
-            try
-            {
-                using (StreamReader sr = File.OpenText(path))
+            //Irá procurar o os produtos da compra pela compra id
+            return ReadProductBought()
+                .Skip(1)
+                .Select(p => new ProductBoughtEntitie
                 {
-                    //Irá procurar o os produtos da compra pela compra id
-                    productBoughtEntitie = ReadProductBought()
-                        .Skip(1)
-                        .Select(p => new ProductBoughtEntitie
-                        {
-                            ProductBoughtId = int.Parse(p.Split(',')[0]),
-                            ProductId = int.Parse(p.Split(',')[1]),
-                            Name = p.Split(',')[2],
-                            CategoryId = int.Parse(p.Split(',')[3]),
-                            Amount = int.Parse(p.Split(',')[4]),
-                            StatusId = int.Parse(p.Split(',')[5]),
-                            Price = double.Parse(p.Split(',')[6]),                            
-                            BoughtId = int.Parse(p.Split(',')[7]),
-                        })
-                        .Where(p => p.BoughtId == boughtId)
-                        .ToList();
-                }
-            }
-            catch (IOException e)
-            {
-                Console.WriteLine("Ocorreu um erro");
-                Console.WriteLine(e.Message);
-            }
-            return productBoughtEntitie;
+                    ProductBoughtId = int.Parse(p.Split(',')[0]),
+                    ProductId = int.Parse(p.Split(',')[1]),
+                    Amount = int.Parse(p.Split(',')[2]),
+                    BoughtId = int.Parse(p.Split(',')[3]),
+                })
+                .Where(p => p.BoughtId == boughtId)
+                .ToList();
         }
 
         //Adiciona os produtos nas tabelas de compras
@@ -151,8 +107,8 @@ namespace SingleExperience.Entities.DB
             var listItens = new List<ItemEntitie>();
             var linesItens = new List<string>();
             var linesBought = new List<string>();
-            string codeBought = ""; //Esse code Bought é o número do cartão, ou o gid gerado para boleto e pix
             var data = DateTime.Now.ToString("G");
+            string codeBought = ""; //Esse code Bought é o número do cartão, ou o gid gerado para boleto e pix
             int statusBought = 0;
 
             //Verifica se o pagamento foi feito com boleto, para transformar o status do produto em Pagamento Pendente
@@ -165,10 +121,10 @@ namespace SingleExperience.Entities.DB
                 statusBought = Convert.ToInt32(StatusBoughtEnum.ConfirmacaoPendente);
             }
 
-            
+
             if (addBought.Payment == PaymentMethodEnum.CreditCard)
             {
-                codeBought = cardDB.ListCard(parameters.Session)
+                codeBought = clientDB.ListCard(parameters.Session)
                     .Where(p => p.CardNumber
                         .ToString()
                         .Contains(addBought.CodeConfirmation))
@@ -182,7 +138,7 @@ namespace SingleExperience.Entities.DB
             }
 
             try
-            {            
+            {
                 //Adiciona compra no csv
                 var auxBought = new string[]
                 {
@@ -224,16 +180,12 @@ namespace SingleExperience.Entities.DB
                     {
                         ReadProductBought().Length.ToString(),
                         i.ProductId.ToString(),
-                        i.Name,
-                        i.CategoryId.ToString(),
                         i.Amount.ToString(),
-                        i.StatusId.ToString(),
-                        i.Price.ToString(),
                         (listBought.Count() + 1).ToString()
                     };
 
                     linesItens.Add(String.Join(",", aux));
-                });         
+                });
 
                 using (StreamWriter writer = File.AppendText(pathProducts))
                 {

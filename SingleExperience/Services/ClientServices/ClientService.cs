@@ -8,12 +8,7 @@ namespace SingleExperience.Services.ClientServices
     class ClientService
     {
 
-        private ClientDB clientDB;
-
-        public ClientService()
-        {
-            clientDB = new ClientDB();
-        }
+        private ClientDB clientDB = new ClientDB();
 
         //Login
         public string SignIn(SignInModel signIn)
@@ -35,38 +30,25 @@ namespace SingleExperience.Services.ClientServices
         //Sair
         public string SignOut()
         {
-            return clientDB.ClientId();
+            return clientDB.GetIP();
         }
 
         //Puxa o nome do cliente
         public string ClientName(string session)
         {
-            var client = clientDB.GetClient(session);
-
-            return client.FullName;
+            return clientDB.GetClient(session).FullName;
         }        
 
         //Verifica se o cliente possui cartão de crédito
         public bool HasCard(string session)
         {
-            var card = clientDB.ListCard(session);
-            var hasCard = false;
-
-            if (card.Count != 0)
-            {
-                hasCard = true;
-            }
-
-            return hasCard;
+            return clientDB.ListCard(session).Count != 0;
         }
 
         //Traz todos os cartões cadastrados do usuário
         public List<ShowCardModel> ShowCards(string session)
         {
-            var card = clientDB.ListCard(session);
-            var cards = new List<ShowCardModel>();
-
-            cards = card
+            return clientDB.ListCard(session)
                 .Select(i => new ShowCardModel
                 {
                     CardNumber = i.CardNumber.ToString(),
@@ -74,7 +56,6 @@ namespace SingleExperience.Services.ClientServices
                     ShelfLife = i.ShelfLife
                 })
                 .ToList();
-            return cards;
         }
 
         //Traz todos os endereços do usuário
@@ -82,9 +63,8 @@ namespace SingleExperience.Services.ClientServices
         {
             var client = clientDB.GetClient(session);
             var listAddress = clientDB.ListAddress(session);
-            var showAddress = new List<ShowAddressModel>();
 
-            showAddress = listAddress
+            return listAddress
                 .Select(i => new ShowAddressModel
                 {
                     ClientName = client.FullName,
@@ -97,8 +77,6 @@ namespace SingleExperience.Services.ClientServices
                     State = i.State
                 })
                 .ToList();
-
-            return showAddress;
         }
     }
 }

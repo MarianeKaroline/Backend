@@ -15,14 +15,13 @@ namespace SingleExperience.Views
         public int j = 41;
         private ClientPreviewBoughtView preview;
         private ClientService client;
-        private ClientDB clientDB;
+        private ClientDB clientDB = new ClientDB();
         private CardModel cardModel;
 
         public ClientPaymentMethodView()
         {
             preview = new ClientPreviewBoughtView();
             client = new ClientService();
-            clientDB = new ClientDB();
             cardModel = new CardModel();
         }
 

@@ -16,7 +16,7 @@ namespace SingleExperience.Entities.DB
         private string path = null;
         private string pathItens = null;
         private string header = "";
-        private ClientDB client = null;
+        private ClientDB clientDB = new ClientDB();
         private CartEntitie currentCart = null;
 
         public CartDB()
@@ -25,7 +25,6 @@ namespace SingleExperience.Entities.DB
             path = CurrentDirectory + @"..\..\..\..\\Database\Cart.csv";
             pathItens = CurrentDirectory + @"..\..\..\..\\Database\ItensCart.csv";
             header = ReadItens()[0];
-            client = new ClientDB();
             currentCart = new CartEntitie();
         }
 
@@ -47,63 +46,35 @@ namespace SingleExperience.Entities.DB
         //Cart
         public CartEntitie GetCart(string userId)
         {
-            var cart = new CartEntitie();
-            try
-            {
-                using (StreamReader sr = File.OpenText(path))
+            //Irá procurar o carrinho pelo userId
+            return ReadCart()
+                .Skip(1)
+                .Select(p => new CartEntitie
                 {
-                    //Irá procurar o carrinho pelo userId
-                    cart = ReadCart()
-                        .Skip(1)
-                        .Select(p => new CartEntitie
-                        {
-                            CartId = int.Parse(p.Split(',')[0]),
-                            Cpf = p.Split(',')[1],
-                            DateCreated = DateTime.Parse(p.Split(',')[2]),
-                        })
-                        .FirstOrDefault(p => p.Cpf == userId);
-                }
-            }
-            catch (IOException e)
-            {
-                Console.WriteLine("Ocorreu um erro");
-                Console.WriteLine(e.Message);
-            }
-            return cart;
+                    CartId = int.Parse(p.Split(',')[0]),
+                    Cpf = p.Split(',')[1],
+                    DateCreated = DateTime.Parse(p.Split(',')[2]),
+                })
+                .FirstOrDefault(p => p.Cpf == userId);
         }
 
 
         //Itens Cart
         public List<ItemEntitie> ListItens(int cartId)
         {
-            var itens = new List<ItemEntitie>();
-            try
-            {
-                using (StreamReader sr = File.OpenText(pathItens))
+            //Retorna a lista de produtos do carrinho
+            return ReadItens()
+                .Skip(1)
+                .Select(i => new ItemEntitie
                 {
-                    itens = ReadItens()
-                        .Skip(1)
-                        .Select(i => new ItemEntitie
-                        {
-                            ProductCartId = int.Parse(i.Split(',')[0]),
-                            ProductId = int.Parse(i.Split(',')[1]),
-                            CartId = int.Parse(i.Split(',')[2]),
-                            Name = i.Split(',')[3],
-                            CategoryId = int.Parse(i.Split(',')[4]),
-                            Amount = int.Parse(i.Split(',')[5]),
-                            StatusId = int.Parse(i.Split(',')[6]),
-                            Price = double.Parse(i.Split(',')[7])
-                        })
-                        .Where(i => i.CartId == cartId)
-                        .ToList();
-                }
-            }
-            catch (IOException e)
-            {
-                Console.WriteLine("Ocorreu um erro");
-                Console.WriteLine(e.Message);
-            }
-            return itens;
+                    ItemCartId = int.Parse(i.Split(',')[0]),
+                    ProductId = int.Parse(i.Split(',')[1]),
+                    CartId = int.Parse(i.Split(',')[2]),
+                    Amount = int.Parse(i.Split(',')[3]),
+                    StatusId = int.Parse(i.Split(',')[4]),
+                })
+                .Where(i => i.CartId == cartId)
+                .ToList();
         }
 
 
@@ -151,12 +122,12 @@ namespace SingleExperience.Entities.DB
         //Adiciona produtos
         public void AddItemCart(ParametersModel parameters, CartModel cartModel)
         {
-            var ipComputer = client.ClientId();
+            var ipComputer = clientDB.GetIP();
             var cartId = AddCart(parameters);
             var listItensCart = ListItens(cartId);
             var linesItens = new List<string>();
-            var exist = true;
-            var sum = 1;            
+            var exist = false;
+            var sum = 1;
 
             try
             {
@@ -192,11 +163,9 @@ namespace SingleExperience.Entities.DB
                             ReadItens().Length.ToString(),
                             cartModel.ProductId.ToString(),
                             cartId.ToString(),
-                            cartModel.Name.ToString(),
-                            cartModel.CategoryId.ToString(),
                             sum.ToString(),
-                            cartModel.StatusId.ToString(),
-                            cartModel.Price.ToString(),
+                            cartModel.StatusId.ToString()
+
                         };
 
                         linesItens.Add(String.Join(",", auxItens));
@@ -216,7 +185,7 @@ namespace SingleExperience.Entities.DB
                 Console.WriteLine("Ocorreu um erro");
                 Console.WriteLine(e.Message);
             }
-        }        
+        }
 
 
         //Edita a quantidade do item, caso o usuário adiciona o produto mais uma vez no carrinho
@@ -235,14 +204,11 @@ namespace SingleExperience.Entities.DB
                     {
                         var aux = new string[]
                         {
-                            p.ProductCartId.ToString(),
+                            p.ItemCartId.ToString(),
                             p.ProductId.ToString(),
                             p.CartId.ToString(),
-                            p.Name,
-                            p.CategoryId.ToString(),
                             p.Amount.ToString(),
-                            p.StatusId.ToString(),
-                            p.Price.ToString()
+                            p.StatusId.ToString()
                         };
 
                         //Atualiza a linha que contém o produtoId
@@ -250,14 +216,11 @@ namespace SingleExperience.Entities.DB
                         {
                             aux = new string[]
                             {
-                                p.ProductCartId.ToString(),
+                                p.ItemCartId.ToString(),
                                 p.ProductId.ToString(),
                                 p.CartId.ToString(),
-                                p.Name,
-                                p.CategoryId.ToString(),
                                 sub.ToString(),
-                                p.StatusId.ToString(),
-                                p.Price.ToString()
+                                p.StatusId.ToString()
                             };
                         }
                         lines.Add(String.Join(",", aux));
@@ -286,14 +249,11 @@ namespace SingleExperience.Entities.DB
                     {
                         var aux = new string[]
                         {
-                            p.ProductCartId.ToString(),
+                            p.ItemCartId.ToString(),
                             p.ProductId.ToString(),
                             p.CartId.ToString(),
-                            p.Name,
-                            p.CategoryId.ToString(),
                             p.Amount.ToString(),
-                            p.StatusId.ToString(),
-                            p.Price.ToString()
+                            p.StatusId.ToString()
                         };
 
                         if (p.ProductId == productId)
@@ -308,14 +268,11 @@ namespace SingleExperience.Entities.DB
                             }
                             aux = new string[]
                             {
-                                p.ProductCartId.ToString(),
+                                p.ItemCartId.ToString(),
                                 p.ProductId.ToString(),
                                 p.CartId.ToString(),
-                                p.Name,
-                                p.CategoryId.ToString(),
                                 auxAmount.ToString(),
-                                Convert.ToInt32(status).ToString(),
-                                p.Price.ToString()
+                                Convert.ToInt32(status).ToString()
                             };
                         }
                         lines.Add(String.Join(",", aux));
@@ -323,44 +280,19 @@ namespace SingleExperience.Entities.DB
                 }
                 File.WriteAllLines(pathItens, lines);
             }
-        }        
+        }
 
 
         //Passa os itens da memória para o banco
         public void PassItens(ParametersModel parameters)
         {
             var cart = new CartDB();
-            var currentCart = cart.GetCart(parameters.Session);
             var linesCart = new List<string>();
 
-            //Se carrinho está null ele cria um para o cliente
-            if (currentCart == null)
-            {
-                currentCart = new CartEntitie();
-                currentCart.Cpf = parameters.Session;
-                currentCart.DateCreated = DateTime.Now;
+            //Verifica se já existe o carrinho
+            var cartId = AddCart(parameters);
 
-                var auxCart = new string[]
-                {
-                    ReadCart().Length.ToString(),
-                    currentCart.Cpf,
-                    currentCart.DateCreated.ToString()
-                };
-
-                linesCart.Add(String.Join(",", auxCart));
-
-                using (StreamWriter writer = File.AppendText(path))
-                {
-                    linesCart.ForEach(i =>
-                    {
-                        writer.WriteLine(i);
-                    });
-                }
-
-                currentCart = cart.GetCart(parameters.Session);
-            }
-
-            var listItensCart = ListItens(currentCart.CartId);
+            var listItensCart = ListItens(cartId);
             var linesItens = new List<string>();
             var aux = 0;
 
@@ -379,7 +311,7 @@ namespace SingleExperience.Entities.DB
                         }
                         else if (j.ProductId == i.ProductId)
                         {
-                            EditAmount(j.ProductId, parameters.Session, i.Amount+1);
+                            EditAmount(j.ProductId, parameters.Session, i.Amount + 1);
                             aux++;
                         }
                     });
@@ -395,12 +327,9 @@ namespace SingleExperience.Entities.DB
                     {
                         ReadItens().Length.ToString(),
                         i.ProductId.ToString(),
-                        currentCart.CartId.ToString(),
-                        i.Name.ToString(),
-                        i.CategoryId.ToString(),
+                        cartId.ToString(),
                         i.Amount.ToString(),
-                        i.StatusId.ToString(),
-                        i.Price.ToString()
+                        i.StatusId.ToString()
                     };
 
                     linesItens.Add(String.Join(",", auxItens));
@@ -439,13 +368,10 @@ namespace SingleExperience.Entities.DB
                 {
                     var item = new ItemEntitie()
                     {
-                        ProductCartId = 1,
+                        ItemCartId = 1,
                         ProductId = cart.ProductId,
-                        Name = cart.Name,
-                        CategoryId = cart.CategoryId,
                         Amount = sum,
-                        StatusId = cart.StatusId,
-                        Price = cart.Price
+                        StatusId = cart.StatusId
                     };
                     cartMemory.Add(item);
                 }
@@ -453,13 +379,10 @@ namespace SingleExperience.Entities.DB
                 {
                     cartMemory.ForEach(i =>
                     {
-                        i.ProductCartId = cartMemory.Count();
+                        i.ItemCartId = cartMemory.Count();
                         i.ProductId = cart.ProductId;
-                        i.Name = cart.Name;
-                        i.CategoryId = cart.CategoryId;
                         i.Amount += sum;
                         i.StatusId = cart.StatusId;
-                        i.Price = cart.Price;
                     });
                 }
             }

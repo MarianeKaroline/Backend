@@ -141,7 +141,7 @@ namespace SingleExperience.Views
             }
             else
             {
-                parameters.Session = clientDB.ClientId();
+                parameters.Session = clientDB.GetIP();
                 Console.WriteLine("Tecle enter para continuar");
                 Console.ReadKey();
                 cartView.ListCart(parameters);

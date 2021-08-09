@@ -18,6 +18,8 @@ namespace SingleExperience.Entities.DB
         private string pathAddress = null;
         private string pathCard = null;
         private string[] addressList = null;
+        private string[] cardList = null;
+        private string[] clientList = null;
         private ClientEntitie client = null;
 
         public ClientDB()
@@ -27,12 +29,14 @@ namespace SingleExperience.Entities.DB
             pathAddress = CurrentDirectory + @"..\..\..\..\\Database\Address.csv";
             pathCard = CurrentDirectory + @"..\..\..\..\\Database\Card.csv";
             addressList = File.ReadAllLines(pathAddress, Encoding.UTF8);
+            clientList = File.ReadAllLines(path, Encoding.UTF8);
+            cardList = File.ReadAllLines(pathCard, Encoding.UTF8);
             client = new ClientEntitie();
         }
 
 
         //Pega o endereço do Computador
-        public string ClientId()
+        public string GetIP()
         {
             var host = Dns.GetHostEntry(Dns.GetHostName());
             string session = "";
@@ -45,102 +49,61 @@ namespace SingleExperience.Entities.DB
                 }
             }
             return session;
-        }       
+        }
 
         /* Lê Arquivo CSV */
         //Client
         public ClientEntitie GetClient(string authentication)
         {
-            try
-            {
-                string[] clientList = File.ReadAllLines(path, Encoding.UTF8);
-                using (StreamReader sr = File.OpenText(path))
+            return clientList
+                .Skip(1)
+                .Select(i => new ClientEntitie
                 {
-                    client = clientList
-                        .Skip(1)
-                        .Select(i => new ClientEntitie
-                        {
-                            Cpf = i.Split(',')[0],
-                            FullName = i.Split(',')[1],
-                            Phone = i.Split(',')[2],
-                            Email = i.Split(',')[3],
-                            BirthDate = DateTime.Parse(i.Split(',')[4]),
-                            Password = i.Split(',')[5]
-                        })
-                        .FirstOrDefault(i => i.Cpf == authentication || i.Email == authentication);
-                }
-            }
-            catch (IOException e)
-            {
-                Console.WriteLine("Ocorreu um erro");
-                Console.WriteLine(e.Message);
-            }
-            return client;
+                    Cpf = i.Split(',')[0],
+                    FullName = i.Split(',')[1],
+                    Phone = i.Split(',')[2],
+                    Email = i.Split(',')[3],
+                    BirthDate = DateTime.Parse(i.Split(',')[4]),
+                    Password = i.Split(',')[5]
+                })
+                .FirstOrDefault(i => i.Cpf == authentication || i.Email == authentication);
         }
 
         //Address
         public List<AddressEntitie> ListAddress(string userId)
         {
-            var address = new List<AddressEntitie>();
-            try
-            {
-                string[] addressList = File.ReadAllLines(pathAddress, Encoding.UTF8);
-                using (StreamReader sr = File.OpenText(pathAddress))
+            return addressList
+                .Skip(1)
+                .Select(i => new AddressEntitie
                 {
-                    address = addressList
-                        .Skip(1)
-                        .Select(i => new AddressEntitie
-                        {
-                            AddressId = int.Parse(i.Split(',')[0]),
-                            Cep = i.Split(',')[1],
-                            Street = i.Split(',')[2],
-                            Number = i.Split(',')[3],
-                            City = i.Split(',')[4],
-                            State = i.Split(',')[5],
-                            ClientId = i.Split(',')[6]
-                        })
-                        .Where(i => i.ClientId == userId)
-                        .ToList();
-                }
-            }
-            catch (IOException e)
-            {
-                Console.WriteLine("Ocorreu um erro");
-                Console.WriteLine(e.Message);
-            }
-            return address;
+                    AddressId = int.Parse(i.Split(',')[0]),
+                    Cep = i.Split(',')[1],
+                    Street = i.Split(',')[2],
+                    Number = i.Split(',')[3],
+                    City = i.Split(',')[4],
+                    State = i.Split(',')[5],
+                    Cpf = i.Split(',')[6]
+                })
+                .Where(i => i.Cpf == userId)
+                .ToList();
         }
 
         //Card
         public List<CardEntitie> ListCard(string userId)
         {
-            var card = new List<CardEntitie>();
-            try
-            {
-                string[] cardList = File.ReadAllLines(pathCard, Encoding.UTF8);
-                using (StreamReader sr = File.OpenText(pathAddress))
-                {
-                    card = cardList
-                        .Skip(1)
-                        .Where(i => i.Split(',')[5] == userId)
-                        .Select(i => new CardEntitie
-                        {
-                            CardId = int.Parse(i.Split(',')[0]),
-                            CardNumber = long.Parse(i.Split(',')[1]),
-                            Name = i.Split(',')[2],
-                            ShelfLife = DateTime.Parse(i.Split(',')[3]),
-                            CVV = int.Parse(i.Split(',')[4]),
-                            Cpf = i.Split(',')[5],
-                        })
-                        .ToList();
-                }
-            }
-            catch (IOException e)
-            {
-                Console.WriteLine("Ocorreu um erro");
-                Console.WriteLine(e.Message);
-            }
-            return card;
+            return cardList
+                    .Skip(1)
+                    .Where(i => i.Split(',')[5] == userId)
+                    .Select(i => new CardEntitie
+                    {
+                        CardId = int.Parse(i.Split(',')[0]),
+                        CardNumber = long.Parse(i.Split(',')[1]),
+                        Name = i.Split(',')[2],
+                        ShelfLife = DateTime.Parse(i.Split(',')[3]),
+                        CVV = int.Parse(i.Split(',')[4]),
+                        Cpf = i.Split(',')[5],
+                    })
+                    .ToList();
         }
 
         /* Cadastro */
@@ -148,8 +111,6 @@ namespace SingleExperience.Entities.DB
         public bool SignUp(SignUpModel client)
         {
             var existClient = GetClient(client.Cpf);
-            var signUp = false;
-
             try
             {
                 var lines = new List<string>();
@@ -168,8 +129,6 @@ namespace SingleExperience.Entities.DB
 
                     lines.Add(String.Join(",", aux));
 
-
-
                     using (StreamWriter sw = File.AppendText(path))
                     {
                         lines.ForEach(p =>
@@ -177,12 +136,6 @@ namespace SingleExperience.Entities.DB
                             sw.WriteLine(p);
                         });
                     }
-
-                    signUp = true;
-                }
-                else
-                {
-                    signUp = false;
                 }
             }
             catch (IOException e)
@@ -191,19 +144,18 @@ namespace SingleExperience.Entities.DB
                 Console.WriteLine(e.Message);
             }
 
-            return signUp;
+            return existClient == null;
         }
 
         //Address
         public int AddAddress(string session, AddressModel addressModel)
         {
-            var address = File.ReadAllLines(pathAddress, Encoding.UTF8);
             var linesAddress = new List<string>();
             try
             {
                 var auxAddress = new string[]
                 {
-                    address.Length.ToString(),
+                    addressList.Length.ToString(),
                     addressModel.Cep,
                     addressModel.Street,
                     addressModel.Number,
@@ -228,13 +180,12 @@ namespace SingleExperience.Entities.DB
                 Console.WriteLine(e.Message);
             }
 
-            return address.Length;
+            return addressList.Length;
         }
 
         //CreditCard
         public void AddCard(string session, CardModel card)
         {
-            string[] cardList = File.ReadAllLines(pathCard, Encoding.UTF8);
             var client = GetClient(card.Cpf);
             var existCard = ListCard(session);
             var lines = new List<string>();

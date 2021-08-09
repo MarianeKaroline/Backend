@@ -124,6 +124,7 @@ namespace SingleExperience.Views
                     else
                     {
                         cartDB.AddItemCart(parameters, cartModel);
+
                         parameters.CartMemory = new List<ItemEntitie>();
                     }
 

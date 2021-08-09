@@ -74,7 +74,6 @@ namespace SingleExperience.Views
         {
             var homeView = new ClientHomeView();
             var perfilView = new ClientPerfilView();
-            var productsBoughtView = new ClientProductsBoughtView();
             bool validate = true;
             int opc = 0;
 

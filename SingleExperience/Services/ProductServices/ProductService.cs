@@ -95,7 +95,7 @@ namespace SingleExperience.Services.ProductServices
         }
 
         //Diminui a quantidade do estoque quando a compra é confirmada pelo funcionário
-        public bool Confirm(List<ProductBought> list)
+        public bool Confirm(List<ProductBoughtModel> list)
         {
             var confirmed = false;
 
