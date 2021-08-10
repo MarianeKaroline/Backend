@@ -38,7 +38,7 @@ namespace SingleExperience.Services.ClientServices
         //Traz todos os endereços do usuário
         public List<ShowAddressModel> ShowAddress(string session)
         {
-            var client = clientDB.GetEnjoyer(session);
+            var client = GetEnjoyer(session);
             var listAddress = clientDB.ListAddress(session);
 
             return listAddress

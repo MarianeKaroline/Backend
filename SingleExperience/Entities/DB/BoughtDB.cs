@@ -27,11 +27,6 @@ namespace SingleExperience.Entities.DB
             header = readBought[0];
         }
 
-        public string[] ReadBought()
-        {
-            return File.ReadAllLines(path, Encoding.UTF8);
-        }
-
         //Lista todas as compras para o employee
         public List<BoughtEntitie> ListAll()
         {
