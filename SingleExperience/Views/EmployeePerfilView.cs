@@ -9,15 +9,18 @@ namespace SingleExperience.Views
 {
     class EmployeePerfilView
     {
-        public void Menu(ParametersModel parameters)
+
+        private EmployeeService employeeService = new EmployeeService();
+        private EmployeeDB employeeDB = new EmployeeDB();
+
+        public void Menu(SessionModel parameters)
         {
+            EmployeeInventoryView employeeInventory = new EmployeeInventoryView();
+            EmployeeListAllBoughtView allBought = new EmployeeListAllBoughtView();
+            EmployeeRegisterView signUp = new EmployeeRegisterView();
+            ClientHomeView homeView = new ClientHomeView();
+
             bool validate = true;
-            var homeView = new ClientHomeView();
-            var signUp = new EmployeeRegisterView();
-            var employee = new EmployeeService();
-            var employeeDB = new EmployeeDB();
-            var employeeInventory = new EmployeeInventoryView();
-            var allBought = new EmployeeListAllBoughtView();
             int opc = 0;
 
             var split = parameters.Session.Split('_');
@@ -88,7 +91,7 @@ namespace SingleExperience.Views
                     break;
 
                 case 4:
-                    parameters.Session = employee.SignOut();
+                    parameters.Session = employeeService.SignOut();
                     homeView.ListProducts(parameters);
                     break;
                 case 9:

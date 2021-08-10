@@ -10,16 +10,18 @@ namespace SingleExperience.Views
 {
     class EmployeeListAllBoughtView
     {
-        public void Bought(ParametersModel parameters)
+        private EmployeeStatusBoughtView productStatus = new EmployeeStatusBoughtView();
+        private EmployeeService employeeService = new EmployeeService();
+
+        public void Bought(SessionModel parameters)
         {
             int j = 51;
-            var employeeService = new EmployeeService();
 
             Console.Clear();
 
             Console.WriteLine("\nAdministrador > Lista Compras\n");
 
-            employeeService.Bought().ForEach(i => 
+            employeeService.Bought().ForEach(i =>
             {
                 Console.WriteLine($"+{new string('-', j)}+");
                 Console.WriteLine($"|Pedido em {i.DateBought}{new string(' ', j - $"Pedido em {i.DateBought}".Length)}|");
@@ -68,11 +70,10 @@ namespace SingleExperience.Views
             Menu(parameters);
         }
 
-        public void Menu(ParametersModel parameters)
+        public void Menu(SessionModel parameters)
         {
-            var homeView = new ClientHomeView();
-            var productStatus = new EmployeeStatusBoughtView();
-            var employee = new EmployeeService();
+            ClientHomeView homeView = new ClientHomeView();
+
             bool validate = true;
             int opc = 0;
 
@@ -110,7 +111,7 @@ namespace SingleExperience.Views
                     productStatus.Bought(parameters, StatusBoughtEnum.Cancelado);
                     break;
                 case 4:
-                    parameters.Session = employee.SignOut();
+                    parameters.Session = employeeService.SignOut();
                     homeView.ListProducts(parameters);
                     break;
                 case 9:

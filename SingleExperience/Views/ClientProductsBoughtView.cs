@@ -11,7 +11,7 @@ namespace SingleExperience.Views
 {
     class ClientProductsBoughtView
     {
-        public void ProductsBought(List<BoughtModel> boughtModels, ParametersModel parameters, int boughtId)
+        public void ProductsBought(List<BoughtModel> boughtModels, SessionModel parameters, int boughtId)
         {
             int j = 51;
 
@@ -70,7 +70,7 @@ namespace SingleExperience.Views
                 });
             Menu(boughtModels, parameters);
         }
-        public void Menu(List<BoughtModel> boughtModels, ParametersModel parameters)
+        public void Menu(List<BoughtModel> boughtModels, SessionModel parameters)
         {
             var homeView = new ClientHomeView();
             var perfilView = new ClientPerfilView();

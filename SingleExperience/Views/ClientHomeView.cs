@@ -12,21 +12,23 @@ namespace SingleExperience.Views
 {
     class ClientHomeView
     {
-        public ClientProductCategoryView products = new ClientProductCategoryView();
-        public ProductService product = new ProductService();
+        EmployeeService employee = new EmployeeService();
+        ClientService client = new ClientService();
+        BoughtService boughtService = new BoughtService();
+        ProductService productService = new ProductService();
+        ProductService product = new ProductService();
+        CartService cartService = new CartService();
+
         //Tela inicial
-        public void Menu(ParametersModel parameters)
+        public void Menu(SessionModel parameters)
         {
-            var cartService = new CartService();
-            var selectedProduct = new ClientSelectedProductView();
-            var signIn = new ClientSignInView();
-            var signUp = new ClientSignUpView();
-            var perfilClientView = new ClientPerfilView();
-            var employee = new EmployeeService();
-            var client = new ClientService();
-            var boughtService = new BoughtService();
-            var pefilEmployee = new EmployeePerfilView();
-            var cart = new ClientCartView();
+            ClientSelectedProductView selectedProduct = new ClientSelectedProductView();
+            ClientSignInView signIn = new ClientSignInView();
+            ClientSignUpView signUp = new ClientSignUpView();
+            ClientPerfilView perfilClientView = new ClientPerfilView();
+            EmployeePerfilView pefilEmployee = new EmployeePerfilView();
+            ClientCartView cart = new ClientCartView();
+
             var opc = 0;
             var invalid = true;
             var invalidCode = true;
@@ -155,8 +157,9 @@ namespace SingleExperience.Views
         }
 
         //Pesquisa
-        public void Search(ParametersModel parameters)
+        public void Search(SessionModel parameters)
         {
+            ClientProductCategoryView products = new ClientProductCategoryView();
             Console.Clear();
 
             Console.WriteLine("\nInício > Pesquisa\n");
@@ -215,10 +218,8 @@ namespace SingleExperience.Views
         }
 
         //Listar produtos na página inicial 
-        public void ListProducts(ParametersModel parameters)
+        public void ListProducts(SessionModel parameters)
         {
-            var client = new ClientService();
-            var productService = new ProductService();
             var products = productService.ListProducts();
             var j = 41;
 

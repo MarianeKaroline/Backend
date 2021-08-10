@@ -10,7 +10,7 @@ namespace SingleExperience
         static void Main(string[] args)
         {
             //Carrinho memória
-            ParametersModel parameters = new ParametersModel();
+            SessionModel parameters = new SessionModel();
             CartModel model = new CartModel();
             CartDB cart = new CartDB();
             parameters.CartMemory = cart.AddItensMemory(model, parameters.CartMemory);            

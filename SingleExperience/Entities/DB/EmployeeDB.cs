@@ -11,8 +11,8 @@ namespace SingleExperience.Entities.DB
 {
     class EmployeeDB
     {
-        private string CurrentDirectory = null;
-        private string path = null;
+        private string CurrentDirectory;
+        private string path;
 
         public EmployeeDB()
         {

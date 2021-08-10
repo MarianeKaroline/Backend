@@ -14,17 +14,15 @@ namespace SingleExperience.Views
 {
     class ClientSendingAddressView
     {
-        private AddBoughtModel addBought = null;
+        private AddBoughtModel addBought = new AddBoughtModel();
+        private BoughtService boughtService = new BoughtService();
+        private ClientService clientService = new ClientService();
+        private CartService cartService = new CartService();
+        private AddressModel addressModel = new AddressModel();
+        private ClientDB clientDB = new ClientDB();
 
-        public ClientSendingAddressView()
+        public void ListAddress(SessionModel parameters)
         {
-            addBought = new AddBoughtModel();
-        }
-
-        public void ListAddress(ParametersModel parameters)
-        {
-            var boughtService = new BoughtService();
-            var clientService = new ClientService();
             var opc = '\0';
             var validate = true;
             var j = 41;
@@ -81,11 +79,12 @@ namespace SingleExperience.Views
             }
         }
 
-        public void Address(ParametersModel parameters)
+        public void Address(SessionModel parameters)
         {
-            var paymentMethod = new ClientPaymentMethodView();
-            var boughtService = new BoughtService();
-            var clientService = new ClientService();
+            ClientPaymentMethodView paymentMethod = new ClientPaymentMethodView();
+            ClientHomeView home = new ClientHomeView();
+            ClientCartView cartView = new ClientCartView();
+
             var opc = '\0';
             var validate = true;
             var j = 41;
@@ -166,11 +165,12 @@ namespace SingleExperience.Views
             }
         }
 
-        public void AddNewAddress(ParametersModel parameters, bool home)
+        public void AddNewAddress(SessionModel parameters, bool home)
         {
-            var addressModel = new AddressModel();
-            var clientDB = new ClientDB();
-            var paymentMethod = new ClientPaymentMethodView();
+            ClientPaymentMethodView paymentMethod = new ClientPaymentMethodView();
+            ClientHomeView inicio = new ClientHomeView();
+            ClientCartView cartView = new ClientCartView();
+
             var validateNumber = true;
             var validateCep = true;
 
@@ -245,12 +245,11 @@ namespace SingleExperience.Views
             }
         }
 
-        public void Menu(ParametersModel parameters)
+        public void Menu(SessionModel parameters)
         {
-            var home = new ClientHomeView();
-            var cartService = new CartService();
-            var client = new ClientService();
-            var cart = new ClientCartView();
+            ClientHomeView inicio = new ClientHomeView();
+            ClientCartView cartView = new ClientCartView();
+
             var opc = 0;
             var invalid = true;
 
@@ -284,18 +283,18 @@ namespace SingleExperience.Views
                     Console.WriteLine("Tecle enter para continuar");
                     Console.ReadLine();
 
-                    home.ListProducts(parameters);
+                    inicio.ListProducts(parameters);
                     break;
                 case 1:
-                    home.ListProducts(parameters);
+                    inicio.ListProducts(parameters);
                     break;
                 case 2:
-                    cart.ListCart(parameters);
+                    cartView.ListCart(parameters);
                     break;
                 case 3:
-                    parameters.Session = client.SignOut();
+                    parameters.Session = clientService.SignOut();
                     parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
-                    home.ListProducts(parameters);
+                    inicio.ListProducts(parameters);
                     break;
                 case 9:
                     Environment.Exit(0);

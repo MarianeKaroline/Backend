@@ -3,3 +3,8 @@ ProductBoughtId,ProductId,Amount,BoughtId
 2,12,2,1
 3,3,1,2
 3,6,1,2
+5,12,1,3
+5,15,1,3
+7,3,1,4
+7,12,1,4
+9,15,3,5

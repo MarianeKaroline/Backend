@@ -15,10 +15,14 @@ namespace SingleExperience.Views
 {
     class EmployeeStatusBoughtView
     {
-        public void Bought(ParametersModel parameters, StatusBoughtEnum status)
+        private BoughtService boughtService = new BoughtService();
+        private EmployeeService employeeService = new EmployeeService();
+        private ProductService productService = new ProductService();
+        private BoughtDB boughtDB = new BoughtDB();
+
+        public void Bought(SessionModel parameters, StatusBoughtEnum status)
         {
             int j = 51;
-            var employeeService = new EmployeeService();
 
             Console.Clear();
 
@@ -75,14 +79,11 @@ namespace SingleExperience.Views
             Menu(parameters, employeeService.BoughtPendent(StatusBoughtEnum.ConfirmacaoPendente), status);
         }
 
-        public void Menu(ParametersModel parameters, List<BoughtModel> list, StatusBoughtEnum status)
+        public void Menu(SessionModel parameters, List<BoughtModel> list, StatusBoughtEnum status)
         {
-            var homeView = new ClientHomeView();
-            var listAllBought = new EmployeeListAllBoughtView();
-            var boughtService = new BoughtService();
-            var employee = new EmployeeService();
-            var productService = new ProductService();
-            var boughtDB = new BoughtDB();
+            ClientHomeView homeView = new ClientHomeView();
+            EmployeeListAllBoughtView listAllBought = new EmployeeListAllBoughtView();
+
             bool validate = true;
             int opc = 0;
 
@@ -120,7 +121,7 @@ namespace SingleExperience.Views
                     listAllBought.Bought(parameters);
                     break;
                 case 101:
-                    parameters.Session = employee.SignOut();
+                    parameters.Session = employeeService.SignOut();
                     homeView.ListProducts(parameters);
                     break;
                 case 102:
@@ -183,7 +184,7 @@ namespace SingleExperience.Views
                     Console.WriteLine("\nTente novamente");
                     Menu(parameters, list, status);
                     break;
-            }           
+            }
         }
     }
 }

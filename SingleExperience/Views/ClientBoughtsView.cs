@@ -10,7 +10,10 @@ namespace SingleExperience.Views
 {
     class ClientBoughtsView
     {
-        public void Boughts(List<BoughtModel> boughtModels, ParametersModel parameters)
+
+        private BoughtService boughtService = new BoughtService();
+
+        public void Boughts(List<BoughtModel> boughtModels, SessionModel parameters)
         {
             int j = 71;
 
@@ -50,12 +53,12 @@ namespace SingleExperience.Views
             Menu(boughtModels, parameters);
         }
 
-        public void Menu(List<BoughtModel> boughtModels, ParametersModel parameters)
+        public void Menu(List<BoughtModel> boughtModels, SessionModel parameters)
         {
-            var homeView = new ClientHomeView();
-            var boughtService = new BoughtService();
-            var perfilView = new ClientPerfilView();
-            var productsBoughtView = new ClientProductsBoughtView();
+            ClientHomeView homeView = new ClientHomeView();
+            ClientPerfilView perfilView = new ClientPerfilView();
+            ClientProductsBoughtView productsBoughtView = new ClientProductsBoughtView();
+
             bool validate = true;
             int aux = 0;
             int opc = 0;

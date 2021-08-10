@@ -10,14 +10,12 @@ namespace SingleExperience.Services.ProductServices
 {
     class ProductService
     {
-        private ProductDB productDB;
-        private ProductDB product;
+        private ProductDB productDB = new ProductDB();
+        private ProductDB product = new ProductDB();
         private List<ProductEntitie> list;
 
         public ProductService()
         {
-            productDB = new ProductDB();
-            product = new ProductDB();
             list = product.ListProducts();
         }
 

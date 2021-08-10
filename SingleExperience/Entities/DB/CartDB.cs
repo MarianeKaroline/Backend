@@ -12,42 +12,27 @@ namespace SingleExperience.Entities.DB
 {
     class CartDB
     {
-        private string CurrentDirectory = null;
-        private string path = null;
-        private string pathItens = null;
-        private string header = "";
+        private string path;
+        private string pathItens;
+        private string[] cartList = File.ReadAllLines(@"C:\Users\nani_\Documents\Backend\SingleExperience\Database\Cart.csv", Encoding.UTF8);
+        private string[] itensList = File.ReadAllLines(@"C:\Users\nani_\Documents\Backend\SingleExperience\Database\ItensCart.csv", Encoding.UTF8);
+        private string header;
         private ClientDB clientDB = new ClientDB();
-        private CartEntitie currentCart = null;
+        private CartEntitie currentCart = new CartEntitie();
 
         public CartDB()
         {
-            CurrentDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            path = CurrentDirectory + @"..\..\..\..\\Database\Cart.csv";
-            pathItens = CurrentDirectory + @"..\..\..\..\\Database\ItensCart.csv";
-            header = ReadItens()[0];
-            currentCart = new CartEntitie();
+            header = itensList[0];
+            path = @"C:\Users\nani_\Documents\Backend\SingleExperience\Database\Cart.csv";
+            pathItens = @"C:\Users\nani_\Documents\Backend\SingleExperience\Database\ItensCart.csv";
         }
-
-        //Lê Todas as linhas quando pedir
-        //Preciso pra que quando eu tiver que atualizar o arquivo csv, eu tenha todas as linhas da tabela
-        public string[] ReadItens()
-        {
-            return File.ReadAllLines(pathItens, Encoding.UTF8);
-        }
-
-
-        public string[] ReadCart()
-        {
-            return File.ReadAllLines(path, Encoding.UTF8);
-        }
-
 
         /* Lê Arquivo CSV */
         //Cart
         public CartEntitie GetCart(string userId)
         {
             //Irá procurar o carrinho pelo userId
-            return ReadCart()
+            return cartList
                 .Skip(1)
                 .Select(p => new CartEntitie
                 {
@@ -62,8 +47,9 @@ namespace SingleExperience.Entities.DB
         //Itens Cart
         public List<ItemEntitie> ListItens(int cartId)
         {
+            itensList = File.ReadAllLines(@"C:\Users\nani_\Documents\Backend\SingleExperience\Database\ItensCart.csv", Encoding.UTF8);
             //Retorna a lista de produtos do carrinho
-            return ReadItens()
+            return itensList
                 .Skip(1)
                 .Select(i => new ItemEntitie
                 {
@@ -80,10 +66,9 @@ namespace SingleExperience.Entities.DB
 
         /* Editar Arquivo CSV */
         //Criar carrinho 
-        public int AddCart(ParametersModel parameters)
+        public int AddCart(SessionModel parameters)
         {
             currentCart = GetCart(parameters.Session);
-            var linesCart = new List<string>();
             var cartId = 0;
 
             //Criar Carrinho
@@ -94,21 +79,16 @@ namespace SingleExperience.Entities.DB
 
                 var auxCart = new string[]
                 {
-                        ReadCart().Length.ToString(),
+                        cartList.Length.ToString(),
                         currentCart.Cpf,
                         currentCart.DateCreated.ToString()
                 };
 
-                linesCart.Add(String.Join(",", auxCart));
-
                 using (StreamWriter writer = File.AppendText(path))
                 {
-                    linesCart.ForEach(i =>
-                    {
-                        writer.WriteLine(i);
-                    });
+                    writer.WriteLine(String.Join(",", auxCart));
                 }
-                cartId = ReadCart().Length;
+                cartId = cartList.Length;
             }
             else
             {
@@ -120,7 +100,7 @@ namespace SingleExperience.Entities.DB
 
 
         //Adiciona produtos
-        public void AddItemCart(ParametersModel parameters, CartModel cartModel)
+        public void AddItemCart(SessionModel parameters, CartModel cartModel)
         {
             var ipComputer = clientDB.GetIP();
             var cartId = AddCart(parameters);
@@ -160,7 +140,7 @@ namespace SingleExperience.Entities.DB
                     {
                         var auxItens = new String[]
                         {
-                            ReadItens().Length.ToString(),
+                            cartList.Length.ToString(),
                             cartModel.ProductId.ToString(),
                             cartId.ToString(),
                             sum.ToString(),
@@ -179,6 +159,8 @@ namespace SingleExperience.Entities.DB
                         }
                     }
                 }
+
+                //chamando novamente, pq não atualiza quando preciso
             }
             catch (IOException e)
             {
@@ -235,8 +217,7 @@ namespace SingleExperience.Entities.DB
         public void EditStatusProduct(int productId, string session, StatusProductEnum status)
         {
             var cart = GetCart(session);
-            var cartDB = new CartDB();
-            var listItens = cartDB.ListItens(cart.CartId);
+            var listItens = ListItens(cart.CartId);
             var lines = new List<string>();
             var auxAmount = 0;
 
@@ -284,9 +265,8 @@ namespace SingleExperience.Entities.DB
 
 
         //Passa os itens da memória para o banco
-        public void PassItens(ParametersModel parameters)
+        public void PassItens(SessionModel parameters)
         {
-            var cart = new CartDB();
             var linesCart = new List<string>();
 
             //Verifica se já existe o carrinho
@@ -325,7 +305,7 @@ namespace SingleExperience.Entities.DB
                 {
                     var auxItens = new String[]
                     {
-                        ReadItens().Length.ToString(),
+                        cartList.Length.ToString(),
                         i.ProductId.ToString(),
                         cartId.ToString(),
                         i.Amount.ToString(),

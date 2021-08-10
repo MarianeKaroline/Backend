@@ -11,7 +11,12 @@ namespace SingleExperience.Views
 {
     class EmployeeInventoryView
     {
-        public void Inventory(ParametersModel parameters)
+        private EmployeeService employeeService = new EmployeeService();
+        private ProductDB productDB = new ProductDB();
+        private EmployeeDB employeeDB = new EmployeeDB();
+        private AddNewProductModel newProduct = new AddNewProductModel();
+
+        public void Inventory(SessionModel parameters)
         {
             var j = 51;
             var productService = new ProductService();
@@ -64,15 +69,13 @@ namespace SingleExperience.Views
             }
         }
 
-        public void Menu(ParametersModel parameters)
+        public void Menu(SessionModel parameters)
         {
+            EmployeeRegisterView signUp = new EmployeeRegisterView();
+            ClientHomeView homeView = new ClientHomeView();
+            EmployeeListAllBoughtView allBought = new EmployeeListAllBoughtView();
+
             bool validate = true;
-            var homeView = new ClientHomeView();
-            var allBought = new EmployeeListAllBoughtView();
-            var employee = new EmployeeService();
-            var productDB = new ProductDB();
-            var signUp = new EmployeeRegisterView();
-            var employeeDB = new EmployeeDB();
             int opc = 0;
 
             var aux = employeeDB.GetEmployee(parameters.Session);
@@ -134,7 +137,7 @@ namespace SingleExperience.Views
                             productDB.EditAvailable(opt, true);
                             break;
                         case 2:
-                            productDB.EditAvailable(opt,  false);
+                            productDB.EditAvailable(opt, false);
                             break;
                         default:
                             break;
@@ -144,7 +147,7 @@ namespace SingleExperience.Views
                     Inventory(parameters);
                     break;
                 case 4:
-                    parameters.Session = employee.SignOut();
+                    parameters.Session = employeeService.SignOut();
                     homeView.ListProducts(parameters);
                     break;
                 case 9:
@@ -156,12 +159,10 @@ namespace SingleExperience.Views
                     Menu(parameters);
                     break;
             }
-        }    
+        }
 
-        public void Add(ParametersModel parameters)
+        public void Add(SessionModel parameters)
         {
-            var productDB = new ProductDB();
-            var newProduct = new AddNewProductModel();
             var validate = true;
 
             Console.Clear();
