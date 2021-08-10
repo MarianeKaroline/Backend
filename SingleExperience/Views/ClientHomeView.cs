@@ -7,6 +7,7 @@ using SingleExperience.Enums;
 using SingleExperience.Services.CartServices;
 using SingleExperience.Services.BoughtServices;
 using SingleExperience.Services.EmployeeServices;
+using SingleExperience.Entities.DB;
 
 namespace SingleExperience.Views
 {
@@ -18,6 +19,7 @@ namespace SingleExperience.Views
         ProductService productService = new ProductService();
         ProductService product = new ProductService();
         CartService cartService = new CartService();
+        ClientDB clientDB = new ClientDB();
 
         //Tela inicial
         public void Menu(SessionModel parameters)
@@ -82,11 +84,15 @@ namespace SingleExperience.Views
                 case 2:
                     cart.ListCart(parameters);
                     break;
-                case 3:
-                    if (parameters.Session.Length == 11)
+                case 3:                    
+                    if (parameters.Session.Length == 11 && clientDB.GetEnjoyer(parameters.Session).Employee == false)
                     {
                         var listBought = boughtService.ClientBought(parameters.Session);
                         perfilClientView.Menu(listBought, parameters);
+                    }
+                    else if (parameters.Session.Length == 11 && clientDB.GetEnjoyer(parameters.Session).Employee == true)
+                    {
+                        pefilEmployee.Menu(parameters);
                     }
                     else
                     {
@@ -136,9 +142,9 @@ namespace SingleExperience.Views
                     }
                     break;
                 case 6:
-                    if (parameters.Session.Length < 12)
+                    if (parameters.Session.Length < 11)
                     {
-                        signIn.LoginEmployee(parameters);
+                        signIn.Login(parameters, true);
                     }
                     else
                     {

@@ -5,38 +5,15 @@ using System.Linq;
 
 namespace SingleExperience.Services.ClientServices
 {
-    class ClientService
+    class ClientService : EnjoyerDB
     {
 
-        private ClientDB clientDB = new ClientDB();
-
-        //Login
-        public string SignIn(SignInModel signIn)
-        {
-            var client = clientDB.GetClient(signIn.Email);
-            string session = "";
-
-            if (client != null)
-            {
-                if (client.Password == signIn.Password)
-                {
-                    session = client.Cpf;
-                }
-            }
-
-            return session;
-        }
-
-        //Sair
-        public string SignOut()
-        {
-            return clientDB.GetIP();
-        }
+        private ClientDB clientDB = new ClientDB();               
 
         //Puxa o nome do cliente
         public string ClientName(string session)
         {
-            return clientDB.GetClient(session).FullName;
+            return clientDB.GetEnjoyer(session).FullName;
         }        
 
         //Verifica se o cliente possui cartão de crédito
@@ -61,7 +38,7 @@ namespace SingleExperience.Services.ClientServices
         //Traz todos os endereços do usuário
         public List<ShowAddressModel> ShowAddress(string session)
         {
-            var client = clientDB.GetClient(session);
+            var client = clientDB.GetEnjoyer(session);
             var listAddress = clientDB.ListAddress(session);
 
             return listAddress

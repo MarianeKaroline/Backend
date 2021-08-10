@@ -11,51 +11,15 @@ using System.Text;
 
 namespace SingleExperience.Entities.DB
 {
-    class ClientDB
+    class ClientDB : EmployeeDB
     {
-        private string[] addressList = File.ReadAllLines(@"C:\Users\nani_\Documents\Backend\SingleExperience\Database\Address.csv", Encoding.UTF8);
-        private string[] cardList = File.ReadAllLines(@"C:\Users\nani_\Documents\Backend\SingleExperience\Database\Card.csv", Encoding.UTF8);
-        private string[] clientList = File.ReadAllLines(@"C:\Users\nani_\Documents\Backend\SingleExperience\Database\Client.csv", Encoding.UTF8);
-
-
-        //Pega o endereço do Computador
-        public string GetIP()
-        {
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            string session = "";
-
-            foreach (var ip in host.AddressList)
-            {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    session = ip.ToString().Replace(".", "");
-                }
-            }
-            return session;
-        }
-
-        /* Lê Arquivo CSV */
-        //Client
-        public ClientEntitie GetClient(string authentication)
-        {
-            return clientList
-                .Skip(1)
-                .Select(i => new ClientEntitie
-                {
-                    Cpf = i.Split(',')[0],
-                    FullName = i.Split(',')[1],
-                    Phone = i.Split(',')[2],
-                    Email = i.Split(',')[3],
-                    BirthDate = DateTime.Parse(i.Split(',')[4]),
-                    Password = i.Split(',')[5]
-                })
-                .FirstOrDefault(i => i.Cpf == authentication || i.Email == authentication);
-        }
+        private string pathAddress = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\Address.csv";
+        private string pathCard = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\Card.csv";
 
         //Address
         public List<AddressEntitie> ListAddress(string userId)
         {
-            addressList = File.ReadAllLines(@"C:\Users\nani_\Documents\Backend\SingleExperience\Database\Address.csv", Encoding.UTF8);
+            string[] addressList = File.ReadAllLines(pathAddress, Encoding.UTF8);
 
             return addressList
                 .Skip(1)
@@ -76,7 +40,7 @@ namespace SingleExperience.Entities.DB
         //Card
         public List<CardEntitie> ListCard(string userId)
         {
-            cardList = File.ReadAllLines(@"C:\Users\nani_\Documents\Backend\SingleExperience\Database\Card.csv", Encoding.UTF8);
+            string[] cardList = File.ReadAllLines(pathCard, Encoding.UTF8);
 
             return cardList
                     .Skip(1)
@@ -95,40 +59,13 @@ namespace SingleExperience.Entities.DB
 
         /* Cadastro */
         //Client
-        public bool SignUp(SignUpModel client)
+        public bool SignUpClient(SignUpModel client)
         {
-            var existClient = GetClient(client.Cpf);
-            try
+            var existClient = GetEnjoyer(client.Cpf);
+
+            if (existClient == null)
             {
-                var lines = new List<string>();
-
-                if (existClient == null)
-                {
-                    var aux = new string[]
-                    {
-                        client.Cpf,
-                        client.FullName.ToString(),
-                        client.Phone.ToString(),
-                        client.Email.ToString(),
-                        client.BirthDate.ToString(),
-                        client.Password.ToString()
-                    };
-
-                    lines.Add(String.Join(",", aux));
-
-                    using (StreamWriter sw = File.AppendText(System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\Client.csv"))
-                    {
-                        lines.ForEach(p =>
-                        {
-                            sw.WriteLine(p);
-                        });
-                    }
-                }
-            }
-            catch (IOException e)
-            {
-                Console.WriteLine("Ocorreu um erro");
-                Console.WriteLine(e.Message);
+                SignUp(client);
             }
 
             return existClient == null;
@@ -142,7 +79,7 @@ namespace SingleExperience.Entities.DB
             {
                 var auxAddress = new string[]
                 {
-                    addressList.Length.ToString(),
+                    (ListAddress(session).Count() + 1).ToString(),
                     addressModel.Cep,
                     addressModel.Street,
                     addressModel.Number,
@@ -167,13 +104,13 @@ namespace SingleExperience.Entities.DB
                 Console.WriteLine(e.Message);
             }
 
-            return addressList.Length;
+            return (ListAddress(session).Count() + 1);
         }
 
         //CreditCard
         public void AddCard(string session, CardModel card)
         {
-            var client = GetClient(card.Cpf);
+            var client = GetEnjoyer(card.Cpf);
             var existCard = ListCard(session);
             var lines = new List<string>();
             var exist = 0;
@@ -192,7 +129,7 @@ namespace SingleExperience.Entities.DB
                 {
                     var aux = new string[]
                     {
-                        cardList.Length.ToString(),
+                        (ListCard(session).Count() + 1).ToString(),
                         card.CardNumber.ToString(),
                         card.Name,
                         card.ShelfLife.ToString(),

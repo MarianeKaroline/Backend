@@ -72,7 +72,7 @@ namespace SingleExperience.Views
             bool validate = true;
             int opc = 0;
 
-            var aux = employeeDB.GetEmployee(parameters.Session);
+            var aux = employeeDB.Access(parameters.Session);
 
             Console.Clear();
 

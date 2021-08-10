@@ -20,13 +20,12 @@ namespace SingleExperience.Views
         private SignInModel signIn = new SignInModel();
         private ClientService ClientService = new ClientService();
         private CartService cartService = new CartService();
-        private SignInEmployeeModel signInEmployee = new SignInEmployeeModel();
-        private EmployeeService employeeService = new EmployeeService();
 
 
         public void Login(SessionModel parameters, bool home)
         {
             ClientSendingAddressView addressView = new ClientSendingAddressView();
+            EmployeePerfilView perfilEmployee = new EmployeePerfilView();
             ClientHomeView inicio = new ClientHomeView();
 
             Console.Clear();
@@ -38,26 +37,30 @@ namespace SingleExperience.Views
             Console.Write("Senha: ");
             signIn.Password = ReadPassword();
 
-            var sessionId = ClientService.SignIn(signIn);
+            var enjoyer = ClientService.SignIn(signIn);
 
-            if (sessionId == "")
+            //Verifica se usuário não existe
+            if (enjoyer == null)
             {
-                System.Console.WriteLine("\nUsuário não existe");
+                Console.WriteLine("\nUsuário não existe");
                 Console.WriteLine("Tecle enter para continuar");
                 Console.ReadKey();
                 inicio.ListProducts(parameters);
             }
-            else
+
+            parameters.Session = enjoyer.Cpf;
+
+            //Verifica se o usuário é funcionário
+            if (enjoyer.Employee)
             {
-                parameters.Session = sessionId;
-                cartDB.PassItens(parameters);
-                parameters.CartMemory = new List<ItemEntitie>();
+                perfilEmployee.Menu(parameters);
             }
 
-            string[] itensList = File.ReadAllLines(@"C:\Users\nani_\Documents\Backend\SingleExperience\Database\ItensCart.csv", Encoding.UTF8);
+            cartDB.PassItens(parameters);
+            parameters.CartMemory = new List<ItemEntitie>();
             parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
 
-
+            //Verifica se página veio da home
             if (home)
             {
                 Menu(parameters, home);
@@ -93,7 +96,6 @@ namespace SingleExperience.Views
                 {
                     Console.WriteLine("Opção inválida, tente novamente.");
                 }
-
             }
 
             switch (op)
@@ -148,35 +150,5 @@ namespace SingleExperience.Views
             return password;
         }
 
-        public void LoginEmployee(SessionModel parameters)
-        {
-            ClientHomeView inicio = new ClientHomeView();
-            EmployeePerfilView perfilEmployee = new EmployeePerfilView();
-            Console.Clear();
-
-            Console.WriteLine("Início > Login\n");
-            Console.Write("Email: ");
-            signInEmployee.Email = Console.ReadLine();
-
-            Console.Write("Senha: ");
-            signInEmployee.Password = ReadPassword();
-
-            var sessionId = employeeService.SignIn(signInEmployee);
-
-            if (sessionId == "")
-            {
-                Console.WriteLine("\nUsuário não existe");
-                Console.WriteLine("Tecle enter para continuar");
-                Console.ReadKey();
-                inicio.ListProducts(parameters);
-            }
-            else
-            {
-                parameters.Session = sessionId;
-                parameters.CartMemory = new List<ItemEntitie>();
-            }
-
-            perfilEmployee.Menu(parameters);
-        }
     }
 }

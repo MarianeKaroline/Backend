@@ -11,16 +11,12 @@ namespace SingleExperience.Entities.DB
 {
     class ProductDB
     {
-        private string CurrentDirectory;
-        private string path;
-        private string[] products;
+        private string path = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\Products.csv";
+        private string[] products = File.ReadAllLines(System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\Products.csv", Encoding.UTF8);
         public string header;
 
         public ProductDB()
         {
-            CurrentDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            path = CurrentDirectory + @"..\..\..\..\\Database\Products.csv";
-            products = File.ReadAllLines(path, Encoding.UTF8);
             header = products[0];
         }
 

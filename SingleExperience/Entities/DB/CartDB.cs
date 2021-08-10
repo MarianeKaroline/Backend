@@ -12,19 +12,17 @@ namespace SingleExperience.Entities.DB
 {
     class CartDB
     {
-        private string path;
-        private string pathItens;
-        private string[] cartList = File.ReadAllLines(@"C:\Users\nani_\Documents\Backend\SingleExperience\Database\Cart.csv", Encoding.UTF8);
-        private string[] itensList = File.ReadAllLines(@"C:\Users\nani_\Documents\Backend\SingleExperience\Database\ItensCart.csv", Encoding.UTF8);
+        private string path = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\Cart.csv";
+        private string pathItens = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\ItensCart.csv";
+        private string[] cartList = File.ReadAllLines(System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\Cart.csv", Encoding.UTF8);
+        private string[] itensList = File.ReadAllLines(System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\ItensCart.csv", Encoding.UTF8);
         private string header;
-        private ClientDB clientDB = new ClientDB();
         private CartEntitie currentCart = new CartEntitie();
+        private ClientDB clientDB = new ClientDB();
 
         public CartDB()
         {
             header = itensList[0];
-            path = @"C:\Users\nani_\Documents\Backend\SingleExperience\Database\Cart.csv";
-            pathItens = @"C:\Users\nani_\Documents\Backend\SingleExperience\Database\ItensCart.csv";
         }
 
         /* Lê Arquivo CSV */
@@ -47,7 +45,8 @@ namespace SingleExperience.Entities.DB
         //Itens Cart
         public List<ItemEntitie> ListItens(int cartId)
         {
-            itensList = File.ReadAllLines(@"C:\Users\nani_\Documents\Backend\SingleExperience\Database\ItensCart.csv", Encoding.UTF8);
+            itensList = File.ReadAllLines(pathItens, Encoding.UTF8);
+
             //Retorna a lista de produtos do carrinho
             return itensList
                 .Skip(1)

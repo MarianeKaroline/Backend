@@ -11,7 +11,7 @@ using System.Text;
 
 namespace SingleExperience.Services.EmployeeServices
 {
-    class EmployeeService
+    class EmployeeService : EnjoyerDB
     {
         private BoughtDB boughtDB = new BoughtDB();
         private CartDB cartDB = new CartDB();
@@ -26,7 +26,7 @@ namespace SingleExperience.Services.EmployeeServices
 
             listBought.ForEach(i =>
             {
-                var client = clientDB.GetClient(i.Cpf);
+                var client = clientDB.GetEnjoyer(i.Cpf);
                 var address = clientDB.ListAddress(i.Cpf);
                 var card = clientDB.ListCard(i.Cpf);
                 var cart = cartDB.GetCart(i.Cpf);
@@ -72,7 +72,7 @@ namespace SingleExperience.Services.EmployeeServices
                 boughtDB.ListProductBought(i.BoughtId)
                 .ToList()
                 .ForEach(j =>
-                {                   
+                {
                     var product = new ProductBoughtModel();
 
                     product.ProductId = j.ProductId;
@@ -90,29 +90,6 @@ namespace SingleExperience.Services.EmployeeServices
             return listProducts;
         }
 
-        //Login
-        public string SignIn(SignInEmployeeModel signIn)
-        {
-            var numberSession = Guid.NewGuid();
-            var employee = employeeDB.GetEmployee(signIn.Email);
-            string session = "";
-
-            if (employee != null)
-            {
-                if (employee.Password == signIn.Password)
-                {
-                    session = $"{numberSession}_{employee.Cpf}";
-                }
-            }
-
-            return session;
-        }
-
-        public string SignOut()
-        {
-            return clientDB.GetIP();
-        }
-
         public List<BoughtModel> BoughtPendent(StatusBoughtEnum status)
         {
             return Bought().Where(i => i.StatusId == Convert.ToInt32(status)).ToList();
@@ -120,16 +97,16 @@ namespace SingleExperience.Services.EmployeeServices
 
         public List<RegiteredModel> listEmployee()
         {
-           return employeeDB.List()
-                    .Select(i => new RegiteredModel()
-                    {
-                        Cpf = i.Cpf,
-                        FullName = i.FullName,
-                        Email = i.Email,
-                        AccessInventory = i.AccessInventory,
-                        RegisterEmployee = i.RegisterEmployee
-                    })
-                    .ToList();
+            return employeeDB.List()
+                     .Select(i => new RegiteredModel()
+                     {
+                         Cpf = i.Cpf,
+                         FullName = i.FullName,
+                         Email = i.Email,
+                         AccessInventory = employeeDB.Access(i.Cpf).AccessInventory,
+                         RegisterEmployee = employeeDB.Access(i.Cpf).AccessRegister
+                     })
+                     .ToList();
         }
     }
 }

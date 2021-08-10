@@ -1,4 +1,6 @@
-﻿using SingleExperience.Entities.EmployesEntities;
+﻿using SingleExperience.Entities.ClientEntities;
+using SingleExperience.Entities.EmployesEntities;
+using SingleExperience.Services.ClientServices.Models;
 using SingleExperience.Services.EmployeeServices.Models;
 using System;
 using System.Collections.Generic;
@@ -9,86 +11,55 @@ using System.Text;
 
 namespace SingleExperience.Entities.DB
 {
-    class EmployeeDB
+    class EmployeeDB : EnjoyerDB
     {
-        private string CurrentDirectory;
-        private string path;
-
-        public EmployeeDB()
-        {
-            CurrentDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            path = CurrentDirectory + @"..\..\..\..\\Database\Employee.csv";
-        }
-
-        public string[] EmployeeList()
-        {
-            return File.ReadAllLines(path, Encoding.UTF8);
-        }
+        private string pathAccess = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\AccessEmployee.csv";
 
         //Lista todos os funcionário cadastrados no sistema
-        public List<EmployeeEntitie> List()
+        public List<EnjoyerEntitie> List()
         {
-            return EmployeeList()
-                .Skip(1)
-                .Select(i => new EmployeeEntitie
-                {
-                    Cpf = i.Split(',')[0],
-                    FullName = i.Split(',')[1],
-                    Email = i.Split(',')[2],
-                    Password = i.Split(',')[3],
-                    AccessInventory = bool.Parse(i.Split(',')[4]),
-                    RegisterEmployee = bool.Parse(i.Split(',')[5]),
-                })
+            return ListEnjoyer()
+                .Where(i => i.Employee == true)
                 .ToList();
-        }
+        }        
 
-        //Pega apenas um funcionário pelo cpf
-        public EmployeeEntitie GetEmployee(string cpf)
+        //Lista o acesso do funcionário
+        public AccessEmployeeEntitie Access(string cpf)
         {
-            return EmployeeList()
+            string[] listAccess = File.ReadAllLines(pathAccess, Encoding.UTF8);
+
+            return listAccess
                 .Skip(1)
-                .Select(i => new EmployeeEntitie
+                .Select(i => new AccessEmployeeEntitie
                 {
                     Cpf = i.Split(',')[0],
-                    FullName = i.Split(',')[1],
-                    Email = i.Split(',')[2],
-                    Password = i.Split(',')[3],
-                    AccessInventory = bool.Parse(i.Split(',')[4]),
-                    RegisterEmployee = bool.Parse(i.Split(',')[5]),
+                    AccessInventory = bool.Parse(i.Split(',')[1]),
+                    AccessRegister = bool.Parse(i.Split(',')[2])
                 })
-                .FirstOrDefault(i => i.Cpf == cpf || i.Email == cpf);
+                .FirstOrDefault(i => i.Cpf == cpf);
         }
 
         //Cadastra funcionário
-        public bool Register(SignUpEmployeeModel employee)
+        public bool Register(SignUpModel employee)
         {
-            var existEmployee = GetEmployee(employee.Cpf);
+            var existEmployee = GetEnjoyer(employee.Cpf);
 
             try
             {
-                var lines = new List<string>();
-
                 if (existEmployee == null)
                 {
-                    var aux = new string[]
+                    SignUp(employee);
+
+                    var auxAccess = new string[]
                     {
                         employee.Cpf,
-                        employee.FullName.ToString(),
-                        employee.Email.ToString(),
-                        employee.Password.ToString(),
                         employee.AccessInventory.ToString(),
-                        employee.RegisterEmployee.ToString()
+                        employee.AccessRegister.ToString()
                     };
 
-                    lines.Add(String.Join(",", aux));
-
-
-                    using (StreamWriter sw = File.AppendText(path))
+                    using (StreamWriter sw = File.AppendText(pathAccess))
                     {
-                        lines.ForEach(p =>
-                        {
-                            sw.WriteLine(p);
-                        });
+                        sw.WriteLine(String.Join(",", auxAccess));
                     }
                 }
             }

@@ -17,7 +17,7 @@ namespace SingleExperience.Services.BoughtServices
         //Listar as compras do cliente
         public List<BoughtModel> ClientBought(string session)
         {
-            var client = clientDB.GetClient(session);
+            var client = clientDB.GetEnjoyer(session);
             var address = clientDB.ListAddress(session);
             var card = clientDB.ListCard(session);
             var cart = cartDB.GetCart(session);

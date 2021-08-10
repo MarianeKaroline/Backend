@@ -15,19 +15,16 @@ namespace SingleExperience.Entities.DB
 {
     class BoughtDB
     {
-        private string CurrentDirectory;
-        private string path;
-        private string pathProducts;
+        private string path = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\Bought.csv";
+        private string pathProducts = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\ProductBought.csv";
+        private string[] readBought = File.ReadAllLines(System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\Bought.csv", Encoding.UTF8);
         private CartDB cartDB = new CartDB();
         private ClientDB clientDB = new ClientDB();
         private string header;
 
         public BoughtDB()
         {
-            CurrentDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            path = CurrentDirectory + @"..\..\..\..\\Database\Bought.csv";
-            pathProducts = CurrentDirectory + @"..\..\..\..\\Database\ProductBought.csv";
-            header = ReadBought()[0];
+            header = readBought[0];
         }
 
         public string[] ReadBought()
@@ -35,15 +32,12 @@ namespace SingleExperience.Entities.DB
             return File.ReadAllLines(path, Encoding.UTF8);
         }
 
-        public string[] ReadProductBought()
-        {
-            return File.ReadAllLines(pathProducts, Encoding.UTF8);
-        }
-
         //Lista todas as compras para o employee
         public List<BoughtEntitie> ListAll()
         {
-            return ReadBought()
+            readBought = File.ReadAllLines(path, Encoding.UTF8);
+
+            return readBought
                 .Skip(1)
                 .Select(p => new BoughtEntitie
                 {
@@ -62,8 +56,10 @@ namespace SingleExperience.Entities.DB
         //Lista apenas as compras do usuário
         public List<BoughtEntitie> List(string userId)
         {
+            readBought = File.ReadAllLines(path, Encoding.UTF8);
+
             //Irá procurar a compra pelo cpf do cliente
-            return ReadBought()
+            return readBought
                 .Skip(1)
                 .Select(p => new BoughtEntitie
                 {
@@ -83,8 +79,10 @@ namespace SingleExperience.Entities.DB
         //Lista os produtos comprados
         public List<ProductBoughtEntitie> ListProductBought(int boughtId)
         {
+            string[] readProductBought = File.ReadAllLines(pathProducts, Encoding.UTF8);
+
             //Irá procurar o os produtos da compra pela compra id
-            return ReadProductBought()
+            return readProductBought
                 .Skip(1)
                 .Select(p => new ProductBoughtEntitie
                 {
@@ -176,7 +174,7 @@ namespace SingleExperience.Entities.DB
                 {
                     var aux = new string[]
                     {
-                        ReadProductBought().Length.ToString(),
+                        (ListProductBought(getCart.CartId).Count + 1).ToString(),
                         i.ProductId.ToString(),
                         i.Amount.ToString(),
                         (listBought.Count() + 1).ToString()

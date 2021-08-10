@@ -78,11 +78,11 @@ namespace SingleExperience.Views
             bool validate = true;
             int opc = 0;
 
-            var aux = employeeDB.GetEmployee(parameters.Session);
+            var aux = employeeDB.Access(parameters.Session);
 
             Console.WriteLine("0. Voltar para o início");
             Console.WriteLine("1. Ver lista de compras");
-            if (aux.RegisterEmployee)
+            if (aux.AccessRegister)
             {
                 Console.WriteLine("2. Ver funcionários cadastrados");
             }
@@ -111,7 +111,7 @@ namespace SingleExperience.Views
                     allBought.Bought(parameters);
                     break;
                 case 2:
-                    if (aux.RegisterEmployee)
+                    if (aux.AccessRegister)
                     {
                         signUp.ListEmployee(parameters);
                     }

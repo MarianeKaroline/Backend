@@ -20,7 +20,7 @@ namespace SingleExperience.Views
         private ClientDB clientDB = new ClientDB();
         private CartService cartService = new CartService();
         private ClientService clientService = new ClientService();
-        private SignUpEmployeeModel employee = new SignUpEmployeeModel();
+        private SignUpModel employee = new SignUpModel();
         private EmployeeDB employeeDB = new EmployeeDB();
 
 
@@ -132,7 +132,10 @@ namespace SingleExperience.Views
                 clientModel.Password = password;
             }
 
-            var signUp = clientDB.SignUp(clientModel);
+
+
+            clientModel.Employee = false;
+            var signUp = clientDB.SignUpClient(clientModel);
 
             if (signUp)
             {
@@ -298,6 +301,48 @@ namespace SingleExperience.Views
                 }
             }
 
+            validate = true;
+            while (validate)
+            {
+                try
+                {
+                    Console.Write("Data de Nascimento: (00/00/0000) ");
+                    DateTime birthDate = DateTime.ParseExact(Console.ReadLine(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    employee.BirthDate = birthDate;
+                    validate = false;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Opção inválida.");
+                    Console.WriteLine("Por favor, tente novamente.");
+                }
+            }
+
+            validate = true;
+            while (validate)
+            {
+                try
+                {
+                    Console.Write("Telefone: ");
+                    string phone = Console.ReadLine();
+                    if (phone.All(char.IsDigit))
+                    {
+                        employee.Phone = phone;
+                        validate = false;
+                    }
+                    else
+                    {
+                        Console.WriteLine("O número de telefone deve conter apenas números.");
+                        Console.WriteLine("Por favor, tente novamente.");
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("O número de telefone deve conter apenas números.");
+                    Console.WriteLine("Por favor, tente novamente.");
+                }
+            }
+
             var equal = passwords();
 
             if (!equal)
@@ -311,12 +356,14 @@ namespace SingleExperience.Views
                 employee.Password = password;
             }
 
+            employee.Employee = true;
+
             validate = true;
             while (validate)
             {
                 try
                 {
-                    Console.Write("Acesso ao estoque: ");
+                    Console.Write("Acesso ao estoque: (true/false/) ");
                     employee.AccessInventory = bool.Parse(Console.ReadLine());
                     validate = false;
                 }
@@ -332,8 +379,8 @@ namespace SingleExperience.Views
             {
                 try
                 {
-                    Console.Write("Acesso aos funcionários cadastrados: ");
-                    employee.RegisterEmployee = bool.Parse(Console.ReadLine());
+                    Console.Write("Acesso aos funcionários cadastrados: (true/false/) ");
+                    employee.AccessRegister = bool.Parse(Console.ReadLine());
                     validate = false;
                 }
                 catch (Exception)

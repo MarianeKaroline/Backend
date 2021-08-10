@@ -149,7 +149,7 @@ namespace SingleExperience.Services.CartServices
         public PreviewBoughtModel PreviewBoughts(SessionModel parameters, BuyModel bought, int addressId)
         {
             var preview = new PreviewBoughtModel();
-            var client = clientDB.GetClient(bought.Session);
+            var client = clientDB.GetEnjoyer(bought.Session);
             var address = clientDB.ListAddress(parameters.Session);
             var card = clientDB.ListCard(bought.Session);
             var cart = cartDB.GetCart(bought.Session);
