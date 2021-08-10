@@ -5,22 +5,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using SingleExperience.Enums;
-using SingleExperience.Entities.ProductEntities;
+using System.Text;
 
 namespace SingleExperience.Services.CartServices
 {
     class CartService
     {
-        private ProductDB productDB;
-        private CartDB cartDB;
-        public CartService()
-        {
-            productDB = new ProductDB();
-            cartDB = new CartDB();
-        }
+        private ProductDB productDB = new ProductDB();
+        private CartDB cartDB = new CartDB();
 
         //Listar produtos no carrinho
-        public List<ProductCartModel> ItemCart(ParametersModel parameters, StatusProductEnum status)
+        public List<ProductCartModel> ItemCart(SessionModel parameters, StatusProductEnum status)
         {
             var prod = new List<ProductCartModel>();
 
@@ -66,7 +61,7 @@ namespace SingleExperience.Services.CartServices
         }
 
         //Total do Carrinho
-        public TotalCartModel TotalCart(ParametersModel parameters)
+        public TotalCartModel TotalCart(SessionModel parameters)
         {
             var itens = ItemCart(parameters, StatusProductEnum.Ativo);
             var total = new TotalCartModel();
@@ -90,7 +85,7 @@ namespace SingleExperience.Services.CartServices
                 else
                 {
                     total.TotalAmount = parameters.CartMemory.Sum(item => item.Amount);
-                    //total.TotalPrice = parameters.CartMemory.Sum(item => item.Price * item.Amount);
+                    total.TotalPrice = parameters.CartMemory.Sum(item => productDB.ListProducts().FirstOrDefault(i => i.ProductId == item.ProductId).Price * item.Amount);
                 }
             }
 
@@ -98,7 +93,7 @@ namespace SingleExperience.Services.CartServices
         }
 
         //Remove um item do carrinho
-        public void RemoveItem(int productId, string session, ParametersModel parameters)
+        public void RemoveItem(int productId, string session, SessionModel parameters)
         {
             var getCart = cartDB.GetCart(session);
             var listItens = cartDB.ListItens(getCart.CartId);
@@ -148,11 +143,12 @@ namespace SingleExperience.Services.CartServices
 
         }
 
+
+        private ClientDB clientDB = new ClientDB();
         //Ver produtos antes da compra e depois
-        public PreviewBoughtModel PreviewBoughts(ParametersModel parameters, BuyModel bought, int addressId)
+        public PreviewBoughtModel PreviewBoughts(SessionModel parameters, BuyModel bought, int addressId)
         {
             var preview = new PreviewBoughtModel();
-            ClientDB clientDB = new ClientDB();
             var client = clientDB.GetClient(bought.Session);
             var address = clientDB.ListAddress(parameters.Session);
             var card = clientDB.ListCard(bought.Session);

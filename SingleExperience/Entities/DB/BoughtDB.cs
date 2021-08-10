@@ -15,23 +15,21 @@ namespace SingleExperience.Entities.DB
 {
     class BoughtDB
     {
-        private string CurrentDirectory = null;
-        private string path = null;
-        private string pathProducts = null;
-        private CartDB cartDB = null;
+        private string CurrentDirectory;
+        private string path;
+        private string pathProducts;
+        private CartDB cartDB = new CartDB();
         private ClientDB clientDB = new ClientDB();
-        private string header = null;
+        private string header;
 
         public BoughtDB()
         {
             CurrentDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             path = CurrentDirectory + @"..\..\..\..\\Database\Bought.csv";
             pathProducts = CurrentDirectory + @"..\..\..\..\\Database\ProductBought.csv";
-            cartDB = new CartDB();
             header = ReadBought()[0];
         }
 
-        //Tentei colocar no construtor e tudo, fiz até uma lista em memória, porém, por algum motivo, a lista não estava atualizando, então deixei assim
         public string[] ReadBought()
         {
             return File.ReadAllLines(path, Encoding.UTF8);
@@ -100,7 +98,7 @@ namespace SingleExperience.Entities.DB
         }
 
         //Adiciona os produtos nas tabelas de compras
-        public void AddBought(ParametersModel parameters, AddBoughtModel addBought)
+        public void AddBought(SessionModel parameters, AddBoughtModel addBought)
         {
             var listBought = List(parameters.Session);
             var getCart = cartDB.GetCart(parameters.Session);

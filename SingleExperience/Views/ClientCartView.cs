@@ -8,29 +8,27 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.IO;
+using System.Text;
 
 namespace SingleExperience.Views
 {
     class ClientCartView
     {
-        private CartService cart = null;
-        private ProductDB productDB = null;
+        private CartService cartService = new CartService();
+        private ProductDB productDB = new ProductDB();
+        private CartDB cartDB = new CartDB();
 
-        public ClientCartView()
-        {
-            cart = new CartService();
-            productDB = new ProductDB();
-        }
 
-        public void ListCart(ParametersModel parameters)
+        public void ListCart(SessionModel parameters)
         {
             Console.Clear();
-            var total = cart.TotalCart(parameters);
+            var total = cartService.TotalCart(parameters);
             var j = 41;
 
             Console.WriteLine($"\nInício > Carrinho\n");
 
-            var itens = cart.ItemCart(parameters, StatusProductEnum.Ativo);
+            var itens = cartService.ItemCart(parameters, StatusProductEnum.Ativo);
 
 
             itens.ForEach(p =>
@@ -52,22 +50,22 @@ namespace SingleExperience.Views
             Menu(itens, parameters);
         }
 
-        public void Menu(List<ProductCartModel> list, ParametersModel parameters)
+        public void Menu(List<ProductCartModel> list, SessionModel parameters)
         {
+            ClientProductCategoryView productCategory = new ClientProductCategoryView();
+            ClientSendingAddressView address = new ClientSendingAddressView();
+            ClientHomeView inicio = new ClientHomeView();
+            ClientService client = new ClientService();
+            ClientSignUpView signUp = new ClientSignUpView();
+            ClientSignInView signIn = new ClientSignInView();
+
             var op = 0;
             var code = 0;
             var invalid = true;
             var invalidCode = true;
             var invalidCodeRemove = true;
-            var inicio = new ClientHomeView();
-            var productCategory = new ClientProductCategoryView();
-            var address = new ClientSendingAddressView();
-            var client = new ClientService();
-            var signUp = new ClientSignUpView();
-            var signIn = new ClientSignInView();
-            var cartDB = new CartDB();
-            var total = cart.TotalCart(parameters);
-            var category = cart.ItemCart(parameters, StatusProductEnum.Ativo)
+            var total = cartService.TotalCart(parameters);
+            var category = cartService.ItemCart(parameters, StatusProductEnum.Ativo)
                 .Select(p => p.CategoryId)
                 .FirstOrDefault();
 
@@ -155,7 +153,7 @@ namespace SingleExperience.Views
                         }
                     });
 
-                    parameters.CountProduct = cart.TotalCart(parameters).TotalAmount;
+                    parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
 
                     Console.WriteLine("\n\nProduto adicionado com sucesso (Aperte enter para continuar)");
                     Console.ReadKey();
@@ -177,8 +175,8 @@ namespace SingleExperience.Views
                             else
                             {
                                 int codeRemove = int.Parse(Console.ReadLine());
-                                cart.RemoveItem(codeRemove, parameters.Session, parameters);
-                                parameters.CountProduct = cart.TotalCart(parameters).TotalAmount;
+                                cartService.RemoveItem(codeRemove, parameters.Session, parameters);
+                                parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
                                 Console.WriteLine("\n\nProduto removido com sucesso (Aperte enter para continuar)");
                                 Console.ReadKey();
                                 invalidCodeRemove = false;
@@ -231,7 +229,7 @@ namespace SingleExperience.Views
                             {
                                 Console.WriteLine("Opção inválida, tente novamente.");
                             }
-                        }                        
+                        }
                     }
                     else
                     {
@@ -242,7 +240,7 @@ namespace SingleExperience.Views
                     if (parameters.Session.Length == 11)
                     {
                         parameters.Session = client.SignOut();
-                        parameters.CountProduct = cart.TotalCart(parameters).TotalAmount;
+                        parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
                         ListCart(parameters);
                     }
                     else

@@ -11,9 +11,12 @@ namespace SingleExperience.Views
 {
     class ClientProductCategoryView
     {
-        ProductService product = new ProductService();
+        private CartService cartService = new CartService();
+        private ClientService clientService = new ClientService();
+        private ProductService productService = new ProductService();
+
         //Chama ListaProdutos pela Categoria
-        public void Category(int id, ParametersModel parameters)
+        public void Category(int id, SessionModel parameters)
         {
             Console.Clear();
             var category = (CategoryProductEnum)id;
@@ -22,17 +25,16 @@ namespace SingleExperience.Views
             ListProducts(id);
             Menu(parameters, id);
         }
-        
+
         //Menu dos Produtos
-        public void Menu(ParametersModel parameters, int id)
+        public void Menu(SessionModel parameters, int id)
         {
-            var client = new ClientService();
-            var selectedProduct = new ClientSelectedProductView();
-            var cartService = new CartService();
-            var signIn = new ClientSignInView();
-            var signUp = new ClientSignUpView();
-            var cart = new ClientCartView();
-            var inicio = new ClientHomeView();
+            ClientSelectedProductView selectedProduct = new ClientSelectedProductView();
+            ClientSignInView signIn = new ClientSignInView();
+            ClientSignUpView signUp = new ClientSignUpView();
+            ClientCartView cartView = new ClientCartView();
+            ClientHomeView inicio = new ClientHomeView();
+
             var op = 0;
             var invalid = true;
 
@@ -73,12 +75,12 @@ namespace SingleExperience.Views
                     inicio.Search(parameters);
                     break;
                 case 2:
-                    cart.ListCart(parameters);
+                    cartView.ListCart(parameters);
                     break;
                 case 3:
                     if (parameters.Session.Length == 11)
                     {
-                        parameters.Session = client.SignOut();
+                        parameters.Session = clientService.SignOut();
                         parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
                         Category(id, parameters);
                     }
@@ -92,8 +94,8 @@ namespace SingleExperience.Views
                     break;
                 case 5:
                     Console.Write("\nDigite o código # do produto: ");
-                    int code = int.Parse(Console.ReadLine()); 
-                    if (product.HasProduct(code))
+                    int code = int.Parse(Console.ReadLine());
+                    if (productService.HasProduct(code))
                     {
                         selectedProduct.SelectedProduct(code, parameters);
                     }
@@ -114,12 +116,11 @@ namespace SingleExperience.Views
                     break;
             }
 
-            
+
         }
         //Listar Produtos selecionado
         public void ListProducts(int categoryId)
         {
-            var productService = new ProductService();
             var itemCategory = productService.ListProductCategory(categoryId);
             var j = 41;
 

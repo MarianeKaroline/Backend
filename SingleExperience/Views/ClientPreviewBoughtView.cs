@@ -11,13 +11,9 @@ namespace SingleExperience.Views
 {
     class ClientPreviewBoughtView
     {
-        private CartService cart;
+        private CartService cart = new CartService();
 
-        public ClientPreviewBoughtView()
-        {
-            cart = new CartService();
-        }
-        public void Bought(ParametersModel parameters, AddBoughtModel addBought)
+        public void Bought(SessionModel parameters, AddBoughtModel addBought)
         {
             var ids = new List<int>();
             var bought = new BuyModel();
@@ -87,11 +83,12 @@ namespace SingleExperience.Views
             Menu(parameters, addBought);
         }
 
-        public void Menu(ParametersModel parameters, AddBoughtModel addBought)
+        public void Menu(SessionModel parameters, AddBoughtModel addBought)
         {
+            ClientFinishedView finished = new ClientFinishedView();
+            ClientCartView cartView = new ClientCartView();
+
             var total = cart.TotalCart(parameters);
-            var finished = new ClientFinishedView();
-            var cartView = new ClientCartView();
             var validate = true;
             var op = 0;
 

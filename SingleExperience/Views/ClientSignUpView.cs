@@ -14,15 +14,25 @@ namespace SingleExperience.Views
 {
     class ClientSignUpView
     {
+
+        private SignUpModel clientModel = new SignUpModel();
+        private CartDB cartDB = new CartDB();
+        private ClientDB clientDB = new ClientDB();
+        private CartService cartService = new CartService();
+        private ClientService clientService = new ClientService();
+        private SignUpEmployeeModel employee = new SignUpEmployeeModel();
+        private EmployeeDB employeeDB = new EmployeeDB();
+
+
         public string password = null;
-        public void SignUp(ParametersModel parameters, bool home)
+        public void SignUp(SessionModel parameters, bool home)
         {
-            var sendingAddress = new ClientSendingAddressView();
-            var cartView = new ClientCartView();
-            var cart = new CartService();
-            var client = new SignUpModel();
-            var cartDB = new CartDB();
-            var clientDB = new ClientDB();
+            ClientSendingAddressView sendingAddress = new ClientSendingAddressView();
+            ClientCartView cartView = new ClientCartView();
+            ClientCartView cart = new ClientCartView();
+            ClientHomeView inicio = new ClientHomeView();
+            EmployeeRegisterView employeeRegister = new EmployeeRegisterView();
+
             var validate = true;
             var validatePhone = true;
             var validateBirth = true;
@@ -40,17 +50,17 @@ namespace SingleExperience.Views
 
             Console.WriteLine("Informações pessoais\n");
             Console.Write("Nome Completo: ");
-            client.FullName = Console.ReadLine();
+            clientModel.FullName = Console.ReadLine();
 
             while (validatePhone)
             {
                 try
                 {
-                    Console.Write("Telefone: ");            
+                    Console.Write("Telefone: ");
                     string phone = Console.ReadLine();
                     if (phone.All(char.IsDigit))
                     {
-                        client.Phone = phone;
+                        clientModel.Phone = phone;
                         validatePhone = false;
                     }
                     else
@@ -65,9 +75,9 @@ namespace SingleExperience.Views
                     Console.WriteLine("Por favor, tente novamente.");
                 }
             }
-                        
+
             Console.Write("E-mail: ");
-            client.Email = Console.ReadLine();
+            clientModel.Email = Console.ReadLine();
 
             while (validate)
             {
@@ -77,7 +87,7 @@ namespace SingleExperience.Views
                     string cpf = Console.ReadLine();
                     if (cpf.All(char.IsDigit) && cpf.Length == 11)
                     {
-                        client.Cpf = cpf;
+                        clientModel.Cpf = cpf;
                         validate = false;
                     }
                     else
@@ -91,7 +101,7 @@ namespace SingleExperience.Views
                     Console.WriteLine("O cpf deve conter apenas números e deve conter 11 digitos.");
                     Console.WriteLine("Por favor, tente novamente.");
                 }
-            }     
+            }
 
             while (validateBirth)
             {
@@ -99,7 +109,7 @@ namespace SingleExperience.Views
                 {
                     Console.Write("Data de Nascimento: (00/00/0000) ");
                     DateTime birthDate = DateTime.ParseExact(Console.ReadLine(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                    client.BirthDate = birthDate;
+                    clientModel.BirthDate = birthDate;
                     validateBirth = false;
                 }
                 catch (Exception)
@@ -108,7 +118,7 @@ namespace SingleExperience.Views
                     Console.WriteLine("Por favor, tente novamente.");
                 }
             }
-            
+
             var equal = passwords();
 
             if (!equal)
@@ -119,17 +129,17 @@ namespace SingleExperience.Views
             }
             if (equal)
             {
-                client.Password = password;
-            }                       
+                clientModel.Password = password;
+            }
 
-            var signUp = clientDB.SignUp(client);
+            var signUp = clientDB.SignUp(clientModel);
 
             if (signUp)
             {
-                parameters.Session = client.Cpf;
+                parameters.Session = clientModel.Cpf;
                 cartDB.PassItens(parameters);
                 parameters.CartMemory = new List<ItemEntitie>();
-                parameters.CountProduct = cart.TotalCart(parameters).TotalAmount;
+                parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
                 if (home)
                 {
                     Menu(parameters, home);
@@ -145,7 +155,7 @@ namespace SingleExperience.Views
                 Console.WriteLine("Tecle enter para continuar");
                 Console.ReadKey();
                 cartView.ListCart(parameters);
-            }         
+            }
 
         }
 
@@ -166,12 +176,11 @@ namespace SingleExperience.Views
             return equal;
         }
 
-        public void Menu(ParametersModel parameters, bool home)
+        public void Menu(SessionModel parameters, bool home)
         {
-            var cartService = new CartService();
-            var client = new ClientService();
-            var cart = new ClientCartView();
-            var inicio = new ClientHomeView();
+            ClientCartView cart = new ClientCartView();
+            ClientHomeView inicio = new ClientHomeView();
+
             var op = 0;
             var invalid = true;
 
@@ -205,7 +214,7 @@ namespace SingleExperience.Views
                     cart.ListCart(parameters);
                     break;
                 case 3:
-                    parameters.Session = client.SignOut();
+                    parameters.Session = clientService.SignOut();
                     parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
                     inicio.ListProducts(parameters);
                     break;
@@ -245,25 +254,22 @@ namespace SingleExperience.Views
             return password;
         }
 
-        public void SignUpEmployee(ParametersModel parameters)
+        public void SignUpEmployee(SessionModel parameters)
         {
-            var sendingAddress = new ClientSendingAddressView();
-            var employeePerfil = new EmployeePerfilView();
-            var employeeRegister = new EmployeeRegisterView();
-            var cartView = new ClientCartView();
-            var cart = new CartService();
-            var employee = new SignUpEmployeeModel();
-            var cartDB = new CartDB();
-            var clientDB = new ClientDB();
-            var employeeDB = new EmployeeDB();
+            ClientSendingAddressView sendingAddress = new ClientSendingAddressView();
+            ClientCartView cartView = new ClientCartView();
+            ClientCartView cart = new ClientCartView();
+            ClientHomeView inicio = new ClientHomeView();
+            EmployeeRegisterView employeeRegister = new EmployeeRegisterView();
+
             var validate = true;
 
             Console.Clear();
-            
+
             Console.WriteLine("\nAdministrador > Cadastrar funcionário\n");
 
             Console.Write("Nome Completo: ");
-            employee.FullName = Console.ReadLine();            
+            employee.FullName = Console.ReadLine();
 
             Console.Write("E-mail: ");
             employee.Email = Console.ReadLine();

@@ -8,19 +8,27 @@ using SingleExperience.Services.ClientServices.Models;
 using System;
 using System.Collections.Generic;
 using SingleExperience.Services.EmployeeServices;
+using System.IO;
+using System.Text;
 
 namespace SingleExperience.Views
 {
     class ClientSignInView
     {
-        public void Login(ParametersModel parameters, bool home)
+
+        private CartDB cartDB = new CartDB();
+        private SignInModel signIn = new SignInModel();
+        private ClientService ClientService = new ClientService();
+        private CartService cartService = new CartService();
+        private SignInEmployeeModel signInEmployee = new SignInEmployeeModel();
+        private EmployeeService employeeService = new EmployeeService();
+
+
+        public void Login(SessionModel parameters, bool home)
         {
-            var inicio = new ClientHomeView();
-            var cart = new CartService();
-            var cartDB = new CartDB();
-            var signIn = new SignInModel();
-            var client = new ClientService();
-            var address = new ClientSendingAddressView();
+            ClientSendingAddressView addressView = new ClientSendingAddressView();
+            ClientHomeView inicio = new ClientHomeView();
+
             Console.Clear();
 
             Console.WriteLine("Início > Login\n");
@@ -30,7 +38,7 @@ namespace SingleExperience.Views
             Console.Write("Senha: ");
             signIn.Password = ReadPassword();
 
-            var sessionId = client.SignIn(signIn);
+            var sessionId = ClientService.SignIn(signIn);
 
             if (sessionId == "")
             {
@@ -46,7 +54,8 @@ namespace SingleExperience.Views
                 parameters.CartMemory = new List<ItemEntitie>();
             }
 
-            parameters.CountProduct = cart.TotalCart(parameters).TotalAmount;
+            string[] itensList = File.ReadAllLines(@"C:\Users\nani_\Documents\Backend\SingleExperience\Database\ItensCart.csv", Encoding.UTF8);
+            parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
 
 
             if (home)
@@ -55,16 +64,14 @@ namespace SingleExperience.Views
             }
             else
             {
-                address.Address(parameters);
+                addressView.Address(parameters);
             }
         }
 
-        public void Menu(ParametersModel parameters, bool home)
+        public void Menu(SessionModel parameters, bool home)
         {
-            var client = new ClientService();
-            var cartService = new CartService();
-            var cart = new ClientCartView();
-            var inicio = new ClientHomeView();
+            ClientHomeView inicio = new ClientHomeView();
+            ClientCartView cart = new ClientCartView();
             var invalid = true;
             var op = 0;
 
@@ -84,7 +91,7 @@ namespace SingleExperience.Views
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine("Opção inválida, tente novamente.");    
+                    Console.WriteLine("Opção inválida, tente novamente.");
                 }
 
             }
@@ -101,7 +108,7 @@ namespace SingleExperience.Views
                     cart.ListCart(parameters);
                     break;
                 case 3:
-                    parameters.Session = client.SignOut();
+                    parameters.Session = ClientService.SignOut();
                     parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
                     inicio.ListProducts(parameters);
                     break;
@@ -141,12 +148,10 @@ namespace SingleExperience.Views
             return password;
         }
 
-        public void LoginEmployee(ParametersModel parameters)
+        public void LoginEmployee(SessionModel parameters)
         {
-            var inicio = new ClientHomeView();
-            var signInEmployee = new SignInEmployeeModel();
-            var perfilEmployee = new EmployeePerfilView();
-            var employee = new EmployeeService();
+            ClientHomeView inicio = new ClientHomeView();
+            EmployeePerfilView perfilEmployee = new EmployeePerfilView();
             Console.Clear();
 
             Console.WriteLine("Início > Login\n");
@@ -156,7 +161,7 @@ namespace SingleExperience.Views
             Console.Write("Senha: ");
             signInEmployee.Password = ReadPassword();
 
-            var sessionId = employee.SignIn(signInEmployee);
+            var sessionId = employeeService.SignIn(signInEmployee);
 
             if (sessionId == "")
             {

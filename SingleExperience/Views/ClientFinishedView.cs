@@ -13,12 +13,13 @@ namespace SingleExperience.Views
 {
     class ClientFinishedView
     {
-        public void ProductsBought(ParametersModel parameters, AddBoughtModel addBought)
+        private BoughtDB boughtDB = new BoughtDB();
+        private CartService cart = new CartService();
+
+        public void ProductsBought(SessionModel parameters, AddBoughtModel addBought)
         {
-            var home = new ClientHomeView();
-            var boughtDB = new BoughtDB();
-            var cart = new CartService();
-            var bought = new BuyProductModel();
+            ClientHomeView home = new ClientHomeView();
+
             var ids = new List<int>();
 
             addBought.BuyProducts.ForEach(i =>

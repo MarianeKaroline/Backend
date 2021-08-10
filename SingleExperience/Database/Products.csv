@@ -13,5 +13,5 @@ ProdutoId,Nome,Preco,Details,Qtde,CategoriaId,Ranking,Disponibilidade,Avaliacao
 12,Mouse Gamer,139,Marca: Corsair;Botões: 8;DPI: 12.400;Tipo de Sensor: Ótico;Conectividade: com fio,77,1,15,True,0
 13,iPad,2549,Marca: Apple;Memória RAM: 6GB;Armazenamento: 32 GB,46,5,10,True,0
 14,Tablet Samsung,1399,Marca: Samsung;Câmera Traseira: 8MP;Câmera Frontal: 5MP;Memória RAM: 3GB;Armazenamento: 64GB,88,5,13,False,0
-15,Tablet Multilaser,399,Marca: Multilaser;Sistema operacional: Android 8.1; Armazenamento: 16 GB;Memória: 1GB,285,5,20,True,0
+15,Tablet Multilaser,399,Marca: Multilaser;Sistema operacional: Android 8.1; Armazenamento: 16 GB;Memória: 1GB,284,5,20,True,0
 16,Fone de ouvido,2000,Marca: Xiaomi;Qualidade do audio: boa,100,1,1,True,0

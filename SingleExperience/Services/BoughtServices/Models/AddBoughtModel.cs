@@ -8,7 +8,7 @@ namespace SingleExperience.Services.BoughtServices.Models
 {
     class AddBoughtModel
     {
-        public ParametersModel Session { get; set; }
+        public SessionModel Session { get; set; }
         public List<BuyProductModel> BuyProducts { get; set; }
         public PaymentMethodEnum Payment { get; set; }
         public string CodeConfirmation { get; set; }

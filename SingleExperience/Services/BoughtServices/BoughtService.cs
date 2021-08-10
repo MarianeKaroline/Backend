@@ -10,14 +10,9 @@ namespace SingleExperience.Services.BoughtServices
 {
     class BoughtService
     {
-        private BoughtDB boughtDB;
-        private CartDB cartDB;
+        private BoughtDB boughtDB = new BoughtDB();
+        private CartDB cartDB = new CartDB();
         private ClientDB clientDB = new ClientDB();
-        public BoughtService()
-        {
-            boughtDB = new BoughtDB();
-            cartDB = new CartDB();
-        }
 
         //Listar as compras do cliente
         public List<BoughtModel> ClientBought(string session)

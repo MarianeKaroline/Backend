@@ -7,15 +7,18 @@ using System.Text;
 namespace SingleExperience.Views
 {
     class ClientPerfilView
-    {       
-        public void Menu(List<BoughtModel> boughtModels, ParametersModel parameters)
+    {
+        private AddBoughtModel addBought = new AddBoughtModel();
+
+
+        public void Menu(List<BoughtModel> boughtModels, SessionModel parameters)
         {
+            ClientHomeView homeView = new ClientHomeView();
+            ClientBoughtsView boughtsView = new ClientBoughtsView();
+            ClientSendingAddressView address = new ClientSendingAddressView();
+            ClientPaymentMethodView card = new ClientPaymentMethodView();
+
             bool validate = true;
-            var homeView = new ClientHomeView();
-            var boughtsView = new ClientBoughtsView();
-            var address = new ClientSendingAddressView();
-            var card = new ClientPaymentMethodView();
-            AddBoughtModel addBought = new AddBoughtModel();
             int opc = 0;
 
             Console.Clear();

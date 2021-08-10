@@ -13,19 +13,12 @@ namespace SingleExperience.Views
     class ClientPaymentMethodView
     {
         public int j = 41;
-        private ClientPreviewBoughtView preview;
-        private ClientService client;
+        private ClientService clientService = new ClientService();
         private ClientDB clientDB = new ClientDB();
-        private CardModel cardModel;
+        private CardModel cardModel = new CardModel();
+        private CartService cartService = new CartService();
 
-        public ClientPaymentMethodView()
-        {
-            preview = new ClientPreviewBoughtView();
-            client = new ClientService();
-            cardModel = new CardModel();
-        }
-
-        public void Methods(ParametersModel parameters, AddBoughtModel addBought)
+        public void Methods(SessionModel parameters, AddBoughtModel addBought)
         {
             var op = 0;
             var invalid = true;
@@ -65,8 +58,9 @@ namespace SingleExperience.Views
             }
         }
 
-        public void CreditCard(ParametersModel parameters, AddBoughtModel addBought, bool home)
+        public void CreditCard(SessionModel parameters, AddBoughtModel addBought, bool home)
         {
+            ClientPreviewBoughtView preview = new ClientPreviewBoughtView();
             var op = "";
             char opc = '\0';
             var invalid = true;
@@ -79,10 +73,10 @@ namespace SingleExperience.Views
             }
 
             //Se o cliente tiver cartões cadastrado, irá mostrar para ele
-            if (client.HasCard(parameters.Session))
+            if (clientService.HasCard(parameters.Session))
             {
-                client.ShowCards(parameters.Session)
-                    .ForEach(p => 
+                clientService.ShowCards(parameters.Session)
+                    .ForEach(p =>
                     {
                         Console.WriteLine($"\n(Crédito) com final {p.CardNumber.Substring(12)}        {p.Name}        {p.ShelfLife.ToString("MM/yyyy")}\n");
                     });
@@ -169,8 +163,9 @@ namespace SingleExperience.Views
             }
         }
 
-        public void BankSlip(ParametersModel parameters, AddBoughtModel addBought)
+        public void BankSlip(SessionModel parameters, AddBoughtModel addBought)
         {
+            ClientPreviewBoughtView preview = new ClientPreviewBoughtView();
             var numberCode = Guid.NewGuid();
             addBought.CodeConfirmation = numberCode.ToString();
 
@@ -178,8 +173,9 @@ namespace SingleExperience.Views
             preview.Bought(parameters, addBought);
         }
 
-        public void Pix(ParametersModel parameters, AddBoughtModel addBought)
-        {           
+        public void Pix(SessionModel parameters, AddBoughtModel addBought)
+        {
+            ClientPreviewBoughtView preview = new ClientPreviewBoughtView();
             var numberPix = Guid.NewGuid();
             addBought.CodeConfirmation = numberPix.ToString();
 
@@ -189,8 +185,10 @@ namespace SingleExperience.Views
         }
 
         //Caso a edição do cartão seja do perfil, o home tem que ser true
-        public void AddNewCreditCard(ParametersModel parameters, AddBoughtModel addBought, bool home)
+        public void AddNewCreditCard(SessionModel parameters, AddBoughtModel addBought, bool home)
         {
+            ClientPreviewBoughtView preview = new ClientPreviewBoughtView();
+
             Console.WriteLine($"\n+{new string('-', j)}+\n");
             Console.Write("Novo Cartão\n");
             Console.Write("Número do cartão: ");
@@ -217,12 +215,10 @@ namespace SingleExperience.Views
             }
         }
 
-        public void Menu(ParametersModel parameters)
+        public void Menu(SessionModel parameters)
         {
+            ClientCartView cartView = new ClientCartView();
             var home = new ClientHomeView();
-            var cartService = new CartService();
-            var client = new ClientService();
-            var cart = new ClientCartView();
             var opc = 0;
             var invalid = true;
 
@@ -262,10 +258,10 @@ namespace SingleExperience.Views
                     home.ListProducts(parameters);
                     break;
                 case 2:
-                    cart.ListCart(parameters);
+                    cartView.ListCart(parameters);
                     break;
                 case 3:
-                    parameters.Session = client.SignOut();
+                    parameters.Session = clientService.SignOut();
                     parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
                     home.ListProducts(parameters);
                     break;

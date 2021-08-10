@@ -9,7 +9,12 @@ namespace SingleExperience.Views
 {
     class EmployeeRegisterView
     {
-        public void ListEmployee(ParametersModel parameters)
+        private EmployeeListAllBoughtView allBought = new EmployeeListAllBoughtView();
+        private EmployeeService employeeService = new EmployeeService();
+        private EmployeeInventoryView employeeInventory = new EmployeeInventoryView();
+        private EmployeeDB employeeDB = new EmployeeDB();
+
+        public void ListEmployee(SessionModel parameters)
         {
             var signUp = new ClientSignUpView();
             var j = 51;
@@ -60,14 +65,11 @@ namespace SingleExperience.Views
                     break;
             }
         }
-        public void Menu(ParametersModel parameters)
+        public void Menu(SessionModel parameters)
         {
+            ClientHomeView homeView = new ClientHomeView();
+
             bool validate = true;
-            var homeView = new ClientHomeView();
-            var allBought = new EmployeeListAllBoughtView();
-            var employee = new EmployeeService();
-            var employeeInventory = new EmployeeInventoryView();
-            var employeeDB = new EmployeeDB();
             int opc = 0;
 
             var aux = employeeDB.GetEmployee(parameters.Session);
@@ -120,7 +122,7 @@ namespace SingleExperience.Views
                     }
                     break;
                 case 3:
-                    parameters.Session = employee.SignOut();
+                    parameters.Session = employeeService.SignOut();
                     homeView.ListProducts(parameters);
                     break;
                 case 9:

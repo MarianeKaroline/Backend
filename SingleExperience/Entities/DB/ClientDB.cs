@@ -13,26 +13,9 @@ namespace SingleExperience.Entities.DB
 {
     class ClientDB
     {
-        private string CurrentDirectory = null;
-        private string path = null;
-        private string pathAddress = null;
-        private string pathCard = null;
-        private string[] addressList = null;
-        private string[] cardList = null;
-        private string[] clientList = null;
-        private ClientEntitie client = null;
-
-        public ClientDB()
-        {
-            CurrentDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            path = CurrentDirectory + @"..\..\..\..\\Database\Client.csv";
-            pathAddress = CurrentDirectory + @"..\..\..\..\\Database\Address.csv";
-            pathCard = CurrentDirectory + @"..\..\..\..\\Database\Card.csv";
-            addressList = File.ReadAllLines(pathAddress, Encoding.UTF8);
-            clientList = File.ReadAllLines(path, Encoding.UTF8);
-            cardList = File.ReadAllLines(pathCard, Encoding.UTF8);
-            client = new ClientEntitie();
-        }
+        private string[] addressList = File.ReadAllLines(@"C:\Users\nani_\Documents\Backend\SingleExperience\Database\Address.csv", Encoding.UTF8);
+        private string[] cardList = File.ReadAllLines(@"C:\Users\nani_\Documents\Backend\SingleExperience\Database\Card.csv", Encoding.UTF8);
+        private string[] clientList = File.ReadAllLines(@"C:\Users\nani_\Documents\Backend\SingleExperience\Database\Client.csv", Encoding.UTF8);
 
 
         //Pega o endereço do Computador
@@ -72,6 +55,8 @@ namespace SingleExperience.Entities.DB
         //Address
         public List<AddressEntitie> ListAddress(string userId)
         {
+            addressList = File.ReadAllLines(@"C:\Users\nani_\Documents\Backend\SingleExperience\Database\Address.csv", Encoding.UTF8);
+
             return addressList
                 .Skip(1)
                 .Select(i => new AddressEntitie
@@ -91,6 +76,8 @@ namespace SingleExperience.Entities.DB
         //Card
         public List<CardEntitie> ListCard(string userId)
         {
+            cardList = File.ReadAllLines(@"C:\Users\nani_\Documents\Backend\SingleExperience\Database\Card.csv", Encoding.UTF8);
+
             return cardList
                     .Skip(1)
                     .Where(i => i.Split(',')[5] == userId)
@@ -129,7 +116,7 @@ namespace SingleExperience.Entities.DB
 
                     lines.Add(String.Join(",", aux));
 
-                    using (StreamWriter sw = File.AppendText(path))
+                    using (StreamWriter sw = File.AppendText(System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\Client.csv"))
                     {
                         lines.ForEach(p =>
                         {
@@ -166,7 +153,7 @@ namespace SingleExperience.Entities.DB
                 linesAddress.Add(String.Join(",", auxAddress));
 
 
-                using (StreamWriter sw = File.AppendText(pathAddress))
+                using (StreamWriter sw = File.AppendText(System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\Address.csv"))
                 {
                     linesAddress.ForEach(p =>
                     {
@@ -214,7 +201,7 @@ namespace SingleExperience.Entities.DB
                     };
                     lines.Add(String.Join(",", aux));
 
-                    using (StreamWriter sw = File.AppendText(pathCard))
+                    using (StreamWriter sw = File.AppendText(System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"..\..\..\..\\Database\Card.csv"))
                     {
                         lines.ForEach(p =>
                         {

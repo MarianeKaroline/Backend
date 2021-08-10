@@ -13,17 +13,11 @@ namespace SingleExperience.Services.EmployeeServices
 {
     class EmployeeService
     {
-        private BoughtDB boughtDB;
-        private CartDB cartDB;
+        private BoughtDB boughtDB = new BoughtDB();
+        private CartDB cartDB = new CartDB();
         private ClientDB clientDB = new ClientDB();
-        private EmployeeDB employeeDB;
-
-        public EmployeeService()
-        {
-            boughtDB = new BoughtDB();
-            cartDB = new CartDB();
-            employeeDB = new EmployeeDB();
-        }
+        private ProductDB productDB = new ProductDB();
+        private EmployeeDB employeeDB = new EmployeeDB();
 
         public List<BoughtModel> Bought()
         {
@@ -78,11 +72,13 @@ namespace SingleExperience.Services.EmployeeServices
                 boughtDB.ListProductBought(i.BoughtId)
                 .ToList()
                 .ForEach(j =>
-                {
+                {                   
                     var product = new ProductBoughtModel();
 
                     product.ProductId = j.ProductId;
+                    product.ProductName = productDB.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Name;
                     product.Amount = j.Amount;
+                    product.Price = productDB.ListProducts().FirstOrDefault(i => i.ProductId == j.ProductId).Price;
                     product.BoughtId = j.BoughtId;
 
                     boughtModel.Itens.Add(product);

@@ -9,19 +9,20 @@ using SingleExperience.Services.ProductServices.Model;
 using SingleExperience.Entities.DB;
 using System.Collections.Generic;
 using SingleExperience.Entities.CartEntities;
+using System.IO;
+using System.Text;
 
 namespace SingleExperience.Views
 {
     class ClientSelectedProductView
     {
-        private ProductService productService = null;
-        public ClientSelectedProductView()
-        {
-            productService = new ProductService();
-        }
+        private ProductService productService = new ProductService();
+        private CartService cartService = new CartService();
+        private CartDB cartDB = new CartDB();
+        private ClientService clientService = new ClientService();
 
         //Listar Produtos
-        public void SelectedProduct(int productId, ParametersModel parameters)
+        public void SelectedProduct(int productId, SessionModel parameters)
         {
             Console.Clear();
             var product = productService.SelectedProduct(productId);
@@ -54,17 +55,14 @@ namespace SingleExperience.Views
         }
 
         //Mostra Menu
-        public void Menu(ProductSelectedModel list, ParametersModel parameters, int productId)
+        public void Menu(ProductSelectedModel list, SessionModel parameters, int productId)
         {
-            var signIn = new ClientSignInView();
-            var signUp = new ClientSignUpView();
-            var client = new ClientService();
-            var categoryProduct = new ClientProductCategoryView();
-            var inicio = new ClientHomeView();
-            var cartList = new ClientCartView();
+            ClientSignInView signIn = new ClientSignInView();
+            ClientSignUpView signUp = new ClientSignUpView();
+            ClientCartView cartView = new ClientCartView();
+            ClientProductCategoryView categoryProduct = new ClientProductCategoryView();
+            ClientHomeView inicio = new ClientHomeView();
             var category = (CategoryProductEnum)list.CategoryId;
-            var cart = new CartService();
-            var cartDB = new CartDB();
             var op = 0;
             var invalid = true;
 
@@ -82,7 +80,7 @@ namespace SingleExperience.Views
             {
                 Console.WriteLine("5. Desconectar-se");
             }
-            Console.WriteLine("9. Sair do Sistema"); 
+            Console.WriteLine("9. Sair do Sistema");
             while (invalid)
             {
                 try
@@ -128,20 +126,20 @@ namespace SingleExperience.Views
                         parameters.CartMemory = new List<ItemEntitie>();
                     }
 
-                    parameters.CountProduct = cart.TotalCart(parameters).TotalAmount;
+                    parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
 
                     Console.WriteLine("\nProduto adicionado com sucesso (Aperte enter para continuar)");
                     Console.ReadKey();
                     SelectedProduct(list.ProductId, parameters);
                     break;
                 case 4:
-                    cartList.ListCart(parameters);
+                    cartView.ListCart(parameters);
                     break;
                 case 5:
                     if (parameters.Session.Length == 11)
                     {
-                        parameters.Session = client.SignOut();
-                        parameters.CountProduct = cart.TotalCart(parameters).TotalAmount;
+                        parameters.Session = clientService.SignOut();
+                        parameters.CountProduct = cartService.TotalCart(parameters).TotalAmount;
                         SelectedProduct(productId, parameters);
                     }
                     else
